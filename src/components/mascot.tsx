@@ -24,7 +24,7 @@ export function Mascot() {
           </g>
           {/* Antenna */}
           <line x1="100" y1="100" x2="100" y2="80" stroke="hsl(var(--secondary))" strokeWidth="2" />
-          <circle cx="100" cy="75" r="5" fill="hsl(var(--primary))" />
+          <circle cx="100" cy="75" r="5" fill="hsl(var(--primary))" className="animate-antenna-pulse" />
         </g>
         
         <style jsx>{`
@@ -34,22 +34,31 @@ export function Mascot() {
           }
           .animate-eye-blink {
             animation: eye-blink 4s infinite;
-            transform-origin: center 125px;
+            transform-origin: center;
           }
           @keyframes float {
-             0%, 100% { transform: translateY(0px); }
-             50% { transform: translateY(-10px); }
+             0%, 100% { transform: translateY(0px) rotate(0deg); }
+             25% { transform: translateY(-8px) rotate(-3deg); }
+             50% { transform: translateY(-12px) rotate(0deg); }
+             75% { transform: translateY(-8px) rotate(3deg); }
           }
           .animate-float {
-            animation: float 4s ease-in-out infinite;
+            animation: float 5s ease-in-out infinite;
           }
            @keyframes shadow-pulse {
              0%, 100% { transform: scaleX(1); opacity: 0.2; }
              50% { transform: scaleX(0.9); opacity: 0.1; }
           }
           .animate-shadow-pulse {
-            animation: shadow-pulse 4s ease-in-out infinite;
+            animation: shadow-pulse 5s ease-in-out infinite;
             transform-origin: center;
+          }
+          @keyframes antenna-pulse {
+            0%, 100% { box-shadow: 0 0 3px 1px hsl(var(--primary)); }
+            50% { box-shadow: 0 0 8px 3px hsl(var(--primary)); }
+          }
+          .animate-antenna-pulse {
+             animation: antenna-pulse 2s ease-in-out infinite;
           }
         `}</style>
       </svg>

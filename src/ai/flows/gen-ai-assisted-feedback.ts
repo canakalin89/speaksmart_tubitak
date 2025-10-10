@@ -122,7 +122,7 @@ const prompt = ai.definePrompt({
   Task Description: {{{taskDescription}}}
   Audio for analysis: {{media url=audio}}
 
-  Respond in {{#if language "tr"}}Turkish{{else}}English{{/if}}.
+  Respond in {{language}}.
   The scores should be numbers between 0-100.
   Each feedback text should clearly state the mistakes and offer concrete suggestions for improvement.
   `,
@@ -136,7 +136,8 @@ const genAiAssistedFeedbackFlow = ai.defineFlow(
     model: 'googleai/gemini-2.5-pro'
   },
   async input => {
-    const {output} = await prompt(input);
+    const languageFullName = input.language === 'tr' ? 'Turkish' : 'English';
+    const {output} = await prompt({...input, language: languageFullName});
     return output!;
   }
 );

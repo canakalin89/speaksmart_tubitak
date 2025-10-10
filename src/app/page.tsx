@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import {
   genAiAssistedFeedback,
   GenAiAssistedFeedbackOutput,
@@ -11,12 +11,16 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from '@/components/ui/textarea';
 import { Progress } from "@/components/ui/progress";
-import { Mic, MicOff, Languages, FileUp, School, Link as LinkIcon, Instagram, Twitter, Youtube, Users, Atom, CreativeCommons, MessageCircle, Bot, User as UserIcon } from 'lucide-react';
+import { Mic, MicOff, Languages, FileUp, School, Link as LinkIcon, Instagram, Twitter, Youtube, Users, Atom, CreativeCommons, MessageCircle, Bot, User as UserIcon, History } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Mascot, MascotLoading } from '@/components/mascot';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useAuth, useUser } from '@/firebase';
+import { useAuth, useUser, useCollection, useMemoFirebase, useFirestore } from '@/firebase';
 import { initiateAnonymousSignIn } from '@/firebase/non-blocking-login';
+import { collection } from 'firebase/firestore';
+import { formatDistanceToNow } from 'date-fns';
+import { tr } from 'date-fns/locale';
+
 
 const content = {
   tr: {
@@ -71,7 +75,10 @@ const content = {
     continueAsGuest: 'Misafir Olarak Devam Et',
     welcomeGuest: 'Hoş Geldin, Misafir!',
     loginToSave: 'İlerlemenizi kaydetmek için giriş yapın veya kaydolun.',
-    welcome: 'Hoş Geldin'
+    welcome: 'Hoş Geldin',
+    pastResults: 'Geçmiş Sonuçlarım',
+    noPastResults: 'Henüz bir deneme yapmadınız.',
+    viewResult: 'Sonucu Görüntüle'
   },
   en: {
     title: 'SpeakSmart',
@@ -125,7 +132,10 @@ const content = {
     continueAsGuest: 'Continue as Guest',
     welcomeGuest: 'Welcome, Guest!',
     loginToSave: 'Log in or sign up to save your progress.',
-    welcome: 'Welcome'
+    welcome: 'Welcome',
+    pastResults: 'Past Results',
+    noPastResults: 'You haven\'t made any attempts yet.',
+    viewResult: 'View Result'
   }
 };
 
@@ -144,9 +154,17 @@ export default function Home() {
   const { toast } = useToast();
   const auth = useAuth();
   const { user, isUserLoading } = useUser();
+  const firestore = useFirestore();
 
   const t = content[language];
 
+  const progressCollectionRef = useMemoFirebase(() => {
+    if (!firestore || !user?.uid) return null;
+    return collection(firestore, 'users', user.uid, 'progress');
+  }, [firestore, user?.uid]);
+
+  const { data: progressData } = useCollection<GenAiAssistedFeedbackOutput>(progressCollectionRef);
+  
   const handleAudioAnalysis = async (base64Audio: string) => {
     setIsLoading(true);
     setFeedback(null);
@@ -339,6 +357,19 @@ export default function Home() {
   const canSubmit = taskDescription.trim().length > 0;
   const isReady = !isUserLoading && user;
 
+  const sortedProgressData = useMemo(() => {
+    if (!progressData) return [];
+    // The feedback object from the AI doesn't include the timestamp,
+    // but the document saved in Firestore does if `serverTimestamp()` is used.
+    // Assuming a `createdAt` field exists. If not, we can't sort reliably.
+    // Let's assume the gen-ai-assisted-feedback flow adds a `createdAt` field.
+    return [...progressData].sort((a: any, b: any) => {
+        const dateA = a.createdAt?.toDate?.() || 0;
+        const dateB = b.createdAt?.toDate?.() || 0;
+        return dateB - dateA;
+    });
+  }, [progressData]);
+
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <header className="bg-card shadow-sm sticky top-0 z-10 border-b">
@@ -436,12 +467,35 @@ export default function Home() {
               </Card>
 
               <Card>
-                  <CardHeader>
-                      <CardTitle className="text-base">{t.howItWorks}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="text-sm text-muted-foreground space-y-3">
-                     {t.howItWorksSteps.map((step, i) => <p key={i} className="flex items-start gap-2"><span className="font-bold text-primary">{i+1}.</span><span>{step}</span></p>)}
-                  </CardContent>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-base"><History className="w-5 h-5 text-primary"/>{t.pastResults}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ScrollArea className="h-48">
+                    {sortedProgressData && sortedProgressData.length > 0 ? (
+                      <div className="space-y-4">
+                        {sortedProgressData.map((item) => (
+                           <div key={item.id} className="flex items-center justify-between p-3 bg-secondary/50 rounded-lg">
+                             <div className="flex-grow overflow-hidden">
+                               <p className="font-semibold truncate text-sm">{(item as any).taskDescription}</p>
+                               <p className="text-xs text-muted-foreground">
+                                { (item as any).createdAt ? formatDistanceToNow((item as any).createdAt.toDate(), { addSuffix: true, locale: language === 'tr' ? tr : undefined }) : ''}
+                               </p>
+                             </div>
+                             <div className="flex items-center gap-2 flex-shrink-0 ml-4">
+                                <span className="font-bold text-primary text-lg">{(item as any).overallScore}</span>
+                                <Button size="sm" variant="ghost" onClick={() => setFeedback(item)}>
+                                    {t.viewResult}
+                                </Button>
+                             </div>
+                           </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-center text-sm text-muted-foreground py-8">{t.noPastResults}</p>
+                    )}
+                  </ScrollArea>
+                </CardContent>
               </Card>
             </div>
 
@@ -565,3 +619,5 @@ export default function Home() {
     </div>
   );
 }
+
+    

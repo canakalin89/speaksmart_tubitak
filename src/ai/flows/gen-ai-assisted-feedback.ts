@@ -12,7 +12,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, serverTimestamp } from 'firebase/firestore';
 import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { collection } from 'firebase/firestore';
 import { initializeFirebase } from '@/firebase';
@@ -67,9 +67,11 @@ export async function genAiAssistedFeedback(input: GenAiAssistedFeedbackInput): 
     addDocumentNonBlocking(progressRef, {
         userId: input.userId,
         taskId: input.taskId,
+        taskDescription: input.taskDescription,
         completionStatus: 'completed',
         attempts: 1, // This could be incremented in a more complex scenario
         feedback: JSON.stringify(result), // Storing the full feedback
+        createdAt: serverTimestamp(),
         ...result
     });
   }
@@ -138,3 +140,4 @@ const genAiAssistedFeedbackFlow = ai.defineFlow(
     return output!;
   }
 );
+

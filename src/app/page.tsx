@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from '@/components/ui/textarea';
 import { Progress } from "@/components/ui/progress";
-import { Mic, MicOff, Loader2, Languages, GraduationCap, Zap, BrainCircuit, Speech, FileUp, School, Link as LinkIcon, Instagram, Twitter, Youtube, Users, Atom, CreativeCommons, MessageCircle } from 'lucide-react';
+import { Mic, MicOff, Loader2, Languages, GraduationCap, Zap, BrainCircuit, Speech, FileUp, School, Link as LinkIcon, Instagram, Twitter, Youtube, Users, Atom, CreativeCommons, MessageCircle, Bot } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Mascot, MascotLoading } from '@/components/mascot';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -123,7 +123,6 @@ export default function Home() {
       };
       reader.readAsDataURL(file);
     }
-     // Reset file input to allow uploading the same file again
      if(fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -135,12 +134,10 @@ export default function Home() {
     const [progress, setProgress] = useState(0);
 
     useEffect(() => {
-      // Animate progress bar on load
       const timer = setTimeout(() => setProgress(score), 300);
       return () => clearTimeout(timer);
     }, [score]);
     
-    // Determine color based on score
     const getScoreColor = (score: number) => {
       if (score < 50) return 'red';
       if (score < 75) return 'yellow';
@@ -165,79 +162,70 @@ export default function Home() {
     return (
       <div className="space-y-2">
         <div className="flex justify-between items-baseline">
-          <span className="font-medium text-sm">{label}</span>
-          <span className={`text-lg font-bold ${textColorClass}`}>{score}</span>
+          <span className="font-medium text-sm text-foreground/80">{label}</span>
+          <span className={`text-base font-bold ${textColorClass}`}>{score}</span>
         </div>
-        <Progress value={progress} indicatorClassName={indicatorColorClass} />
+        <Progress value={progress} indicatorClassName={indicatorColorClass} className="h-2" />
+      </div>
+    );
+  };
+  
+  const OverallScoreIndicator = ({ score } : {score: number}) => {
+    const circumference = 2 * Math.PI * 45; // radius = 45
+    const offset = circumference - (score / 100) * circumference;
+
+    return (
+      <div className="relative flex items-center justify-center w-32 h-32">
+        <svg className="absolute top-0 left-0 w-full h-full" viewBox="0 0 100 100">
+          <circle
+            className="text-secondary"
+            strokeWidth="10"
+            stroke="currentColor"
+            fill="transparent"
+            r="45"
+            cx="50"
+            cy="50"
+          />
+          <circle
+            className="text-primary"
+            strokeWidth="10"
+            stroke="currentColor"
+            fill="transparent"
+            r="45"
+            cx="50"
+            cy="50"
+            style={{
+              strokeDasharray: circumference,
+              strokeDashoffset: offset,
+              transition: 'stroke-dashoffset 0.5s ease-out',
+              transform: 'rotate(-90deg)',
+              transformOrigin: '50% 50%'
+            }}
+          />
+        </svg>
+        <span className="text-3xl font-bold text-primary">{score}</span>
       </div>
     );
   };
 
+
   const canSubmit = taskDescription.trim().length > 0;
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
-       <header className="py-2 px-4 md:px-6 bg-secondary text-secondary-foreground shadow-lg">
-          <div className="container mx-auto text-center">
-            <div className="flex justify-center items-center gap-3">
-              <School className="w-5 h-5 text-primary"/>
-              <div>
-                 <h1 className="text-lg font-bold text-primary tracking-tight">AI İngilizce Eğitmeni</h1>
-                 <p className="text-xs text-secondary-foreground/80">
-                   Aziz Sancar Anadolu Lisesi - TÜBİTAK 4006-B Projesi
-                 </p>
-              </div>
-            </div>
-          </div>
+    <div className="flex flex-col min-h-screen p-4 sm:p-6 md:p-8">
+      <header className="mb-8">
+        <h1 className="text-3xl font-bold tracking-tight">AI Speech Analyzer</h1>
+        <p className="text-muted-foreground">İngilizce konuşma becerilerinizi anında analiz edin ve geliştirin.</p>
       </header>
-      <main className="container mx-auto p-4 md:p-8 flex-grow">
-        <Card className="mb-8 bg-card/80 backdrop-blur-sm border-primary/20">
-            <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                    <GraduationCap className="text-primary" />
-                    TÜBİTAK 4006-B Bilim Fuarı Projesi
-                </CardTitle>
-            </CardHeader>
-            <CardContent>
-                <p className="text-muted-foreground mb-4">
-                    Bu proje, Aziz Sancar Anadolu Lisesi öğrencileri tarafından TÜBİTAK 4006-B Bilim Fuarı için geliştirilmiştir. Amacımız, Türkiye Yüzyılı Maarif Modeli hedefleri doğrultusunda, yapay zeka teknolojisini kullanarak İngilizce konuşma becerilerini geliştirmeye yönelik yenilikçi ve interaktif bir araç sunmaktır.
-                </p>
-                <div className="flex flex-wrap items-center gap-4">
-                  <a href="http://azizsancaranadolu.meb.k12.tr" target="_blank" rel="noopener noreferrer">
-                      <Button variant="outline">
-                          <LinkIcon />
-                          Okul Web Sitesi
-                      </Button>
-                  </a>
-                  <div className="flex items-center gap-2">
-                      <a href="https://www.instagram.com/asalkapakli2019/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-                          <Button variant="ghost" size="icon">
-                              <Instagram className="h-5 w-5" />
-                          </Button>
-                      </a>
-                      <a href="https://x.com/asalkapakli2019" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
-                          <Button variant="ghost" size="icon">
-                              <Twitter className="h-5 w-5" />
-                          </Button>
-                      </a>
-                      <a href="https://www.youtube.com/@AzizSancarAnadoluLisesi" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
-                          <Button variant="ghost" size="icon">
-                              <Youtube className="h-5 w-5" />
-                          </Button>
-                      </a>
-                  </div>
-                </div>
-            </CardContent>
-        </Card>
 
-
-        <div className="grid gap-8 lg:grid-cols-2">
-          <Card>
+      <main className="grid gap-8 lg:grid-cols-5 flex-grow">
+        <div className="lg:col-span-2 flex flex-col gap-8">
+          <Card className="flex-grow">
             <CardHeader>
-              <CardTitle>1. Görevinizi Tanımlayın ve Konuşun</CardTitle>
-              <CardDescription>Konuşma görevinizi açıklayın ve sesinizi kaydedin veya yükleyin.</CardDescription>
+              <CardTitle>1. Adım: Pratik Yapın</CardTitle>
+              <CardDescription>Görevinizi açıklayın ve sesinizi kaydedin.</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="flex flex-col gap-6">
               <Textarea
                 placeholder="Örn: 'Bir iş görüşmesinde kendinizi tanıtın' veya 'Son tatilinizi anlatın.'"
                 value={taskDescription}
@@ -245,166 +233,136 @@ export default function Home() {
                 rows={4}
                 className="resize-none text-base"
               />
-              <div className="space-y-4">
-                <p className="text-center text-sm font-medium text-muted-foreground">2. Analiz için Ses Ekleyin</p>
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <Button
-                    onClick={toggleRecording}
-                    disabled={!canSubmit || isLoading}
-                    className="w-full flex items-center justify-center gap-2 transition-all duration-300 transform hover:scale-105"
-                    size="lg"
-                  >
-                    {isLoading && !isRecording ? (
-                      <Loader2 className="animate-spin" />
-                    ) : isRecording ? (
-                      <>
-                        <MicOff /> Kaydı Durdur
-                      </>
-                    ) : (
-                      <>
-                        <Mic /> Kayıt Yap
-                      </>
-                    )}
-                  </Button>
-                  <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="audio/*" />
-                   <Button
-                    onClick={triggerFileSelect}
-                    disabled={!canSubmit || isLoading || isRecording}
-                    variant="outline"
-                    className="w-full flex items-center justify-center gap-2 transition-all duration-300 transform hover:scale-105"
-                    size="lg"
-                  >
-                     {isLoading && !isRecording ? (
-                      <Loader2 className="animate-spin" />
-                    ) : (
-                      <>
-                        <FileUp /> Dosya Yükle
-                      </>
-                    )}
-                  </Button>
-                </div>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button
+                  onClick={toggleRecording}
+                  disabled={!canSubmit || isLoading}
+                  className="w-full flex-1"
+                  size="lg"
+                >
+                  {isLoading && !isRecording ? (
+                    <Loader2 className="animate-spin" />
+                  ) : isRecording ? (
+                    <><MicOff /> Kaydı Durdur</>
+                  ) : (
+                    <><Mic /> Kayıt Yap</>
+                  )}
+                </Button>
+                <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="audio/*" />
+                <Button
+                  onClick={triggerFileSelect}
+                  disabled={!canSubmit || isLoading || isRecording}
+                  variant="outline"
+                  className="w-full flex-1"
+                  size="lg"
+                >
+                  {isLoading && !isRecording ? (
+                    <Loader2 className="animate-spin" />
+                  ) : (
+                    <><FileUp /> Dosya Yükle</>
+                  )}
+                </Button>
               </div>
-               {isRecording && (
+              {isRecording && (
                 <div className="flex items-center justify-center text-sm text-red-500 animate-pulse">
-                  <div className="w-3 h-3 rounded-full bg-red-500 mr-2 animate-ping"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-red-500 mr-2 animate-ping"></div>
                   Kayıt yapılıyor...
                 </div>
               )}
             </CardContent>
           </Card>
+        </div>
 
-          <Card className="flex flex-col h-full">
-             <CardHeader>
-                <CardTitle>3. Sonuçlar ve Geri Bildirim</CardTitle>
-                <CardDescription>Konuşmanızın analizi ve gelişim önerileri.</CardDescription>
-             </CardHeader>
-             <CardContent className="flex-grow flex flex-col">
-                 {isLoading && !feedback && (
-                   <div className="flex-grow flex flex-col items-center justify-center p-8">
-                      <MascotLoading />
-                      <h3 className="text-2xl font-semibold text-primary mb-2 mt-6">Analiz Ediliyor...</h3>
-                      <p className="text-lg text-muted-foreground">Yapay zeka konuşmanızı değerlendiriyor, lütfen bekleyin.</p>
-                   </div>
-                )}
+        <div className="lg:col-span-3">
+          <Card className="h-full flex flex-col">
+            <CardHeader>
+              <CardTitle>2. Adım: Sonuçları İnceleyin</CardTitle>
+              <CardDescription>Konuşmanızın analizi ve gelişim önerileri.</CardDescription>
+            </CardHeader>
+            <CardContent className="flex-grow flex flex-col">
+              {isLoading && !feedback && (
+                <div className="m-auto flex flex-col items-center justify-center text-center gap-4">
+                   <MascotLoading />
+                   <h3 className="text-xl font-semibold text-primary">Analiz Ediliyor...</h3>
+                   <p className="text-muted-foreground">Yapay zeka konuşmanızı değerlendiriyor, lütfen bekleyin.</p>
+                </div>
+              )}
 
-                {!isLoading && !feedback && (
-                  <div className="flex-grow flex flex-col items-center justify-center p-8 text-center border-dashed border-2 rounded-lg">
-                      <Mascot />
-                      <h3 className="text-xl font-semibold mb-2 mt-4">Başlamaya Hazır mısınız?</h3>
-                      <p className="text-muted-foreground max-w-md">
-                        Görevinizi tanımlayın, kayda başlayın ve yapay zeka destekli anında geri bildirim alarak İngilizce konuşmanızı mükemmelleştirin!
-                      </p>
-                  </div>
-                )}
+              {!isLoading && !feedback && (
+                <div className="m-auto flex flex-col items-center justify-center text-center gap-4">
+                  <Mascot />
+                  <h3 className="text-xl font-semibold">Başlamaya Hazır mısınız?</h3>
+                  <p className="text-muted-foreground max-w-sm">
+                    Görevinizi tanımlayın, kayda başlayın ve anında geri bildirim alarak İngilizce konuşmanızı mükemmelleştirin!
+                  </p>
+                </div>
+              )}
 
-                {feedback && (
-                   <div className='flex flex-col h-full'>
-                      <div className="space-y-4 mb-6">
-                        <h4 className="font-semibold flex items-center gap-2"><Languages/> Konuşmanızın Metni</h4>
-                        <ScrollArea className="h-24 md:h-28">
-                            <p className="italic text-muted-foreground bg-muted p-4 rounded-md">{feedback.transcribedText}</p>
-                        </ScrollArea>
-                      </div>
-
-                      <div className="flex-grow">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 mb-6 p-4 border rounded-lg">
-                          <div className="flex flex-col items-center justify-center gap-2">
-                            <span className="text-lg font-medium text-muted-foreground">Genel Puan</span>
-                            <p className="text-6xl font-bold text-primary">{feedback.overallScore}</p>
-                          </div>
-                          <div className="space-y-3">
+              {feedback && (
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-grow">
+                   <div className="flex flex-col gap-6">
+                      <Card>
+                        <CardHeader>
+                            <CardTitle className="text-lg">Genel Puan</CardTitle>
+                        </CardHeader>
+                        <CardContent className="flex items-center justify-center">
+                            <OverallScoreIndicator score={feedback.overallScore} />
+                        </CardContent>
+                      </Card>
+                      <Card className="flex-grow">
+                        <CardHeader>
+                            <CardTitle className="text-lg">Detaylı Puanlar</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
                             <ScoreDisplay score={feedback.rapportScore} label="Dinleyici ile Bağ Kurma" />
                             <ScoreDisplay score={feedback.organisationScore} label="Organizasyon" />
                             <ScoreDisplay score={feedback.deliveryScore} label="Sunum" />
                             <ScoreDisplay score={feedback.languageUseScore} label="Dil Kullanımı" />
                             <ScoreDisplay score={feedback.creativityScore} label="Yaratıcılık" />
-                          </div>
-                        </div>
-                        <Tabs defaultValue="overall" className="w-full">
-                          <TabsList className="grid w-full grid-cols-3">
-                            <TabsTrigger value="overall">Genel</TabsTrigger>
-                            <TabsTrigger value="strengths">Güçlü Yönler</TabsTrigger>
-                            <TabsTrigger value="improvements">Gelişim Alanları</TabsTrigger>
-                          </TabsList>
-                          <ScrollArea className="h-48 md:h-56 mt-4">
-                            <TabsContent value="overall">
-                                <Card>
-                                <CardHeader>
-                                    <CardTitle className="flex items-center gap-2"><BrainCircuit /> Genel Değerlendirme</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <p>{feedback.overallFeedback}</p>
-                                </CardContent>
-                                </Card>
-                            </TabsContent>
-                            <TabsContent value="strengths">
-                                <div className="space-y-4">
-                                    <Card>
-                                        <CardHeader><CardTitle className="flex items-center gap-2 text-base"><Users /> Dinleyici ile Bağ Kurma</CardTitle></CardHeader>
-                                        <CardContent><p>{feedback.rapportFeedback}</p></CardContent>
-                                    </Card>
-                                     <Card>
-                                        <CardHeader><CardTitle className="flex items-center gap-2 text-base"><Atom /> Organizasyon</CardTitle></CardHeader>
-                                        <CardContent><p>{feedback.organisationFeedback}</p></CardContent>
-                                    </Card>
-                                    <Card>
-                                        <CardHeader><CardTitle className="flex items-center gap-2 text-base"><Speech /> Sunum</CardTitle></CardHeader>
-                                        <CardContent><p>{feedback.deliveryFeedback}</p></CardContent>
-                                    </Card>
-                                    <Card>
-                                        <CardHeader><CardTitle className="flex items-center gap-2 text-base"><MessageCircle /> Dil Kullanımı</CardTitle></CardHeader>
-                                        <CardContent><p>{feedback.languageUseFeedback}</p></CardContent>
-                                    </Card>
-                                    <Card>
-                                        <CardHeader><CardTitle className="flex items-center gap-2 text-base"><CreativeCommons /> Yaratıcılık</CardTitle></CardHeader>
-                                        <CardContent><p>{feedback.creativityFeedback}</p></CardContent>
-                                    </Card>
-                                </div>
-                            </TabsContent>
-                            <TabsContent value="improvements">
-                                 <Card>
-                                    <CardHeader>
-                                      <CardTitle className="flex items-center gap-2"><Zap /> Nasıl Geliştirebilirim?</CardTitle>
-                                    </CardHeader>
-                                    <CardContent>
-                                      <p>Yapay zeka yakında burada gelişim önerileri sunacak.</p>
-                                    </CardContent>
-                                  </Card>
-                            </TabsContent>
+                        </CardContent>
+                      </Card>
+                   </div>
+                   <div className="flex flex-col gap-6">
+                      <Card>
+                        <CardHeader><CardTitle className="text-lg">Konuşma Metni</CardTitle></CardHeader>
+                        <CardContent>
+                          <ScrollArea className="h-28">
+                              <p className="italic text-muted-foreground">{feedback.transcribedText}</p>
                           </ScrollArea>
-                        </Tabs>
-                      </div>
-                    </div>
-                )}
-             </CardContent>
+                        </CardContent>
+                      </Card>
+                      <Card className="flex-grow">
+                        <CardHeader><CardTitle className="text-lg">Geri Bildirim</CardTitle></CardHeader>
+                        <CardContent>
+                           <Tabs defaultValue="overall" className="w-full">
+                            <TabsList className="grid w-full grid-cols-2">
+                                <TabsTrigger value="overall">Genel Değerlendirme</TabsTrigger>
+                                <TabsTrigger value="details">Detaylar</TabsTrigger>
+                            </TabsList>
+                             <ScrollArea className="h-56 mt-4">
+                                <TabsContent value="overall">
+                                    <p className="text-sm">{feedback.overallFeedback}</p>
+                                </TabsContent>
+                                <TabsContent value="details">
+                                    <div className="space-y-4 text-sm">
+                                      <div><h4 className="font-semibold">Dinleyici ile Bağ Kurma</h4><p className="text-muted-foreground">{feedback.rapportFeedback}</p></div>
+                                      <div><h4 className="font-semibold">Organizasyon</h4><p className="text-muted-foreground">{feedback.organisationFeedback}</p></div>
+                                      <div><h4 className="font-semibold">Sunum</h4><p className="text-muted-foreground">{feedback.deliveryFeedback}</p></div>
+                                      <div><h4 className="font-semibold">Dil Kullanımı</h4><p className="text-muted-foreground">{feedback.languageUseFeedback}</p></div>
+                                      <div><h4 className="font-semibold">Yaratıcılık</h4><p className="text-muted-foreground">{feedback.creativityFeedback}</p></div>
+                                    </div>
+                                </TabsContent>
+                              </ScrollArea>
+                            </Tabs>
+                        </CardContent>
+                      </Card>
+                   </div>
+                 </div>
+              )}
+            </CardContent>
           </Card>
         </div>
       </main>
-      <footer className="py-4 px-4 md:px-8 border-t border-border mt-8">
-        <p className="text-center text-sm text-muted-foreground">
-          Firebase Studio ile ❤️ ile geliştirildi.
-        </p>
-      </footer>
     </div>
   );
 }

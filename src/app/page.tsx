@@ -1,7 +1,7 @@
-
 'use client';
 
 import { useState, useRef, useEffect, useMemo } from 'react';
+import Image from 'next/image';
 import {
   genAiAssistedFeedback,
   GenAiAssistedFeedbackOutput,
@@ -9,9 +9,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Textarea } from '@/components/ui/textarea';
 import { Progress } from "@/components/ui/progress";
-import { Mic, MicOff, Languages, FileUp, School, Link as LinkIcon, Instagram, Twitter, Youtube, Users, Atom, CreativeCommons, MessageCircle, Bot, User as UserIcon, History } from 'lucide-react';
+import { Mic, MicOff, Languages, FileUp, History, Users, Atom, CreativeCommons, User as UserIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Mascot, MascotLoading } from '@/components/mascot';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -20,15 +19,15 @@ import { initiateAnonymousSignIn } from '@/firebase/non-blocking-login';
 import { collection } from 'firebase/firestore';
 import { formatDistanceToNow } from 'date-fns';
 import { tr } from 'date-fns/locale';
-
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const content = {
   tr: {
     title: 'SpeakSmart',
     subtitle: 'Türkiye Yüzyılı Maarif Modeli ile İngilizce konuşma pratiği yapın.',
-    step1: 'Görevinizi Tanımlayın ve Konuşun',
-    step1Desc: 'Konuşma görevinizi açıklayın ve sesinizi kaydedin veya yükleyin.',
-    taskPlaceholder: 'Örn: \'Bir iş görüşmesinde kendinizi tanıtın\' veya \'Son tatilinizi anlatın.\'',
+    step1: 'Görevinizi Seçin ve Konuşun',
+    step1Desc: 'Aşağıdaki görevlerden birini seçin, ardından sesinizi kaydedin veya yükleyin.',
+    taskSelectPlaceholder: 'Bir konuşma görevi seçin...',
     or: 'VEYA',
     startRecording: 'Kayda Başla',
     stopRecording: 'Kaydı Durdur',
@@ -45,7 +44,7 @@ const content = {
     analyzing: 'Analiz Ediliyor...',
     analyzingDesc: 'Yapay zeka konuşmanızı değerlendiriyor, lütfen bekleyin.',
     readyToStart: 'Başlamaya Hazır mısınız?',
-    readyToStartDesc: 'Görevinizi tanımlayıp konuşmaya başladıktan sonra analiz sonuçlarınız burada görünecek.',
+    readyToStartDesc: 'Görevinizi seçip konuşmaya başladıktan sonra analiz sonuçlarınız burada görünecek.',
     overallScore: 'Genel Puan',
     detailedScores: 'Detaylı Puanlar',
     rapport: 'Dinleyici ile Bağ Kurma',
@@ -83,13 +82,13 @@ const content = {
   en: {
     title: 'SpeakSmart',
     subtitle: 'Practice English speaking with the Turkish Century Maarif Model.',
-    step1: 'Define Your Task and Speak',
-    step1Desc: 'Describe your speaking task, then record or upload your audio.',
-    taskPlaceholder: 'e.g., \'Introduce yourself in a job interview\' or \'Describe your last vacation.\'',
+    step1: 'Select Your Task and Speak',
+    step1Desc: 'Choose a task from the list below, then record or upload your audio.',
+    taskSelectPlaceholder: 'Select a speaking task...',
     or: 'OR',
     startRecording: 'Start Recording',
     stopRecording: 'Stop Recording',
-    uploadAudio: 'Upload Audio',
+uploadAudio: 'Upload Audio',
     recording: 'Recording...',
     howItWorks: 'How It Works',
     howItWorksSteps: [
@@ -102,7 +101,7 @@ const content = {
     analyzing: 'Analyzing...',
     analyzingDesc: 'The AI is evaluating your speech, please wait.',
     readyToStart: 'Ready to Start?',
-    readyToStartDesc: 'Your analysis results will appear here after you define your task and start speaking.',
+    readyToStartDesc: 'Your analysis results will appear here after you select your task and start speaking.',
     overallScore: 'Overall Score',
     detailedScores: 'Detailed Scores',
     rapport: 'Rapport with Audience',
@@ -139,6 +138,23 @@ const content = {
   }
 };
 
+const predefinedTasks = {
+  tr: [
+    { id: 'task-1', text: 'Bir iş görüşmesinde kendinizi tanıtın.' },
+    { id: 'task-2', text: 'En sevdiğiniz filmi ve neden sevdiğinizi anlatın.' },
+    { id: 'task-3', text: 'Hayalinizdeki tatili tarif edin.' },
+    { id: 'task-4', text: 'Bir restoranda nasıl sipariş verileceğini rol yaparak gösterin.' },
+    { id: 'task-5', text: 'Size verilen bir görseli detaylı bir şekilde betimleyin.' }
+  ],
+  en: [
+    { id: 'task-1', text: 'Introduce yourself in a job interview.' },
+    { id: 'task-2', text: 'Describe your favorite movie and why you love it.' },
+    { id'task-3', text: 'Describe your dream vacation.' },
+    { id: 'task-4', text: 'Role-play ordering food at a restaurant.' },
+    { id: 'task-5', text: 'Describe a picture you are given in detail.' }
+  ]
+}
+
 
 export default function Home() {
   const [taskDescription, setTaskDescription] = useState('');
@@ -157,6 +173,7 @@ export default function Home() {
   const firestore = useFirestore();
 
   const t = content[language];
+  const tasks = predefinedTasks[language];
 
   const progressCollectionRef = useMemoFirebase(() => {
     if (!firestore || !user?.uid) return null;
@@ -171,12 +188,14 @@ export default function Home() {
     
     try {
       toast({ title: t.toastGenerating, description: t.toastGeneratingDesc });
+      const currentTask = tasks.find(task => task.id === taskDescription) || { id: `custom-${Date.now()}`, text: taskDescription };
+
       const feedbackResult = await genAiAssistedFeedback({
         audio: base64Audio,
-        taskDescription,
+        taskDescription: currentTask.text,
         language,
         userId: user?.uid,
-        taskId: `task-${Date.now()}` // Placeholder Task ID
+        taskId: currentTask.id
       });
       setFeedback(feedbackResult);
       toast({
@@ -359,10 +378,6 @@ export default function Home() {
 
   const sortedProgressData = useMemo(() => {
     if (!progressData) return [];
-    // The feedback object from the AI doesn't include the timestamp,
-    // but the document saved in Firestore does if `serverTimestamp()` is used.
-    // Assuming a `createdAt` field exists. If not, we can't sort reliably.
-    // Let's assume the gen-ai-assisted-feedback flow adds a `createdAt` field.
     return [...progressData].sort((a: any, b: any) => {
         const dateA = a.createdAt?.toDate?.() || 0;
         const dateB = b.createdAt?.toDate?.() || 0;
@@ -375,7 +390,7 @@ export default function Home() {
       <header className="bg-card shadow-sm sticky top-0 z-10 border-b">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
             <div className="flex items-center gap-3">
-                <Bot className="w-8 h-8 text-primary"/>
+                <Image src="/logo.png" alt="Okul Logosu" width={40} height={40} className="rounded-full" />
                 <h1 className="text-2xl font-bold text-foreground tracking-tight">{t.title}</h1>
             </div>
             <div className="flex items-center gap-4">
@@ -421,13 +436,17 @@ export default function Home() {
                   <CardDescription>{t.step1Desc}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <Textarea
-                    placeholder={t.taskPlaceholder}
-                    value={taskDescription}
-                    onChange={e => setTaskDescription(e.target.value)}
-                    className="text-base"
-                    rows={3}
-                  />
+                  <Select onValueChange={setTaskDescription} value={taskDescription}>
+                    <SelectTrigger>
+                      <SelectValue placeholder={t.taskSelectPlaceholder} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {tasks.map(task => (
+                        <SelectItem key={task.id} value={task.id}>{task.text}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
                    <div className="flex items-center gap-4">
                       <div className="flex-grow border-t"></div>
                       <span className="text-xs text-muted-foreground">{t.or}</span>
@@ -591,8 +610,8 @@ export default function Home() {
         )}
       </main>
 
-      <footer className="bg-card mt-24 border-t">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <footer className="bg-card mt-12 border-t">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
                 <div>
                     <h3 className="font-semibold text-foreground mb-4 flex items-center justify-center md:justify-start gap-2"><Atom className="w-5 h-5 text-primary"/> {t.tubitak}</h3>
@@ -605,9 +624,9 @@ export default function Home() {
                 <div>
                     <h3 className="font-semibold text-foreground mb-4 flex items-center justify-center md:justify-start gap-2"><Users className="w-5 h-5 text-primary"/>{t.social}</h3>
                     <div className="flex justify-center md:justify-start gap-4">
-                        <a href="https://www.instagram.com/k.azizsancar_al/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><Instagram className="w-6 h-6"/></a>
-                        <a href="https://x.com/ka_sancar_al" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><Twitter className="w-6 h-6"/></a>
-                        <a href="https://www.youtube.com/@KapakliAzizSancarAL" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><Youtube className="w-6 h-6"/></a>
+                        <a href="https://www.instagram.com/k.azizsancar_al/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><Image src="https://img.icons8.com/fluent/48/000000/instagram-new.png" width={24} height={24} alt="Instagram" /></a>
+                        <a href="https://x.com/ka_sancar_al" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><Image src="https://img.icons8.com/fluent/48/000000/twitterx.png" width={24} height={24} alt="Twitter" /></a>
+                        <a href="https://www.youtube.com/@KapakliAzizSancarAL" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><Image src="https://img.icons8.com/fluent/48/000000/youtube-play.png" width={24} height={24} alt="Youtube" /></a>
                     </div>
                 </div>
             </div>
@@ -619,5 +638,4 @@ export default function Home() {
     </div>
   );
 }
-
     

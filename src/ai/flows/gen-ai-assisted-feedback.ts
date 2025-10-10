@@ -73,7 +73,11 @@ const prompt = ai.definePrompt({
       - The presentation has a clear beginning, middle, and end.
       - The flow of the ideas is sequenced well.
       Provide a score from 0-100.
-  3.  Delivery: Analyze the delivery from the audio. Comment on pace, intonation, clarity and pronunciation. Is the voice strong and clear? Provide a score from 0-100.
+  3.  Delivery: Analyze the delivery from the audio. 
+      - Speaks with a strong and clear voice.
+      - Pronunciation is clear and accurate.
+      - Comment on pace and intonation. Is the voice strong and clear? 
+      Provide a score from 0-100.
   4.  Language use: Analyze the grammar and vocabulary from the transcribed text. Is the grammar accurate? Is the vocabulary varied and used correctly? Provide a score from 0-100.
   5.  Creativity: Analyze the originality of the ideas and the language used. Is the approach to the topic unique? Is the language vivid and imaginative? Provide a score from 0-100.
 
@@ -83,7 +87,7 @@ const prompt = ai.definePrompt({
   Audio for analysis: {{media url=audio}}
 
   Respond in Turkish.
-  The scores should be numbers between 0 and 100.
+  The scores should be numbers between 0-100.
   `,
 });
 

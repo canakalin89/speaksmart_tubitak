@@ -222,7 +222,7 @@ export default function Home() {
                       </Button>
                   </a>
                   <div className="flex items-center gap-2">
-                      <a href="https://www.instagram.com/asalanadolulisesi/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                      <a href="https://www.instagram.com/asalkapakli2019/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
                           <Button variant="ghost" size="icon">
                               <Instagram className="h-5 w-5" />
                           </Button>

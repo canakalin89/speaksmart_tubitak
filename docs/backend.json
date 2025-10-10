@@ -1,0 +1,162 @@
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user of the KonusOyna application.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the User entity."
+        },
+        "email": {
+          "type": "string",
+          "description": "Email address of the user. Nullable for anonymous users.",
+          "format": "email"
+        },
+        "role": {
+          "type": "string",
+          "description": "Role of the user (e.g., 'student', 'teacher')."
+        }
+      },
+      "required": [
+        "id",
+        "role"
+      ]
+    },
+    "Task": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Task",
+      "type": "object",
+      "description": "Represents a speaking task or exercise.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Task entity."
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the task."
+        },
+        "scenario": {
+          "type": "string",
+          "description": "The scenario or instructions for the task."
+        },
+        "teacherId": {
+          "type": "string",
+          "description": "Reference to the User who created the task. (Relationship: User 1:N Task)"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "scenario",
+        "teacherId"
+      ]
+    },
+    "Progress": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Progress",
+      "type": "object",
+      "description": "Represents a user's progress on a specific task.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Progress entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the User. (Relationship: User 1:N Progress)"
+        },
+        "taskId": {
+          "type": "string",
+          "description": "Reference to the Task. (Relationship: Task 1:N Progress)"
+        },
+        "completionStatus": {
+          "type": "string",
+          "description": "The completion status of the task (e.g., 'incomplete', 'completed')."
+        },
+        "attempts": {
+          "type": "number",
+          "description": "Number of attempts the user has made on the task."
+        },
+        "feedback": {
+          "type": "string",
+          "description": "AI-generated feedback for the user's performance on the task. Can be null or empty.",
+          "format": "string"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "taskId",
+        "completionStatus",
+        "attempts"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user profiles. Includes 'id' which matches the Firebase Auth UID.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The Firebase Auth UID of the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/tasks/{taskId}",
+        "definition": {
+          "entityName": "Task",
+          "schema": {
+            "$ref": "#/backend/entities/Task"
+          },
+          "description": "Stores tasks created by teachers. The 'teacherId' field indicates task ownership.",
+          "params": [
+            {
+              "name": "taskId",
+              "description": "The unique identifier for the task."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/progress/{progressId}",
+        "definition": {
+          "entityName": "Progress",
+          "schema": {
+            "$ref": "#/backend/entities/Progress"
+          },
+          "description": "Stores user progress data for each task.  Enforces a clear ownership model. Includes 'taskId' for filtering.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The Firebase Auth UID of the user."
+            },
+            {
+              "name": "progressId",
+              "description": "The unique identifier for the progress entry."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to ensure authorization independence, clarity, and scalability for the KonuşOyna application. It leverages path-based ownership for user-specific data and separates data with different access requirements into distinct collections. Denormalization is used to avoid `get()` calls in security rules, enhancing atomicity and debuggability.\n\n- **/users/{userId}**: Stores user profiles. This is private user data, directly owned by the user. Security rules can easily verify that `request.auth.uid == userId`.\n- **/tasks/{taskId}**: Stores tasks created by teachers. Enables listing all tasks. The `teacherId` field indicates task ownership.\n- **/users/{userId}/progress/{progressId}**: Stores user progress data for each task. The structure `/users/{userId}/progress/{progressId}` enforces a clear ownership model, ensuring that only the user can modify their own progress data. The `taskId` field allows filtering progress by task.\n\nThis structure supports the required QAPs by:\n\n1.  **Authorization Independence:** The `teacherId` in the `tasks` collection and `userId` in the `progress` collection remove the need for `get()` calls in security rules.\n2.  **Clarity of Intent:** Path-based ownership in `/users/{userId}/progress/{progressId}` clearly indicates data ownership.\n3.  **DBAC:** Roles are stored in the `users` collection, enabling role-based access control using `request.auth.uid`.\n4.  **QAPs:** The segregation of tasks into a separate collection allows for secure listing of all tasks. The progress subcollection enables listing of a user's progress.\n5.  **Invariants:** The structure supports ownership and prevents unauthorized access to user data."
+  }
+}

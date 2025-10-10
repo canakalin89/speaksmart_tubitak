@@ -13,25 +13,29 @@ export function Mascot() {
         <ellipse cx="100" cy="185" rx="45" ry="8" fill="hsl(var(--primary))" opacity="0.2" className="animate-shadow-pulse" />
 
         {/* Body */}
-        <path d="M70,120 Q100,110 130,120 L140,170 L60,170 Z" fill="hsl(var(--secondary))" />
-        <path d="M90,120 L110,120 L100,135 Z" fill="hsl(var(--primary))" />
+        <path d="M50 170 C 50 110, 150 110, 150 170 C 125 180, 75 180, 50 170" fill="hsl(var(--secondary))" />
         
-        {/* Head */}
-        <circle cx="100" cy="85" r="40" fill="hsl(25, 60%, 80%)" />
+        {/* Face */}
+        <path d="M60 140 C 60 70, 140 70, 140 140 C 120 155, 80 155, 60 140" fill="hsl(var(--background))" />
         
-        {/* Hair */}
-        <path d="M70,75 Q100,45 130,75 L130,85 L70,85 Z" fill="hsl(25, 20%, 20%)" />
+        {/* Tummy Patch */}
+         <path d="M80 145 C 80 125, 120 125, 120 145 C 110 150, 90 150, 80 145" fill="hsl(var(--background) / 0.5)" />
 
         {/* Eyes */}
         <g className="animate-eye-blink">
-          <circle cx="85" cy="85" r="5" fill="white" />
-          <circle cx="85" cy="85" r="2" fill="hsl(25, 20%, 20%)" />
-          <circle cx="115" cy="85" r="5" fill="white" />
-          <circle cx="115" cy="85" r="2" fill="hsl(25, 20%, 20%)" />
+          <circle cx="80" cy="115" r="12" fill="white" />
+          <circle cx="82" cy="118" r="5" fill="hsl(25, 20%, 20%)" />
+          <circle cx="120" cy="115" r="12" fill="white" />
+          <circle cx="118" cy="118" r="5" fill="hsl(25, 20%, 20%)" />
         </g>
+        
+        {/* Beak */}
+        <path d="M95 125 L 105 125 L 100 135 Z" fill="hsl(var(--primary))" />
+        
+        {/* Ear tufts */}
+        <path d="M60 75 L 80 50 L 90 70 Z" fill="hsl(var(--secondary))" />
+        <path d="M140 75 L 120 50 L 110 70 Z" fill="hsl(var(--secondary))" />
 
-        {/* Smile */}
-        <path d="M90,100 Q100,110 110,100" stroke="hsl(25, 20%, 20%)" strokeWidth="2" fill="none" />
 
         <style jsx>{`
           @keyframes eye-blink {
@@ -40,7 +44,7 @@ export function Mascot() {
           }
           .animate-eye-blink {
             animation: eye-blink 4s infinite;
-            transform-origin: center;
+            transform-origin: center 115px;
           }
           @keyframes float {
              0%, 100% { transform: translateY(0px); }
@@ -71,39 +75,57 @@ export function MascotLoading() {
         className="w-full h-full"
       >
         {/* Body */}
-        <path d="M70,120 Q100,110 130,120 L140,170 L60,170 Z" fill="hsl(var(--secondary))" />
-        <path d="M90,120 L110,120 L100,135 Z" fill="hsl(var(--primary))" />
+        <path d="M50 170 C 50 110, 150 110, 150 170 C 125 180, 75 180, 50 170" fill="hsl(var(--secondary))" />
         
-        {/* Head */}
-        <circle cx="100" cy="85" r="40" fill="hsl(25, 60%, 80%)" />
+        {/* Face */}
+        <path d="M60 140 C 60 70, 140 70, 140 140 C 120 155, 80 155, 60 140" fill="hsl(var(--background))" />
         
-        {/* Hair */}
-        <path d="M70,75 Q100,45 130,75 L130,85 L70,85 Z" fill="hsl(25, 20%, 20%)" />
+        {/* Tummy Patch */}
+        <path d="M80 145 C 80 125, 120 125, 120 145 C 110 150, 90 150, 80 145" fill="hsl(var(--background) / 0.5)" />
 
-        {/* Eyes - loading effect */}
-        <g className="animate-spin-slow" style={{ transformOrigin: '100px 85px' }}>
-          <path d="M85 80 A 15 15 0 0 1 115 80" fill="none" stroke="white" strokeWidth="4" />
-           <path d="M115 90 A 15 15 0 0 1 85 90" fill="none" stroke="white" strokeWidth="4" />
+        {/* Loading Eyes */}
+        <g>
+            <circle cx="80" cy="115" r="12" fill="white" />
+            <circle cx="120" cy="115" r="12" fill="white" />
+            <path
+                d="M 72 115 A 8 8 0 0 1 88 115"
+                stroke="hsl(var(--primary))"
+                strokeWidth="4"
+                fill="none"
+                className="animate-eye-load-left"
+            />
+             <path
+                d="M 112 115 A 8 8 0 0 1 128 115"
+                stroke="hsl(var(--primary))"
+                strokeWidth="4"
+                fill="none"
+                className="animate-eye-load-right"
+            />
         </g>
         
-        {/* Smile */}
-        <path d="M95,105 C100,108 105,108 105,105" stroke="hsl(25, 20%, 20%)" strokeWidth="2" fill="none" className="animate-pulse-fast"/>
-
+        {/* Beak */}
+        <path d="M95 125 L 105 125 L 100 135 Z" fill="hsl(var(--primary))" />
+        
+        {/* Ear tufts */}
+        <path d="M60 75 L 80 50 L 90 70 Z" fill="hsl(var(--secondary))" />
+        <path d="M140 75 L 120 50 L 110 70 Z" fill="hsl(var(--secondary))" />
 
         <style jsx>{`
-           @keyframes spin-slow {
+           @keyframes eye-load-left {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
           }
-          .animate-spin-slow {
-            animation: spin-slow 1.2s linear infinite;
+          .animate-eye-load-left {
+            animation: eye-load-left 1.2s linear infinite;
+            transform-origin: 80px 115px;
           }
-          @keyframes pulse-fast {
-             0%, 100% { opacity: 1; }
-             50% { opacity: 0.5; }
+           @keyframes eye-load-right {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(-360deg); }
           }
-          .animate-pulse-fast {
-            animation: pulse-fast 1s ease-in-out infinite;
+          .animate-eye-load-right {
+            animation: eye-load-right 1.2s linear infinite;
+            transform-origin: 120px 115px;
           }
         `}</style>
       </svg>

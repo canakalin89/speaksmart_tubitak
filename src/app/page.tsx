@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from '@/components/ui/textarea';
 import { Progress } from "@/components/ui/progress";
-import { Mic, MicOff, Loader2, Languages, GraduationCap, Zap, BrainCircuit, Speech, FileUp, School, Link as LinkIcon } from 'lucide-react';
+import { Mic, MicOff, Loader2, Languages, GraduationCap, Zap, BrainCircuit, Speech, FileUp, School, Link as LinkIcon, Instagram, Twitter, Youtube } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Mascot, MascotLoading } from '@/components/mascot';
 
@@ -186,18 +186,18 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-       <header className="py-4 px-4 md:px-8 bg-secondary text-secondary-foreground shadow-lg">
+       <header className="py-2 px-4 md:px-8 bg-secondary text-secondary-foreground shadow-lg">
           <div className="container mx-auto text-center">
-            <div className="flex justify-center items-center gap-3 mb-1">
-              <School className="w-8 h-8 text-primary"/>
+            <div className="flex justify-center items-center gap-3">
+              <School className="w-6 h-6 text-primary"/>
               <div>
-                 <h1 className="text-2xl font-bold text-primary tracking-tight">AI İngilizce Eğitmeni</h1>
-                 <p className="text-sm text-secondary-foreground/80">
+                 <h1 className="text-xl font-bold text-primary tracking-tight">AI İngilizce Eğitmeni</h1>
+                 <p className="text-xs text-secondary-foreground/80">
                    Aziz Sancar Anadolu Lisesi - TÜBİTAK 4006-B Projesi
                  </p>
               </div>
             </div>
-            <p className="mt-2 text-base text-secondary-foreground/90">
+            <p className="mt-1 text-sm text-secondary-foreground/90">
               <span className="font-semibold">Türkiye Yüzyılı Maarif Modeli</span> ile İngilizce konuşma becerilerinizi geliştirin.
             </p>
           </div>
@@ -214,12 +214,31 @@ export default function Home() {
                 <p className="text-muted-foreground mb-4">
                     Bu proje, Aziz Sancar Anadolu Lisesi öğrencileri tarafından TÜBİTAK 4006-B Bilim Fuarı için geliştirilmiştir. Amacımız, Türkiye Yüzyılı Maarif Modeli hedefleri doğrultusunda, yapay zeka teknolojisini kullanarak İngilizce konuşma becerilerini geliştirmeye yönelik yenilikçi ve interaktif bir araç sunmaktır.
                 </p>
-                <a href="http://azizsancaranadolu.meb.k12.tr" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2">
-                    <Button variant="outline">
-                        <LinkIcon />
-                        Okul Web Sitesini Ziyaret Et
-                    </Button>
-                </a>
+                <div className="flex flex-wrap items-center gap-4">
+                  <a href="http://azizsancaranadolu.meb.k12.tr" target="_blank" rel="noopener noreferrer">
+                      <Button variant="outline">
+                          <LinkIcon />
+                          Okul Web Sitesi
+                      </Button>
+                  </a>
+                  <div className="flex items-center gap-2">
+                      <a href="https://www.instagram.com/asalanadolulisesi/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                          <Button variant="ghost" size="icon">
+                              <Instagram className="h-5 w-5" />
+                          </Button>
+                      </a>
+                      <a href="https://x.com/asalanadolulise" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
+                          <Button variant="ghost" size="icon">
+                              <Twitter className="h-5 w-5" />
+                          </Button>
+                      </a>
+                      <a href="https://www.youtube.com/@asalanadolulisesi" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+                          <Button variant="ghost" size="icon">
+                              <Youtube className="h-5 w-5" />
+                          </Button>
+                      </a>
+                  </div>
+                </div>
             </CardContent>
         </Card>
 
@@ -396,5 +415,3 @@ export default function Home() {
     </div>
   );
 }
-
-    

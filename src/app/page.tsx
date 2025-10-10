@@ -348,12 +348,12 @@ export default function Home() {
                         </CardContent>
                       </Card>
                       <Card className="flex-grow">
-                        <CardHeader><CardTitle className="text-lg">Geri Bildirim</CardTitle></CardHeader>
+                        <CardHeader><CardTitle className="text-lg">Gelişim Alanları</CardTitle></CardHeader>
                         <CardContent>
                            <Tabs defaultValue="overall" className="w-full">
                             <TabsList className="grid w-full grid-cols-2">
-                                <TabsTrigger value="overall">Genel Değerlendirme</TabsTrigger>
-                                <TabsTrigger value="details">Detaylar</TabsTrigger>
+                                <TabsTrigger value="overall">Genel Öneri</TabsTrigger>
+                                <TabsTrigger value="details">Detaylı Analiz</TabsTrigger>
                             </TabsList>
                              <ScrollArea className="h-56 mt-4">
                                 <TabsContent value="overall">

@@ -122,7 +122,7 @@ const prompt = ai.definePrompt({
   Task Description: {{{taskDescription}}}
   Audio for analysis: {{media url=audio}}
 
-  Respond in {{#if (eq language "tr")}}Turkish{{else}}English{{/if}}.
+  Respond in {{#if language "tr"}}Turkish{{else}}English{{/if}}.
   The scores should be numbers between 0-100.
   Each feedback text should clearly state the mistakes and offer concrete suggestions for improvement.
   `,

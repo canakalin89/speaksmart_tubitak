@@ -186,18 +186,18 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-       <header className="py-6 px-4 md:px-8 bg-secondary text-secondary-foreground shadow-lg">
+       <header className="py-4 px-4 md:px-8 bg-secondary text-secondary-foreground shadow-lg">
           <div className="container mx-auto text-center">
-            <div className="flex justify-center items-center gap-4 mb-2">
-              <School className="w-12 h-12 text-primary"/>
+            <div className="flex justify-center items-center gap-3 mb-1">
+              <School className="w-8 h-8 text-primary"/>
               <div>
-                 <h1 className="text-4xl font-bold text-primary tracking-tight">AI İngilizce Eğitmeni</h1>
-                 <p className="text-lg text-secondary-foreground/80">
+                 <h1 className="text-2xl font-bold text-primary tracking-tight">AI İngilizce Eğitmeni</h1>
+                 <p className="text-sm text-secondary-foreground/80">
                    Aziz Sancar Anadolu Lisesi - TÜBİTAK 4006-B Projesi
                  </p>
               </div>
             </div>
-            <p className="mt-4 text-lg text-secondary-foreground/90">
+            <p className="mt-2 text-base text-secondary-foreground/90">
               <span className="font-semibold">Türkiye Yüzyılı Maarif Modeli</span> ile İngilizce konuşma becerilerinizi geliştirin.
             </p>
           </div>
@@ -396,3 +396,5 @@ export default function Home() {
     </div>
   );
 }
+
+    

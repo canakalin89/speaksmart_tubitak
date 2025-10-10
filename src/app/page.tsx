@@ -494,23 +494,23 @@ export default function Home() {
         </div>
       </main>
 
-      <footer className="bg-card mt-12 border-t">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <footer className="bg-card mt-24 border-t">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
                 <div>
-                    <h3 className="font-semibold text-foreground mb-2 flex items-center justify-center md:justify-start gap-2"><Atom className="w-5 h-5 text-primary"/> {t.tubitak}</h3>
+                    <h3 className="font-semibold text-foreground mb-4 flex items-center justify-center md:justify-start gap-2"><Atom className="w-5 h-5 text-primary"/> {t.tubitak}</h3>
                     <p className="text-sm text-muted-foreground">{t.tubitakDesc}</p>
                 </div>
                 <div>
-                    <h3 className="font-semibold text-foreground mb-2 flex items-center justify-center md:justify-start gap-2"><CreativeCommons className="w-5 h-5 text-primary"/> {t.maarif}</h3>
+                    <h3 className="font-semibold text-foreground mb-4 flex items-center justify-center md:justify-start gap-2"><CreativeCommons className="w-5 h-5 text-primary"/> {t.maarif}</h3>
                     <p className="text-sm text-muted-foreground">{t.maarifDesc}</p>
                 </div>
                 <div>
-                    <h3 className="font-semibold text-foreground mb-2">{t.social}</h3>
+                    <h3 className="font-semibold text-foreground mb-4 flex items-center justify-center md:justify-start gap-2"><Users className="w-5 h-5 text-primary"/>{t.social}</h3>
                     <div className="flex justify-center md:justify-start gap-4">
-                        <a href="#" className="text-muted-foreground hover:text-primary"><Instagram className="w-6 h-6"/></a>
-                        <a href="#" className="text-muted-foreground hover:text-primary"><Twitter className="w-6 h-6"/></a>
-                        <a href="#" className="text-muted-foreground hover:text-primary"><Youtube className="w-6 h-6"/></a>
+                        <a href="https://www.instagram.com/k.azizsancar_al/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><Instagram className="w-6 h-6"/></a>
+                        <a href="https://x.com/ka_sancar_al" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><Twitter className="w-6 h-6"/></a>
+                        <a href="https://www.youtube.com/@KapakliAzizSancarAL" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><Youtube className="w-6 h-6"/></a>
                     </div>
                 </div>
             </div>

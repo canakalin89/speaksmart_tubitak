@@ -64,29 +64,32 @@ const prompt = ai.definePrompt({
 
   Then, based on the audio and the provided task description, provide feedback on the following 5 criteria:
 
-  1.  Rapport with the audience: From the audio and transcribed text, analyze the speaker's connection with the audience.
+  1.  Rapport with the audience:
       - Demonstrates understanding of the subject.
       - Answers class questions accurately.
       - Provides additional relevant details when needed.
-      Provide a score from 0-100 for this category.
+      Provide a score from 0-100 for this category and detailed feedback on how to improve.
 
-  2.  Organisation: Analyze the structure of the speech.
+  2.  Organisation:
       - The presentation has a clear beginning, middle, and end.
       - The flow of the ideas is sequenced well.
-      Provide a score from 0-100.
-  3.  Delivery: Analyze the delivery from the audio. 
+      Provide a score from 0-100 and detailed feedback on how to improve.
+      
+  3.  Delivery:
       - Speaks with a strong and clear voice.
       - Pronunciation is clear and accurate.
-      - Comment on pace and intonation. Is the voice strong and clear? 
-      Provide a score from 0-100.
-  4.  Language use: Analyze the grammar and vocabulary from the transcribed text. 
+      - From the audio, comment on pace and intonation. Is the voice strong and clear?
+      Provide a score from 0-100 and detailed feedback on how to improve.
+
+  4.  Language use:
       - Uses accurate and appropriate grammar.
       - Vocabulary is relevant to the topic.
-      Provide a score from 0-100.
-  5.  Creativity: Analyze the originality of the ideas and the language used. 
-      - Is the approach to the topic unique? 
-      - Is the language vivid and imaginative? 
-      Provide a score from 0-100.
+      Provide a score from 0-100 and detailed feedback on how to improve.
+
+  5.  Creativity:
+      - The approach to the topic is unique and interesting.
+      - The language is vivid and imaginative, helping to paint a picture in the listener's mind.
+      Provide a score from 0-100 and detailed feedback on how to improve.
 
   Finally, provide overall feedback on the student's speaking performance, summarizing their strengths and weaknesses, and offering actionable advice for improvement. Then, provide an overall score as the average of the other five scores.
 
@@ -95,6 +98,7 @@ const prompt = ai.definePrompt({
 
   Respond in {{#if language}}{{#ifeq language "tr"}}Turkish{{else}}English{{/ifeq}}{{else}}Turkish{{/if}}.
   The scores should be numbers between 0-100.
+  Each feedback text should clearly state the mistakes and offer concrete suggestions for improvement.
   `,
 });
 
@@ -110,4 +114,5 @@ const genAiAssistedFeedbackFlow = ai.defineFlow(
     return output!;
   }
 );
+
 

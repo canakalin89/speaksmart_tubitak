@@ -69,7 +69,10 @@ const prompt = ai.definePrompt({
       - Provides additional relevant details when needed.
       Provide a score from 0-100 for this category.
 
-  2.  Organisation: Analyze the structure of the speech. Does it have a clear beginning, middle, and end? Is the flow of ideas well-sequenced? Provide a score from 0-100.
+  2.  Organisation: Analyze the structure of the speech.
+      - The presentation has a clear beginning, middle, and end.
+      - The flow of the ideas is sequenced well.
+      Provide a score from 0-100.
   3.  Delivery: Analyze the delivery from the audio. Comment on pace, intonation, clarity and pronunciation. Is the voice strong and clear? Provide a score from 0-100.
   4.  Language use: Analyze the grammar and vocabulary from the transcribed text. Is the grammar accurate? Is the vocabulary varied and used correctly? Provide a score from 0-100.
   5.  Creativity: Analyze the originality of the ideas and the language used. Is the approach to the topic unique? Is the language vivid and imaginative? Provide a score from 0-100.

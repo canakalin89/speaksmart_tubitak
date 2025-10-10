@@ -1,17 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
-import {
-  SidebarProvider,
-  Sidebar,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-  SidebarInset,
-} from '@/components/ui/sidebar';
-import { BrainCircuit, Bot } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 
 export const metadata: Metadata = {
   title: 'Yapay Zeka İngilizce Eğitmeni',
@@ -39,26 +28,10 @@ export default function RootLayout({
         />
       </head>
       <body className="font-body antialiased">
-        <SidebarProvider>
-          <Sidebar>
-            <SidebarHeader>
-              <Button variant="ghost" className="h-12 w-12 rounded-full">
-                <Bot className="h-6 w-6 text-primary" />
-              </Button>
-            </SidebarHeader>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton tooltip="AI Analyzer" isActive>
-                  <BrainCircuit />
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </Sidebar>
-          <SidebarInset>
-            {children}
-            <Toaster />
-          </SidebarInset>
-        </SidebarProvider>
+        <main>
+          {children}
+          <Toaster />
+        </main>
       </body>
     </html>
   );

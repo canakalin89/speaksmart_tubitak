@@ -212,94 +212,110 @@ export default function Home() {
   const canSubmit = taskDescription.trim().length > 0;
 
   return (
-    <div className="flex flex-col min-h-screen p-4 sm:p-6 md:p-8">
-      <header className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">AI Speech Analyzer</h1>
-        <p className="text-muted-foreground">İngilizce konuşma becerilerinizi anında analiz edin ve geliştirin.</p>
+    <div className="flex flex-col min-h-screen bg-gray-50">
+      <header className="bg-white shadow-sm">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div className="flex items-center gap-3">
+                <BrainCircuit className="w-8 h-8 text-primary"/>
+                <h1 className="text-2xl font-bold text-gray-800 tracking-tight">Yapay Zeka İngilizce Eğitmeni</h1>
+            </div>
+            <p className="text-sm text-gray-500 hidden md:block">Türkiye Yüzyılı Maarif Modeli ile İngilizce konuşma pratiği yapın.</p>
+        </div>
       </header>
 
-      <main className="grid gap-8 lg:grid-cols-5 flex-grow">
-        <div className="lg:col-span-2 flex flex-col gap-8">
-          <Card className="flex-grow">
-            <CardHeader>
-              <CardTitle>1. Adım: Pratik Yapın</CardTitle>
-              <CardDescription>Görevinizi açıklayın ve sesinizi kaydedin.</CardDescription>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-6">
-              <Textarea
-                placeholder="Örn: 'Bir iş görüşmesinde kendinizi tanıtın' veya 'Son tatilinizi anlatın.'"
-                value={taskDescription}
-                onChange={e => setTaskDescription(e.target.value)}
-                rows={4}
-                className="resize-none text-base"
-              />
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button
-                  onClick={toggleRecording}
-                  disabled={!canSubmit || isLoading}
-                  className="w-full flex-1"
-                  size="lg"
-                >
-                  {isLoading && !isRecording ? (
-                    <Loader2 className="animate-spin" />
-                  ) : isRecording ? (
-                    <><MicOff /> Kaydı Durdur</>
-                  ) : (
-                    <><Mic /> Kayıt Yap</>
-                  )}
-                </Button>
-                <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="audio/*" />
-                <Button
-                  onClick={triggerFileSelect}
-                  disabled={!canSubmit || isLoading || isRecording}
-                  variant="outline"
-                  className="w-full flex-1"
-                  size="lg"
-                >
-                  {isLoading && !isRecording ? (
-                    <Loader2 className="animate-spin" />
-                  ) : (
-                    <><FileUp /> Dosya Yükle</>
-                  )}
-                </Button>
-              </div>
-              {isRecording && (
-                <div className="flex items-center justify-center text-sm text-red-500 animate-pulse">
-                  <div className="w-2.5 h-2.5 rounded-full bg-red-500 mr-2 animate-ping"></div>
-                  Kayıt yapılıyor...
+      <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+          
+          <div className="lg:col-span-2 flex flex-col gap-8">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2"><span className="flex items-center justify-center w-6 h-6 bg-primary text-primary-foreground rounded-full text-sm font-bold">1</span><span>Görevinizi Tanımlayın ve Konuşun</span></CardTitle>
+                <CardDescription>Konuşma görevinizi açıklayın ve sesinizi kaydedin veya yükleyin.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <Textarea
+                  placeholder="Örn: 'Bir iş görüşmesinde kendinizi tanıtın' veya 'Son tatilinizi anlatın.'"
+                  value={taskDescription}
+                  onChange={e => setTaskDescription(e.target.value)}
+                  className="text-base"
+                  rows={3}
+                />
+                 <div className="flex items-center gap-4">
+                    <div className="flex-grow border-t border-gray-200"></div>
+                    <span className="text-xs text-gray-400">VEYA</span>
+                    <div className="flex-grow border-t border-gray-200"></div>
                 </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="lg:col-span-3">
-          <Card className="h-full flex flex-col">
-            <CardHeader>
-              <CardTitle>2. Adım: Sonuçları İnceleyin</CardTitle>
-              <CardDescription>Konuşmanızın analizi ve gelişim önerileri.</CardDescription>
-            </CardHeader>
-            <CardContent className="flex-grow flex flex-col">
-              {isLoading && !feedback && (
-                <div className="m-auto flex flex-col items-center justify-center text-center gap-4">
-                   <MascotLoading />
-                   <h3 className="text-xl font-semibold text-primary">Analiz Ediliyor...</h3>
-                   <p className="text-muted-foreground">Yapay zeka konuşmanızı değerlendiriyor, lütfen bekleyin.</p>
+                <div className="flex gap-4">
+                  <Button
+                    onClick={toggleRecording}
+                    disabled={!canSubmit || isLoading}
+                    className="w-full"
+                    size="lg"
+                  >
+                    {isRecording ? (
+                      <><MicOff className="mr-2"/> Kaydı Durdur</>
+                    ) : (
+                      <><Mic className="mr-2"/> Kayda Başla</>
+                    )}
+                  </Button>
+                  <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="audio/*" />
+                  <Button 
+                    onClick={triggerFileSelect} 
+                    disabled={!canSubmit || isLoading || isRecording} 
+                    variant="outline" 
+                    size="lg"
+                    className="w-full"
+                  >
+                    <FileUp className="mr-2"/> Ses Yükle
+                  </Button>
                 </div>
-              )}
+                {isRecording && (
+                    <div className="flex items-center justify-center text-sm text-red-500 animate-pulse">
+                        <div className="w-2 h-2 rounded-full bg-red-500 mr-2 animate-ping"></div>
+                        Kayıt yapılıyor...
+                    </div>
+                )}
+              </CardContent>
+            </Card>
 
-              {!isLoading && !feedback && (
-                <div className="m-auto flex flex-col items-center justify-center text-center gap-4">
-                  <Mascot />
-                  <h3 className="text-xl font-semibold">Başlamaya Hazır mısınız?</h3>
-                  <p className="text-muted-foreground max-w-sm">
-                    Görevinizi tanımlayın, kayda başlayın ve anında geri bildirim alarak İngilizce konuşmanızı mükemmelleştirin!
-                  </p>
-                </div>
-              )}
+            <Card>
+                <CardHeader>
+                    <CardTitle className="text-base">Nasıl Çalışır?</CardTitle>
+                </CardHeader>
+                <CardContent className="text-sm text-muted-foreground space-y-3">
+                    <p>1. Değerlendirilmesini istediğiniz konuşma görevini yukarıdaki metin alanına yazın.</p>
+                    <p>2. Sesinizi kaydedin veya bir ses dosyası yükleyin.</p>
+                    <p>3. Yapay zeka, konuşmanızı analiz ederek size telaffuz, akıcılık ve dilbilgisi üzerine detaylı geri bildirimler sunsun.</p>
+                </CardContent>
+            </Card>
+          </div>
 
-              {feedback && (
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-grow">
+          <div className="lg:col-span-3">
+            <Card className="h-full flex flex-col">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2"><span className="flex items-center justify-center w-6 h-6 bg-primary text-primary-foreground rounded-full text-sm font-bold">2</span><span>Sonuçları İnceleyin</span></CardTitle>
+                <CardDescription>Yapay zeka tarafından oluşturulan analiz ve gelişim önerileri.</CardDescription>
+              </CardHeader>
+              <CardContent className="flex-grow flex items-center justify-center">
+
+                {isLoading && !feedback && (
+                   <div className="text-center space-y-4">
+                     <MascotLoading />
+                     <h3 className="text-xl font-semibold text-primary">Analiz Ediliyor...</h3>
+                     <p className="text-muted-foreground">Yapay zeka konuşmanızı değerlendiriyor, lütfen bekleyin.</p>
+                  </div>
+                )}
+
+                {!isLoading && !feedback && (
+                  <div className="text-center space-y-4">
+                    <Mascot />
+                    <h3 className="text-xl font-semibold">Başlamaya Hazır mısınız?</h3>
+                    <p className="text-muted-foreground max-w-sm mx-auto">Görevinizi tanımlayıp konuşmaya başladıktan sonra analiz sonuçlarınız burada görünecek.</p>
+                  </div>
+                )}
+                
+                {feedback && (
+                 <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-6">
                    <div className="flex flex-col gap-6">
                       <Card>
                         <CardHeader>
@@ -359,10 +375,17 @@ export default function Home() {
                    </div>
                  </div>
               )}
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </main>
+
+      <footer className="bg-white mt-8">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-gray-500">
+            <p className="text-sm">&copy; {new Date().getFullYear()} Yapay Zeka İngilizce Eğitmeni. Tüm hakları saklıdır.</p>
+        </div>
+      </footer>
     </div>
   );
 }

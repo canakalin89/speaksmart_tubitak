@@ -3,71 +3,64 @@ import { cn } from '@/lib/utils';
 
 export function Mascot() {
   return (
-    <div className="relative w-48 h-48 animate-float">
-       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-primary/20 rounded-full blur-2xl"></div>
+    <div className="relative w-64 h-48">
       <svg
-        viewBox="0 0 200 200"
-        className="w-full h-full transform transition-transform duration-500 hover:scale-110"
+        viewBox="0 0 250 200"
+        className="w-full h-full"
       >
-        {/* Shadow */}
-        <ellipse cx="100" cy="185" rx="45" ry="8" fill="hsl(var(--primary))" opacity="0.2" className="animate-shadow-pulse" />
+        <defs>
+            <clipPath id="teacher-clip">
+                <rect x="30" y="80" width="60" height="90" rx="10"/>
+            </clipPath>
+            <clipPath id="student-clip">
+                <rect x="160" y="80" width="60" height="90" rx="10"/>
+            </clipPath>
+        </defs>
+        
+        {/* Ground */}
+        <line x1="10" y1="170" x2="240" y2="170" stroke="hsl(var(--border))" strokeWidth="2" />
 
-        {/* Body */}
-        <g transform="translate(0 -10)" className="animate-body-flip">
-          <rect x="70" y="100" width="60" height="70" rx="15" fill="hsl(var(--secondary))" />
-          {/* Screen */}
-          <rect x="80" y="110" width="40" height="30" rx="5" fill="hsl(var(--background))" />
-          {/* Eyes on screen */}
-          <g className="animate-eye-blink">
-            <circle cx="90" cy="125" r="3" fill="hsl(var(--secondary))" />
-            <circle cx="110" cy="125" r="3" fill="hsl(var(--secondary))" />
-          </g>
-          {/* Antenna */}
-          <line x1="100" y1="100" x2="100" y2="80" stroke="hsl(var(--secondary))" strokeWidth="2" />
-          <circle cx="100" cy="75" r="5" fill="hsl(var(--primary))" className="animate-antenna-pulse" />
+        {/* Teacher */}
+        <g className="animate-teacher-idle">
+            <rect x="30" y="80" width="60" height="90" rx="10" fill="hsl(var(--secondary))" />
+            <circle cx="70" cy="105" r="18" fill="hsl(var(--background))" stroke="hsl(var(--secondary))" strokeWidth="2"/>
+            <circle cx="78" cy="100" r="2" fill="hsl(var(--foreground))" />
+             <path d="M 65 120 q 5 5 10 0" stroke="hsl(var(--foreground))" strokeWidth="1.5" fill="none" />
         </g>
         
+        {/* Student */}
+        <g>
+            <rect x="160" y="80" width="60" height="90" rx="10" fill="hsl(var(--primary))" fillOpacity="0.8" />
+             <circle cx="180" cy="105" r="18" fill="hsl(var(--background))" stroke="hsl(var(--primary))" strokeWidth="2" strokeOpacity="0.8"/>
+            <circle cx="172" cy="100" r="2" fill="hsl(var(--foreground))" />
+            <path d="M 175 120 q 5 0 10 0" stroke="hsl(var(--foreground))" strokeWidth="1.5" fill="none" />
+        </g>
+
+        {/* Speech Bubble animation for student */}
+        <g className="animate-speech-bubble">
+            <path d="M 210 90 a 15 15 0 1 1 0.1 0 Z" fill="hsl(var(--background))" stroke="hsl(var(--border))" strokeWidth="1.5" />
+            <circle cx="210" cy="90" r="1.5" fill="hsl(var(--muted-foreground))" />
+            <circle cx="218" cy="90" r="1.5" fill="hsl(var(--muted-foreground))" />
+            <circle cx="202" cy="90" r="1.5" fill="hsl(var(--muted-foreground))" />
+        </g>
+
         <style jsx>{`
-          @keyframes eye-blink {
-            0%, 90%, 100% { transform: scaleY(1); }
-            95% { transform: scaleY(0.1); }
+          @keyframes teacher-idle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
           }
-          .animate-eye-blink {
-            animation: eye-blink 4s infinite;
-            transform-origin: center;
+          .animate-teacher-idle {
+            animation: teacher-idle 4s ease-in-out infinite;
           }
-          @keyframes float {
-             0% { transform: translateY(0px); }
-             50% { transform: translateY(-20px); }
-             100% { transform: translateY(0px); }
+
+          @keyframes speech-bubble {
+            0%, 60%, 100% { opacity: 0; transform: scale(0.5) translate(10px, -10px); }
+            70% { opacity: 1; transform: scale(1) translate(0, 0); }
+            95% { opacity: 1; transform: scale(1) translate(0, 0); }
           }
-           @keyframes body-flip {
-            0% { transform: rotate(0deg) translateY(0); }
-            25% { transform: rotate(5deg) translateY(-15px); }
-            70% { transform: rotate(-5deg) translateY(-10px); }
-            90%, 100% { transform: rotate(360deg) translateY(0); }
-           }
-          .animate-body-flip {
-             animation: body-flip 5s ease-in-out infinite;
-             transform-origin: center 135px;
-          }
-          .animate-float {
-            animation: float 2.5s ease-in-out infinite;
-          }
-           @keyframes shadow-pulse {
-             0%, 100% { transform: scaleX(1); opacity: 0.2; }
-             50% { transform: scaleX(0.8); opacity: 0.1; }
-          }
-          .animate-shadow-pulse {
-            animation: shadow-pulse 2.5s ease-in-out infinite;
-            transform-origin: center;
-          }
-          @keyframes antenna-pulse {
-            0%, 100% { box-shadow: 0 0 3px 1px hsl(var(--primary)); }
-            50% { box-shadow: 0 0 8px 3px hsl(var(--primary)); }
-          }
-          .animate-antenna-pulse {
-             animation: antenna-pulse 2s ease-in-out infinite;
+          .animate-speech-bubble {
+            animation: speech-bubble 5s ease-in-out infinite;
+            transform-origin: 210px 90px;
           }
         `}</style>
       </svg>
@@ -77,40 +70,73 @@ export function Mascot() {
 
 export function MascotLoading() {
   return (
-     <div className="relative w-48 h-48">
+     <div className="relative w-64 h-48">
       <svg
-        viewBox="0 0 200 200"
+        viewBox="0 0 250 200"
         className="w-full h-full"
       >
-        {/* Body */}
-        <g transform="translate(0 -10)">
-            <rect x="70" y="100" width="60" height="70" rx="15" fill="hsl(var(--secondary))" />
-            {/* Screen */}
-            <rect x="80" y="110" width="40" height="30" rx="5" fill="hsl(var(--background))" />
-            {/* Loading symbol on screen */}
-            <g>
-                <path
-                    d="M 90 125 A 8 8 0 0 1 110 125"
-                    stroke="hsl(var(--primary))"
-                    strokeWidth="3"
-                    fill="none"
-                    className="animate-eye-load-left"
-                />
+        {/* Ground */}
+        <line x1="10" y1="170" x2="240" y2="170" stroke="hsl(var(--border))" strokeWidth="2" />
+
+        {/* Teacher */}
+        <g>
+            <rect x="30" y="80" width="60" height="90" rx="10" fill="hsl(var(--secondary))" />
+            <circle cx="70" cy="105" r="18" fill="hsl(var(--background))" stroke="hsl(var(--secondary))" strokeWidth="2"/>
+            <circle cx="78" cy="100" r="2" fill="hsl(var(--foreground))" className="animate-teacher-eye-scan"/>
+            {/* Pencil */}
+            <g className="animate-writing">
+              <rect x="80" y="120" width="5" height="25" rx="2" fill="hsl(var(--accent))" transform="rotate(-20 82.5 132.5)" />
+               <polygon points="78,142 82.5,148 87,142" fill="hsl(var(--foreground))" transform="rotate(-20 82.5 145)" />
             </g>
-            {/* Antenna */}
-            <line x1="100" y1="100" x2="100" y2="80" stroke="hsl(var(--secondary))" strokeWidth="2" />
-            <circle cx="100" cy="75" r="5" fill="hsl(var(--primary))" className="animate-pulse" />
         </g>
+        
+        {/* Student (speaking) */}
+        <g>
+            <rect x="160" y="80" width="60" height="90" rx="10" fill="hsl(var(--primary))" fillOpacity="0.8" />
+             <circle cx="180" cy="105" r="18" fill="hsl(var(--background))" stroke="hsl(var(--primary))" strokeWidth="2" strokeOpacity="0.8"/>
+            <circle cx="172" cy="100" r="2" fill="hsl(var(--foreground))" />
+            {/* Mouth open */}
+            <ellipse cx="180" cy="122" rx="4" ry="2" fill="hsl(var(--foreground))" className="animate-student-mouth" />
+        </g>
+        
+        {/* Audio wave from student to teacher */}
+        <path d="M 210,110 C 170,110 160,90 120,90" stroke="hsl(var(--primary))" strokeWidth="2" fill="none" strokeDasharray="5" className="animate-wave"/>
 
         <style jsx>{`
-           @keyframes eye-load-left {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-          }
-          .animate-eye-load-left {
-            animation: eye-load-left 1.2s linear infinite;
-            transform-origin: 100px 125px;
-          }
+            @keyframes student-mouth {
+                0%, 100% { transform: scaleY(0.2); }
+                50% { transform: scaleY(1); }
+            }
+            .animate-student-mouth {
+                animation: student-mouth 1s ease-in-out infinite;
+                transform-origin: center;
+            }
+
+            @keyframes wave {
+                to { stroke-dashoffset: -10; }
+            }
+            .animate-wave {
+                animation: wave 0.5s linear infinite;
+            }
+
+            @keyframes writing {
+                0%, 100% { transform: rotate(-20deg) translateY(0); }
+                25% { transform: rotate(-15deg) translateY(2px); }
+                75% { transform: rotate(-25deg) translateY(-2px); }
+            }
+            .animate-writing {
+                animation: writing 1.5s ease-in-out infinite;
+                transform-origin: 80px 120px;
+            }
+            @keyframes teacher-eye-scan {
+                0%, 100% { transform: translateX(0); }
+                40% { transform: translateX(0); }
+                50% { transform: translateX(-5px); }
+                90% { transform: translateX(-5px); }
+            }
+            .animate-teacher-eye-scan {
+                 animation: teacher-eye-scan 3s ease-in-out infinite;
+            }
         `}</style>
       </svg>
     </div>

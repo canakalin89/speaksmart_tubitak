@@ -390,7 +390,7 @@ export default function Home() {
       <header className="bg-card shadow-sm sticky top-0 z-10 border-b">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
             <div className="flex items-center gap-3">
-                <Image src="/logo.png" alt="Okul Logosu" width={40} height={40} className="rounded-full" />
+                <Image src="http://azizsancaranadolu.meb.k12.tr/meb_iys_dosyalar/59/11/765062/resimler/2025_06/03222921_logolar3.jpg" alt="Okul Logosu" width={40} height={40} className="rounded-full object-contain" />
                 <h1 className="text-2xl font-bold text-foreground tracking-tight">{t.title}</h1>
             </div>
             <div className="flex items-center gap-4">
@@ -650,3 +650,5 @@ export default function Home() {
     </div>
   );
 }
+
+    

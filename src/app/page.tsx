@@ -322,15 +322,15 @@ export default function Home() {
   const canSubmit = taskDescription.trim().length > 0;
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm sticky top-0 z-10">
+    <div className="flex flex-col min-h-screen bg-background">
+      <header className="bg-card shadow-sm sticky top-0 z-10 border-b">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
             <div className="flex items-center gap-3">
                 <Bot className="w-8 h-8 text-primary"/>
-                <h1 className="text-2xl font-bold text-gray-800 tracking-tight">{t.title}</h1>
+                <h1 className="text-2xl font-bold text-foreground tracking-tight">{t.title}</h1>
             </div>
             <div className="flex items-center gap-4">
-              <p className="text-sm text-gray-500 hidden md:block">{t.subtitle}</p>
+              <p className="text-sm text-muted-foreground hidden md:block">{t.subtitle}</p>
               <Button variant="ghost" size="icon" onClick={toggleLanguage} aria-label="Change language">
                 <Languages className="w-5 h-5"/>
               </Button>
@@ -356,9 +356,9 @@ export default function Home() {
                   rows={3}
                 />
                  <div className="flex items-center gap-4">
-                    <div className="flex-grow border-t border-gray-200"></div>
-                    <span className="text-xs text-gray-400">{t.or}</span>
-                    <div className="flex-grow border-t border-gray-200"></div>
+                    <div className="flex-grow border-t"></div>
+                    <span className="text-xs text-muted-foreground">{t.or}</span>
+                    <div className="flex-grow border-t"></div>
                 </div>
                 <div className="flex gap-4">
                   <Button
@@ -398,7 +398,7 @@ export default function Home() {
                     <CardTitle className="text-base">{t.howItWorks}</CardTitle>
                 </CardHeader>
                 <CardContent className="text-sm text-muted-foreground space-y-3">
-                   {t.howItWorksSteps.map((step, i) => <p key={i}>{i+1}. {step}</p>)}
+                   {t.howItWorksSteps.map((step, i) => <p key={i} className="flex items-start gap-2"><span className="font-bold text-primary">{i+1}.</span><span>{step}</span></p>)}
                 </CardContent>
             </Card>
           </div>
@@ -494,27 +494,27 @@ export default function Home() {
         </div>
       </main>
 
-      <footer className="bg-white mt-12 border-t">
+      <footer className="bg-card mt-12 border-t">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
                 <div>
-                    <h3 className="font-semibold text-gray-800 mb-2 flex items-center justify-center md:justify-start gap-2"><Atom className="w-5 h-5"/> {t.tubitak}</h3>
-                    <p className="text-sm text-gray-500">{t.tubitakDesc}</p>
+                    <h3 className="font-semibold text-foreground mb-2 flex items-center justify-center md:justify-start gap-2"><Atom className="w-5 h-5 text-primary"/> {t.tubitak}</h3>
+                    <p className="text-sm text-muted-foreground">{t.tubitakDesc}</p>
                 </div>
                 <div>
-                    <h3 className="font-semibold text-gray-800 mb-2 flex items-center justify-center md:justify-start gap-2"><CreativeCommons className="w-5 h-5"/> {t.maarif}</h3>
-                    <p className="text-sm text-gray-500">{t.maarifDesc}</p>
+                    <h3 className="font-semibold text-foreground mb-2 flex items-center justify-center md:justify-start gap-2"><CreativeCommons className="w-5 h-5 text-primary"/> {t.maarif}</h3>
+                    <p className="text-sm text-muted-foreground">{t.maarifDesc}</p>
                 </div>
                 <div>
-                    <h3 className="font-semibold text-gray-800 mb-2">{t.social}</h3>
+                    <h3 className="font-semibold text-foreground mb-2">{t.social}</h3>
                     <div className="flex justify-center md:justify-start gap-4">
-                        <a href="#" className="text-gray-500 hover:text-primary"><Instagram className="w-6 h-6"/></a>
-                        <a href="#" className="text-gray-500 hover:text-primary"><Twitter className="w-6 h-6"/></a>
-                        <a href="#" className="text-gray-500 hover:text-primary"><Youtube className="w-6 h-6"/></a>
+                        <a href="#" className="text-muted-foreground hover:text-primary"><Instagram className="w-6 h-6"/></a>
+                        <a href="#" className="text-muted-foreground hover:text-primary"><Twitter className="w-6 h-6"/></a>
+                        <a href="#" className="text-muted-foreground hover:text-primary"><Youtube className="w-6 h-6"/></a>
                     </div>
                 </div>
             </div>
-             <div className="border-t mt-8 pt-6 text-center text-gray-500">
+             <div className="border-t mt-8 pt-6 text-center text-muted-foreground">
                 <p className="text-sm">&copy; {new Date().getFullYear()} {t.title}. {t.footerRights}</p>
             </div>
         </div>
@@ -523,5 +523,4 @@ export default function Home() {
   );
 }
 
-    
     

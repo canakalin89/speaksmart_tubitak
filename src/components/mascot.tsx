@@ -4,65 +4,67 @@ import { cn } from '@/lib/utils';
 export function Mascot() {
   return (
     <div className="relative w-64 h-48">
+      <style jsx>{`
+        .robot-body {
+            fill: hsl(var(--secondary));
+            stroke: hsl(var(--secondary-foreground));
+            stroke-width: 2;
+        }
+        .robot-eye {
+            fill: white;
+        }
+        .robot-pupil {
+            fill: hsl(var(--foreground));
+        }
+        .robot-antenna {
+            stroke: hsl(var(--secondary-foreground));
+            stroke-width: 1.5;
+        }
+        .antenna-light {
+            fill: hsl(var(--primary));
+        }
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0% { transform: translatey(0px); }
+            50% { transform: translatey(-10px); }
+            100% { transform: translatey(0px); }
+        }
+        .eye-blink {
+            animation: blink 3s ease-in-out infinite;
+        }
+        @keyframes blink {
+            0%, 90%, 100% { transform: scaleY(1); }
+            95% { transform: scaleY(0.1); }
+        }
+      `}</style>
       <svg
-        viewBox="0 0 250 200"
+        viewBox="0 0 200 200"
         className="w-full h-full"
       >
-        <defs>
-            <clipPath id="teacher-clip">
-                <rect x="30" y="80" width="60" height="90" rx="10"/>
-            </clipPath>
-            <clipPath id="student-clip">
-                <rect x="160" y="80" width="60" height="90" rx="10"/>
-            </clipPath>
-        </defs>
-        
-        {/* Ground */}
-        <line x1="10" y1="170" x2="240" y2="170" stroke="hsl(var(--border))" strokeWidth="2" />
+        <g className="floating">
+            {/* Body */}
+            <rect className="robot-body" x="65" y="80" width="70" height="70" rx="15" />
 
-        {/* Teacher */}
-        <g className="animate-teacher-idle">
-            <rect x="30" y="80" width="60" height="90" rx="10" fill="hsl(var(--secondary))" />
-            <circle cx="70" cy="105" r="18" fill="hsl(var(--background))" stroke="hsl(var(--secondary))" strokeWidth="2"/>
-            <circle cx="78" cy="100" r="2" fill="hsl(var(--foreground))" />
-             <path d="M 65 120 q 5 5 10 0" stroke="hsl(var(--foreground))" strokeWidth="1.5" fill="none" />
+            {/* Head */}
+            <rect className="robot-body" x="50" y="50" width="100" height="40" rx="10" />
+
+            {/* Eyes */}
+            <g className="eye-blink">
+                <circle className="robot-eye" cx="80" cy="70" r="8" />
+                <circle className="robot-pupil" cx="82" cy="70" r="3" />
+                <circle className="robot-eye" cx="120" cy="70" r="8" />
+                <circle className="robot-pupil" cx="122" cy="70" r="3" />
+            </g>
+
+            {/* Antenna */}
+            <line className="robot-antenna" x1="100" y1="50" x2="100" y2="30" />
+            <circle className="antenna-light" cx="100" cy="25" r="5" />
+
+             {/* Shadow */}
+            <ellipse cx="100" cy="165" rx="30" ry="5" fill="black" fillOpacity="0.1" />
         </g>
-        
-        {/* Student */}
-        <g>
-            <rect x="160" y="80" width="60" height="90" rx="10" fill="hsl(var(--primary))" fillOpacity="0.8" />
-             <circle cx="180" cy="105" r="18" fill="hsl(var(--background))" stroke="hsl(var(--primary))" strokeWidth="2" strokeOpacity="0.8"/>
-            <circle cx="172" cy="100" r="2" fill="hsl(var(--foreground))" />
-            <path d="M 175 120 q 5 0 10 0" stroke="hsl(var(--foreground))" strokeWidth="1.5" fill="none" />
-        </g>
-
-        {/* Speech Bubble animation for student */}
-        <g className="animate-speech-bubble">
-            <path d="M 210 90 a 15 15 0 1 1 0.1 0 Z" fill="hsl(var(--background))" stroke="hsl(var(--border))" strokeWidth="1.5" />
-            <circle cx="210" cy="90" r="1.5" fill="hsl(var(--muted-foreground))" />
-            <circle cx="218" cy="90" r="1.5" fill="hsl(var(--muted-foreground))" />
-            <circle cx="202" cy="90" r="1.5" fill="hsl(var(--muted-foreground))" />
-        </g>
-
-        <style jsx>{`
-          @keyframes teacher-idle {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-3px); }
-          }
-          .animate-teacher-idle {
-            animation: teacher-idle 4s ease-in-out infinite;
-          }
-
-          @keyframes speech-bubble {
-            0%, 60%, 100% { opacity: 0; transform: scale(0.5) translate(10px, -10px); }
-            70% { opacity: 1; transform: scale(1) translate(0, 0); }
-            95% { opacity: 1; transform: scale(1) translate(0, 0); }
-          }
-          .animate-speech-bubble {
-            animation: speech-bubble 5s ease-in-out infinite;
-            transform-origin: 210px 90px;
-          }
-        `}</style>
       </svg>
     </div>
   );
@@ -71,74 +73,90 @@ export function Mascot() {
 export function MascotLoading() {
   return (
      <div className="relative w-64 h-48">
+      <style jsx>{`
+        .robot-body {
+            fill: hsl(var(--secondary));
+            stroke: hsl(var(--secondary-foreground));
+            stroke-width: 2;
+        }
+        .robot-eye {
+            fill: white;
+        }
+        .robot-pupil {
+            fill: hsl(var(--foreground));
+        }
+        .robot-antenna {
+            stroke: hsl(var(--secondary-foreground));
+            stroke-width: 1.5;
+        }
+        .antenna-light-loading {
+            fill: hsl(var(--primary));
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+         .screen {
+            fill: hsl(var(--background));
+        }
+        .data-line {
+            stroke: hsl(var(--primary));
+            stroke-width: 2;
+            animation: data-scroll 1s linear infinite;
+        }
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0% { transform: translatey(0px); }
+            50% { transform: translatey(-10px); }
+            100% { transform: translatey(0px); }
+        }
+        @keyframes pulse {
+            0% { r: 5px; opacity: 1; }
+            50% { r: 7px; opacity: 0.7; }
+            100% { r: 5px; opacity: 1; }
+        }
+        @keyframes data-scroll {
+            from { transform: translateY(-8px); opacity: 0; }
+            to { transform: translateY(8px); opacity: 1; }
+        }
+      `}</style>
       <svg
-        viewBox="0 0 250 200"
+        viewBox="0 0 200 200"
         className="w-full h-full"
       >
-        {/* Ground */}
-        <line x1="10" y1="170" x2="240" y2="170" stroke="hsl(var(--border))" strokeWidth="2" />
+        <g className="floating">
+            {/* Body */}
+            <rect className="robot-body" x="50" y="50" width="100" height="100" rx="20" />
 
-        {/* Teacher */}
-        <g>
-            <rect x="30" y="80" width="60" height="90" rx="10" fill="hsl(var(--secondary))" />
-            <circle cx="70" cy="105" r="18" fill="hsl(var(--background))" stroke="hsl(var(--secondary))" strokeWidth="2"/>
-            <circle cx="78" cy="100" r="2" fill="hsl(var(--foreground))" className="animate-teacher-eye-scan"/>
-            {/* Pencil */}
-            <g className="animate-writing">
-              <rect x="80" y="120" width="5" height="25" rx="2" fill="hsl(var(--accent))" transform="rotate(-20 82.5 132.5)" />
-               <polygon points="78,142 82.5,148 87,142" fill="hsl(var(--foreground))" transform="rotate(-20 82.5 145)" />
+            {/* Screen on body */}
+            <rect className="screen" x="65" y="80" width="70" height="40" rx="5" />
+            <g clipPath="url(#screen-clip)">
+                <line className="data-line" x1="75" y1="85" x2="125" y2="85" style={{animationDelay: '0s'}} />
+                <line className="data-line" x1="75" y1="95" x2="125" y2="95" style={{animationDelay: '0.3s'}}/>
+                <line className="data-line" x1="75" y1="105" x2="125" y2="105" style={{animationDelay: '0.6s'}}/>
             </g>
+            <defs>
+                <clipPath id="screen-clip">
+                    <rect x="65" y="80" width="70" height="40" rx="5" />
+                </clipPath>
+            </defs>
+            
+            {/* Head */}
+            <rect className="robot-body" x="75" y="30" width="50" height="20" rx="5" />
+            
+            {/* Eyes */}
+            <circle className="robot-eye" cx="90" cy="40" r="4" />
+            <circle className="robot-eye" cx="110" cy="40" r="4" />
+            
+            {/* Antenna */}
+            <line className="robot-antenna" x1="100" y1="30" x2="100" y2="15" />
+            <circle className="antenna-light-loading" cx="100" cy="12" r="5" />
+
+            {/* Shadow */}
+            <ellipse cx="100" cy="165" rx="30" ry="5" fill="black" fillOpacity="0.1" />
         </g>
-        
-        {/* Student (speaking) */}
-        <g>
-            <rect x="160" y="80" width="60" height="90" rx="10" fill="hsl(var(--primary))" fillOpacity="0.8" />
-             <circle cx="180" cy="105" r="18" fill="hsl(var(--background))" stroke="hsl(var(--primary))" strokeWidth="2" strokeOpacity="0.8"/>
-            <circle cx="172" cy="100" r="2" fill="hsl(var(--foreground))" />
-            {/* Mouth open */}
-            <ellipse cx="180" cy="122" rx="4" ry="2" fill="hsl(var(--foreground))" className="animate-student-mouth" />
-        </g>
-        
-        {/* Audio wave from student to teacher */}
-        <path d="M 210,110 C 170,110 160,90 120,90" stroke="hsl(var(--primary))" strokeWidth="2" fill="none" strokeDasharray="5" className="animate-wave"/>
-
-        <style jsx>{`
-            @keyframes student-mouth {
-                0%, 100% { transform: scaleY(0.2); }
-                50% { transform: scaleY(1); }
-            }
-            .animate-student-mouth {
-                animation: student-mouth 1s ease-in-out infinite;
-                transform-origin: center;
-            }
-
-            @keyframes wave {
-                to { stroke-dashoffset: -10; }
-            }
-            .animate-wave {
-                animation: wave 0.5s linear infinite;
-            }
-
-            @keyframes writing {
-                0%, 100% { transform: rotate(-20deg) translateY(0); }
-                25% { transform: rotate(-15deg) translateY(2px); }
-                75% { transform: rotate(-25deg) translateY(-2px); }
-            }
-            .animate-writing {
-                animation: writing 1.5s ease-in-out infinite;
-                transform-origin: 80px 120px;
-            }
-            @keyframes teacher-eye-scan {
-                0%, 100% { transform: translateX(0); }
-                40% { transform: translateX(0); }
-                50% { transform: translateX(-5px); }
-                90% { transform: translateX(-5px); }
-            }
-            .animate-teacher-eye-scan {
-                 animation: teacher-eye-scan 3s ease-in-out infinite;
-            }
-        `}</style>
       </svg>
     </div>
   )
 }
+
+    

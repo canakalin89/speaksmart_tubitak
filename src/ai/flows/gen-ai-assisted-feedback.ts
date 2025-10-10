@@ -82,7 +82,10 @@ const prompt = ai.definePrompt({
       - Uses accurate and appropriate grammar.
       - Vocabulary is relevant to the topic.
       Provide a score from 0-100.
-  5.  Creativity: Analyze the originality of the ideas and the language used. Is the approach to the topic unique? Is the language vivid and imaginative? Provide a score from 0-100.
+  5.  Creativity: Analyze the originality of the ideas and the language used. 
+      - Is the approach to the topic unique? 
+      - Is the language vivid and imaginative? 
+      Provide a score from 0-100.
 
   Finally, provide overall feedback on the student's speaking performance, summarizing their strengths and weaknesses, and offering actionable advice for improvement. Then, provide an overall score as the average of the other five scores.
 

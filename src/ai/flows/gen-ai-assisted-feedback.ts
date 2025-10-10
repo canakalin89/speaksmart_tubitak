@@ -78,7 +78,10 @@ const prompt = ai.definePrompt({
       - Pronunciation is clear and accurate.
       - Comment on pace and intonation. Is the voice strong and clear? 
       Provide a score from 0-100.
-  4.  Language use: Analyze the grammar and vocabulary from the transcribed text. Is the grammar accurate? Is the vocabulary varied and used correctly? Provide a score from 0-100.
+  4.  Language use: Analyze the grammar and vocabulary from the transcribed text. 
+      - Uses accurate and appropriate grammar.
+      - Vocabulary is relevant to the topic.
+      Provide a score from 0-100.
   5.  Creativity: Analyze the originality of the ideas and the language used. Is the approach to the topic unique? Is the language vivid and imaginative? Provide a score from 0-100.
 
   Finally, provide overall feedback on the student's speaking performance, summarizing their strengths and weaknesses, and offering actionable advice for improvement. Then, provide an overall score as the average of the other five scores.

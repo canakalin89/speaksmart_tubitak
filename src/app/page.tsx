@@ -6,7 +6,6 @@ import {
   genAiAssistedFeedback,
   GenAiAssistedFeedbackOutput,
 } from '@/ai/flows/gen-ai-assisted-feedback';
-import { speechToText } from '@/ai/flows/speech-to-text';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -25,7 +24,6 @@ export default function Home() {
   const [feedback, setFeedback] = useState<GenAiAssistedFeedbackOutput | null>(
     null
   );
-  const [transcribedText, setTranscribedText] = useState<string | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -35,20 +33,11 @@ export default function Home() {
   const handleAudioAnalysis = async (base64Audio: string) => {
     setIsLoading(true);
     setFeedback(null);
-    setTranscribedText(null);
     
     try {
-      toast({ title: 'Konuşmanız metne dönüştürülüyor...', description: 'Lütfen bekleyin.' });
-      const sttResult = await speechToText({ audio: base64Audio });
-      setTranscribedText(sttResult.text);
-
-      if (!sttResult.text) {
-        throw new Error('Metne dönüştürme başarısız. Dönen metin boş.');
-      }
-      
       toast({ title: 'Geri bildirim oluşturuluyor...', description: 'Yapay zeka konuşmanızı analiz ediyor.' });
       const feedbackResult = await genAiAssistedFeedback({
-        spokenText: sttResult.text,
+        audio: base64Audio,
         taskDescription,
       });
       setFeedback(feedbackResult);
@@ -95,7 +84,6 @@ export default function Home() {
       mediaRecorderRef.current.start();
       setIsRecording(true);
       setFeedback(null);
-      setTranscribedText(null);
     } catch (error) {
       console.error('Error accessing microphone:', error);
       toast({
@@ -319,7 +307,7 @@ export default function Home() {
                    </div>
                 )}
 
-                {!isLoading && !feedback && !transcribedText && (
+                {!isLoading && !feedback && (
                   <div className="flex-grow flex flex-col items-center justify-center p-8 text-center border-dashed border-2 rounded-lg">
                       <Mascot />
                       <h3 className="text-xl font-semibold mb-2 mt-4">Başlamaya Hazır mısınız?</h3>
@@ -329,13 +317,13 @@ export default function Home() {
                   </div>
                 )}
 
-                {(transcribedText || feedback) && (
+                {feedback && (
                    <div className='flex flex-col h-full'>
-                      {transcribedText && (
+                      {feedback.transcribedText && (
                         <div className="space-y-4 mb-6">
                           <h4 className="font-semibold flex items-center gap-2"><Languages/> Konuşmanızın Metni</h4>
                           <ScrollArea className="h-24 md:h-28">
-                             <p className="italic text-muted-foreground bg-muted p-4 rounded-md">{transcribedText}</p>
+                             <p className="italic text-muted-foreground bg-muted p-4 rounded-md">{feedback.transcribedText}</p>
                           </ScrollArea>
                         </div>
                       )}
@@ -419,3 +407,5 @@ export default function Home() {
     </div>
   );
 }
+
+    

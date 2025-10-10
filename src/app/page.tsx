@@ -11,10 +11,12 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from '@/components/ui/textarea';
 import { Progress } from "@/components/ui/progress";
-import { Mic, MicOff, Languages, FileUp, School, Link as LinkIcon, Instagram, Twitter, Youtube, Users, Atom, CreativeCommons, MessageCircle, Bot } from 'lucide-react';
+import { Mic, MicOff, Languages, FileUp, School, Link as LinkIcon, Instagram, Twitter, Youtube, Users, Atom, CreativeCommons, MessageCircle, Bot, User as UserIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Mascot, MascotLoading } from '@/components/mascot';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useAuth, useUser } from '@/firebase';
+import { initiateAnonymousSignIn } from '@/firebase/non-blocking-login';
 
 const content = {
   tr: {
@@ -66,6 +68,10 @@ const content = {
     maarifDesc: 'Türkiye Yüzyılı Maarif Modeli\'nin öğrenci merkezli ve beceri odaklı yaklaşımını destekler.',
     social: 'Sosyal Medya',
     links: 'Faydalı Linkler',
+    continueAsGuest: 'Misafir Olarak Devam Et',
+    welcomeGuest: 'Hoş Geldin, Misafir!',
+    loginToSave: 'İlerlemenizi kaydetmek için giriş yapın veya kaydolun.',
+    welcome: 'Hoş Geldin'
   },
   en: {
     title: 'SpeakSmart',
@@ -116,6 +122,10 @@ const content = {
     maarifDesc: 'Supports the student-centered and skill-oriented approach of the Turkish Century Maarif Model.',
     social: 'Social Media',
     links: 'Useful Links',
+    continueAsGuest: 'Continue as Guest',
+    welcomeGuest: 'Welcome, Guest!',
+    loginToSave: 'Log in or sign up to save your progress.',
+    welcome: 'Welcome'
   }
 };
 
@@ -132,6 +142,8 @@ export default function Home() {
   const audioChunksRef = useRef<Blob[]>([]);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { toast } = useToast();
+  const auth = useAuth();
+  const { user, isUserLoading } = useUser();
 
   const t = content[language];
 
@@ -145,6 +157,8 @@ export default function Home() {
         audio: base64Audio,
         taskDescription,
         language,
+        userId: user?.uid,
+        taskId: `task-${Date.now()}` // Placeholder Task ID
       });
       setFeedback(feedbackResult);
       toast({
@@ -240,6 +254,10 @@ export default function Home() {
 
   const triggerFileSelect = () => fileInputRef.current?.click();
 
+  const handleGuestLogin = () => {
+    initiateAnonymousSignIn(auth);
+  };
+
   const ScoreDisplay = ({ score, label }: { score: number, label: string }) => {
     const [progress, setProgress] = useState(0);
 
@@ -318,8 +336,8 @@ export default function Home() {
     );
   };
 
-
   const canSubmit = taskDescription.trim().length > 0;
+  const isReady = !isUserLoading && user;
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -330,7 +348,9 @@ export default function Home() {
                 <h1 className="text-2xl font-bold text-foreground tracking-tight">{t.title}</h1>
             </div>
             <div className="flex items-center gap-4">
-              <p className="text-sm text-muted-foreground hidden md:block">{t.subtitle}</p>
+              <p className="text-sm text-muted-foreground hidden md:block">
+                {user ? `${t.welcome}, ${user.isAnonymous ? 'Misafir' : user.email}` : t.subtitle}
+              </p>
               <Button variant="ghost" size="icon" onClick={toggleLanguage} aria-label="Change language">
                 <Languages className="w-5 h-5"/>
               </Button>
@@ -339,159 +359,182 @@ export default function Home() {
       </header>
 
       <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-          
-          <div className="lg:col-span-2 flex flex-col gap-8">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2"><span className="flex items-center justify-center w-6 h-6 bg-primary text-primary-foreground rounded-full text-sm font-bold">1</span><span>{t.step1}</span></CardTitle>
-                <CardDescription>{t.step1Desc}</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <Textarea
-                  placeholder={t.taskPlaceholder}
-                  value={taskDescription}
-                  onChange={e => setTaskDescription(e.target.value)}
-                  className="text-base"
-                  rows={3}
-                />
-                 <div className="flex items-center gap-4">
-                    <div className="flex-grow border-t"></div>
-                    <span className="text-xs text-muted-foreground">{t.or}</span>
-                    <div className="flex-grow border-t"></div>
-                </div>
-                <div className="flex gap-4">
-                  <Button
-                    onClick={toggleRecording}
-                    disabled={!canSubmit || isLoading}
-                    className="w-full"
-                    size="lg"
-                  >
-                    {isRecording ? (
-                      <><MicOff className="mr-2"/> {t.stopRecording}</>
-                    ) : (
-                      <><Mic className="mr-2"/> {t.startRecording}</>
-                    )}
-                  </Button>
-                  <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="audio/*" />
-                  <Button 
-                    onClick={triggerFileSelect} 
-                    disabled={!canSubmit || isLoading || isRecording} 
-                    variant="outline" 
-                    size="lg"
-                    className="w-full"
-                  >
-                    <FileUp className="mr-2"/> {t.uploadAudio}
-                  </Button>
-                </div>
-                {isRecording && (
-                    <div className="flex items-center justify-center text-sm text-red-500 animate-pulse">
-                        <div className="w-2 h-2 rounded-full bg-red-500 mr-2 animate-ping"></div>
-                        {t.recording}
-                    </div>
-                )}
-              </CardContent>
-            </Card>
+        {!isReady && !isUserLoading && (
+          <Card className="max-w-md mx-auto text-center">
+            <CardHeader>
+              <CardTitle>{t.welcomeGuest}</CardTitle>
+              <CardDescription>{t.loginToSave}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button onClick={handleGuestLogin} size="lg">
+                <UserIcon className="mr-2" />
+                {t.continueAsGuest}
+              </Button>
+            </CardContent>
+          </Card>
+        )}
 
-            <Card>
+        {isUserLoading && (
+           <div className="text-center space-y-4">
+              <MascotLoading />
+              <h3 className="text-xl font-semibold text-primary">Yükleniyor...</h3>
+            </div>
+        )}
+        
+        {isReady && (
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+            <div className="lg:col-span-2 flex flex-col gap-8">
+              <Card>
                 <CardHeader>
-                    <CardTitle className="text-base">{t.howItWorks}</CardTitle>
+                  <CardTitle className="flex items-center gap-2"><span className="flex items-center justify-center w-6 h-6 bg-primary text-primary-foreground rounded-full text-sm font-bold">1</span><span>{t.step1}</span></CardTitle>
+                  <CardDescription>{t.step1Desc}</CardDescription>
                 </CardHeader>
-                <CardContent className="text-sm text-muted-foreground space-y-3">
-                   {t.howItWorksSteps.map((step, i) => <p key={i} className="flex items-start gap-2"><span className="font-bold text-primary">{i+1}.</span><span>{step}</span></p>)}
+                <CardContent className="space-y-4">
+                  <Textarea
+                    placeholder={t.taskPlaceholder}
+                    value={taskDescription}
+                    onChange={e => setTaskDescription(e.target.value)}
+                    className="text-base"
+                    rows={3}
+                  />
+                   <div className="flex items-center gap-4">
+                      <div className="flex-grow border-t"></div>
+                      <span className="text-xs text-muted-foreground">{t.or}</span>
+                      <div className="flex-grow border-t"></div>
+                  </div>
+                  <div className="flex gap-4">
+                    <Button
+                      onClick={toggleRecording}
+                      disabled={!canSubmit || isLoading}
+                      className="w-full"
+                      size="lg"
+                    >
+                      {isRecording ? (
+                        <><MicOff className="mr-2"/> {t.stopRecording}</>
+                      ) : (
+                        <><Mic className="mr-2"/> {t.startRecording}</>
+                      )}
+                    </Button>
+                    <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="audio/*" />
+                    <Button 
+                      onClick={triggerFileSelect} 
+                      disabled={!canSubmit || isLoading || isRecording} 
+                      variant="outline" 
+                      size="lg"
+                      className="w-full"
+                    >
+                      <FileUp className="mr-2"/> {t.uploadAudio}
+                    </Button>
+                  </div>
+                  {isRecording && (
+                      <div className="flex items-center justify-center text-sm text-red-500 animate-pulse">
+                          <div className="w-2 h-2 rounded-full bg-red-500 mr-2 animate-ping"></div>
+                          {t.recording}
+                      </div>
+                  )}
                 </CardContent>
-            </Card>
-          </div>
+              </Card>
 
-          <div className="lg:col-span-3">
-            <Card className="h-full flex flex-col">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2"><span className="flex items-center justify-center w-6 h-6 bg-primary text-primary-foreground rounded-full text-sm font-bold">2</span><span>{t.step2}</span></CardTitle>
-                <CardDescription>{t.step2Desc}</CardDescription>
-              </CardHeader>
-              <CardContent className="flex-grow flex items-center justify-center">
+              <Card>
+                  <CardHeader>
+                      <CardTitle className="text-base">{t.howItWorks}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="text-sm text-muted-foreground space-y-3">
+                     {t.howItWorksSteps.map((step, i) => <p key={i} className="flex items-start gap-2"><span className="font-bold text-primary">{i+1}.</span><span>{step}</span></p>)}
+                  </CardContent>
+              </Card>
+            </div>
 
-                {isLoading && !feedback && (
-                   <div className="text-center space-y-4">
-                     <MascotLoading />
-                     <h3 className="text-xl font-semibold text-primary">{t.analyzing}</h3>
-                     <p className="text-muted-foreground">{t.analyzingDesc}</p>
-                  </div>
-                )}
+            <div className="lg:col-span-3">
+              <Card className="h-full flex flex-col">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2"><span className="flex items-center justify-center w-6 h-6 bg-primary text-primary-foreground rounded-full text-sm font-bold">2</span><span>{t.step2}</span></CardTitle>
+                  <CardDescription>{t.step2Desc}</CardDescription>
+                </CardHeader>
+                <CardContent className="flex-grow flex items-center justify-center">
 
-                {!isLoading && !feedback && (
-                  <div className="text-center space-y-4">
-                    <Mascot />
-                    <h3 className="text-xl font-semibold">{t.readyToStart}</h3>
-                    <p className="text-muted-foreground max-w-sm mx-auto">{t.readyToStartDesc}</p>
-                  </div>
-                )}
-                
-                {feedback && (
-                 <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-6">
-                   <div className="flex flex-col gap-6">
-                      <Card>
-                        <CardHeader>
-                            <CardTitle className="text-lg">{t.overallScore}</CardTitle>
-                        </CardHeader>
-                        <CardContent className="flex items-center justify-center">
-                            <OverallScoreIndicator score={feedback.overallScore} />
-                        </CardContent>
-                      </Card>
-                      <Card className="flex-grow">
-                        <CardHeader>
-                            <CardTitle className="text-lg">{t.detailedScores}</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            <ScoreDisplay score={feedback.rapportScore} label={t.rapport} />
-                            <ScoreDisplay score={feedback.organisationScore} label={t.organisation} />
-                            <ScoreDisplay score={feedback.deliveryScore} label={t.delivery} />
-                            <ScoreDisplay score={feedback.languageUseScore} label={t.languageUse} />
-                            <ScoreDisplay score={feedback.creativityScore} label={t.creativity} />
-                        </CardContent>
-                      </Card>
+                  {isLoading && !feedback && (
+                     <div className="text-center space-y-4">
+                       <MascotLoading />
+                       <h3 className="text-xl font-semibold text-primary">{t.analyzing}</h3>
+                       <p className="text-muted-foreground">{t.analyzingDesc}</p>
+                    </div>
+                  )}
+
+                  {!isLoading && !feedback && (
+                    <div className="text-center space-y-4">
+                      <Mascot />
+                      <h3 className="text-xl font-semibold">{t.readyToStart}</h3>
+                      <p className="text-muted-foreground max-w-sm mx-auto">{t.readyToStartDesc}</p>
+                    </div>
+                  )}
+                  
+                  {feedback && (
+                   <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-6">
+                     <div className="flex flex-col gap-6">
+                        <Card>
+                          <CardHeader>
+                              <CardTitle className="text-lg">{t.overallScore}</CardTitle>
+                          </CardHeader>
+                          <CardContent className="flex items-center justify-center">
+                              <OverallScoreIndicator score={feedback.overallScore} />
+                          </CardContent>
+                        </Card>
+                        <Card className="flex-grow">
+                          <CardHeader>
+                              <CardTitle className="text-lg">{t.detailedScores}</CardTitle>
+                          </CardHeader>
+                          <CardContent className="space-y-4">
+                              <ScoreDisplay score={feedback.rapportScore} label={t.rapport} />
+                              <ScoreDisplay score={feedback.organisationScore} label={t.organisation} />
+                              <ScoreDisplay score={feedback.deliveryScore} label={t.delivery} />
+                              <ScoreDisplay score={feedback.languageUseScore} label={t.languageUse} />
+                              <ScoreDisplay score={feedback.creativityScore} label={t.creativity} />
+                          </CardContent>
+                        </Card>
+                     </div>
+                     <div className="flex flex-col gap-6">
+                        <Card>
+                          <CardHeader><CardTitle className="text-lg">{t.transcript}</CardTitle></CardHeader>
+                          <CardContent>
+                            <ScrollArea className="h-28">
+                                <p className="italic text-muted-foreground">{feedback.transcribedText}</p>
+                            </ScrollArea>
+                          </CardContent>
+                        </Card>
+                        <Card className="flex-grow">
+                          <CardHeader><CardTitle className="text-lg">{t.improvementAreas}</CardTitle></CardHeader>
+                          <CardContent>
+                             <Tabs defaultValue="overall" className="w-full">
+                              <TabsList className="grid w-full grid-cols-2">
+                                  <TabsTrigger value="overall">{t.overallFeedback}</TabsTrigger>
+                                  <TabsTrigger value="details">{t.detailedAnalysis}</TabsTrigger>
+                              </TabsList>
+                               <ScrollArea className="h-56 mt-4">
+                                  <TabsContent value="overall">
+                                      <p className="text-sm">{feedback.overallFeedback}</p>
+                                  </TabsContent>
+                                  <TabsContent value="details">
+                                      <div className="space-y-4 text-sm">
+                                        <div><h4 className="font-semibold">{t.rapport}</h4><p className="text-muted-foreground">{feedback.rapportFeedback}</p></div>
+                                        <div><h4 className="font-semibold">{t.organisation}</h4><p className="text-muted-foreground">{feedback.organisationFeedback}</p></div>
+                                        <div><h4 className="font-semibold">{t.delivery}</h4><p className="text-muted-foreground">{feedback.deliveryFeedback}</p></div>
+                                        <div><h4 className="font-semibold">{t.languageUse}</h4><p className="text-muted-foreground">{feedback.languageUseFeedback}</p></div>
+                                        <div><h4 className="font-semibold">{t.creativity}</h4><p className="text-muted-foreground">{feedback.creativityFeedback}</p></div>
+                                      </div>
+                                  </TabsContent>
+                                </ScrollArea>
+                              </Tabs>
+                          </CardContent>
+                        </Card>
+                     </div>
                    </div>
-                   <div className="flex flex-col gap-6">
-                      <Card>
-                        <CardHeader><CardTitle className="text-lg">{t.transcript}</CardTitle></CardHeader>
-                        <CardContent>
-                          <ScrollArea className="h-28">
-                              <p className="italic text-muted-foreground">{feedback.transcribedText}</p>
-                          </ScrollArea>
-                        </CardContent>
-                      </Card>
-                      <Card className="flex-grow">
-                        <CardHeader><CardTitle className="text-lg">{t.improvementAreas}</CardTitle></CardHeader>
-                        <CardContent>
-                           <Tabs defaultValue="overall" className="w-full">
-                            <TabsList className="grid w-full grid-cols-2">
-                                <TabsTrigger value="overall">{t.overallFeedback}</TabsTrigger>
-                                <TabsTrigger value="details">{t.detailedAnalysis}</TabsTrigger>
-                            </TabsList>
-                             <ScrollArea className="h-56 mt-4">
-                                <TabsContent value="overall">
-                                    <p className="text-sm">{feedback.overallFeedback}</p>
-                                </TabsContent>
-                                <TabsContent value="details">
-                                    <div className="space-y-4 text-sm">
-                                      <div><h4 className="font-semibold">{t.rapport}</h4><p className="text-muted-foreground">{feedback.rapportFeedback}</p></div>
-                                      <div><h4 className="font-semibold">{t.organisation}</h4><p className="text-muted-foreground">{feedback.organisationFeedback}</p></div>
-                                      <div><h4 className="font-semibold">{t.delivery}</h4><p className="text-muted-foreground">{feedback.deliveryFeedback}</p></div>
-                                      <div><h4 className="font-semibold">{t.languageUse}</h4><p className="text-muted-foreground">{feedback.languageUseFeedback}</p></div>
-                                      <div><h4 className="font-semibold">{t.creativity}</h4><p className="text-muted-foreground">{feedback.creativityFeedback}</p></div>
-                                    </div>
-                                </TabsContent>
-                              </ScrollArea>
-                            </Tabs>
-                        </CardContent>
-                      </Card>
-                   </div>
-                 </div>
-              )}
-              </CardContent>
-            </Card>
+                )}
+                </CardContent>
+              </Card>
+            </div>
           </div>
-        </div>
+        )}
       </main>
 
       <footer className="bg-card mt-24 border-t">
@@ -522,5 +565,3 @@ export default function Home() {
     </div>
   );
 }
-
-    

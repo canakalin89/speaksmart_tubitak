@@ -12,6 +12,11 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { getFirestore } from 'firebase/firestore';
+import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { collection } from 'firebase/firestore';
+import { initializeFirebase } from '@/firebase';
+
 
 const GenAiAssistedFeedbackInputSchema = z.object({
   audio: z
@@ -23,6 +28,8 @@ const GenAiAssistedFeedbackInputSchema = z.object({
     .string()
     .describe('The description of the speaking task the student completed.'),
   language: z.enum(['tr', 'en']).describe('The language for the feedback response.'),
+  userId: z.string().optional().describe("The user's ID, if they are logged in."),
+  taskId: z.string().describe("The ID of the task being attempted.")
 });
 export type GenAiAssistedFeedbackInput = z.infer<typeof GenAiAssistedFeedbackInputSchema>;
 
@@ -50,7 +57,24 @@ const GenAiAssistedFeedbackOutputSchema = z.object({
 export type GenAiAssistedFeedbackOutput = z.infer<typeof GenAiAssistedFeedbackOutputSchema>;
 
 export async function genAiAssistedFeedback(input: GenAiAssistedFeedbackInput): Promise<GenAiAssistedFeedbackOutput> {
-  return genAiAssistedFeedbackFlow(input);
+  const result = await genAiAssistedFeedbackFlow(input);
+
+  if (input.userId) {
+    const { firestore } = initializeFirebase();
+    const progressRef = collection(firestore, 'users', input.userId, 'progress');
+    
+    // We don't block the response to the user while we save the data.
+    addDocumentNonBlocking(progressRef, {
+        userId: input.userId,
+        taskId: input.taskId,
+        completionStatus: 'completed',
+        attempts: 1, // This could be incremented in a more complex scenario
+        feedback: JSON.stringify(result), // Storing the full feedback
+        ...result
+    });
+  }
+
+  return result;
 }
 
 const prompt = ai.definePrompt({
@@ -114,5 +138,3 @@ const genAiAssistedFeedbackFlow = ai.defineFlow(
     return output!;
   }
 );
-
-

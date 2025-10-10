@@ -13,7 +13,7 @@ export function Mascot() {
         <ellipse cx="100" cy="185" rx="45" ry="8" fill="hsl(var(--primary))" opacity="0.2" className="animate-shadow-pulse" />
 
         {/* Body */}
-        <g transform="translate(0 -10)">
+        <g transform="translate(0 -10)" className="animate-body-flip">
           <rect x="70" y="100" width="60" height="70" rx="15" fill="hsl(var(--secondary))" />
           {/* Screen */}
           <rect x="80" y="110" width="40" height="30" rx="5" fill="hsl(var(--background))" />
@@ -37,20 +37,29 @@ export function Mascot() {
             transform-origin: center;
           }
           @keyframes float {
-             0%, 100% { transform: translateY(0px) rotate(0deg); }
-             25% { transform: translateY(-8px) rotate(-3deg); }
-             50% { transform: translateY(-12px) rotate(0deg); }
-             75% { transform: translateY(-8px) rotate(3deg); }
+             0% { transform: translateY(0px); }
+             50% { transform: translateY(-20px); }
+             100% { transform: translateY(0px); }
+          }
+           @keyframes body-flip {
+            0% { transform: rotate(0deg) translateY(0); }
+            25% { transform: rotate(5deg) translateY(-15px); }
+            70% { transform: rotate(-5deg) translateY(-10px); }
+            90%, 100% { transform: rotate(360deg) translateY(0); }
+           }
+          .animate-body-flip {
+             animation: body-flip 5s ease-in-out infinite;
+             transform-origin: center 135px;
           }
           .animate-float {
-            animation: float 5s ease-in-out infinite;
+            animation: float 2.5s ease-in-out infinite;
           }
            @keyframes shadow-pulse {
              0%, 100% { transform: scaleX(1); opacity: 0.2; }
-             50% { transform: scaleX(0.9); opacity: 0.1; }
+             50% { transform: scaleX(0.8); opacity: 0.1; }
           }
           .animate-shadow-pulse {
-            animation: shadow-pulse 5s ease-in-out infinite;
+            animation: shadow-pulse 2.5s ease-in-out infinite;
             transform-origin: center;
           }
           @keyframes antenna-pulse {

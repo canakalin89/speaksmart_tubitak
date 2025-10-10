@@ -233,7 +233,7 @@ export default function Home() {
                               <Twitter className="h-5 w-5" />
                           </Button>
                       </a>
-                      <a href="https://www.youtube.com/@asalanadolulisesi" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+                      <a href="https://www.youtube.com/@AzizSancarAnadoluLisesi" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
                           <Button variant="ghost" size="icon">
                               <Youtube className="h-5 w-5" />
                           </Button>

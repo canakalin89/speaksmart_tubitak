@@ -60,8 +60,10 @@ const content = {
     toastMicError: 'Mikrofon Hatası',
     toastMicErrorDesc: 'Mikrofona erişilemedi. Lütfen tarayıcı izinlerinizi kontrol edin.',
     footerRights: 'Tüm hakları saklıdır.',
-    tubitak: 'TÜBİTAK 2204-A Projesi',
+    tubitak: 'TÜBİTAK 4006-B Projesi',
+    tubitakDesc: 'Bu proje, Tekirdağ Kapaklı Aziz Sancar Anadolu Lisesi tarafından yürütülen TÜBİTAK 4006-B Bilim Fuarları Destekleme Programı kapsamında geliştirilmiştir.',
     maarif: 'Türkiye Yüzyılı Maarif Modeli',
+    maarifDesc: 'Türkiye Yüzyılı Maarif Modeli\'nin öğrenci merkezli ve beceri odaklı yaklaşımını destekler.',
     social: 'Sosyal Medya',
     links: 'Faydalı Linkler',
   },
@@ -108,8 +110,10 @@ const content = {
     toastMicError: 'Microphone Error',
     toastMicErrorDesc: 'Could not access the microphone. Please check your browser permissions.',
     footerRights: 'All rights reserved.',
-    tubitak: 'TÜBİTAK 2204-A Project',
+    tubitak: 'TÜBİTAK 4006-B Project',
+    tubitakDesc: 'This project was developed within the scope of the TÜBİTAK 4006-B Science Fairs Support Program, conducted by Tekirdağ Kapaklı Aziz Sancar Anatolian High School.',
     maarif: 'Turkish Century Maarif Model',
+    maarifDesc: 'Supports the student-centered and skill-oriented approach of the Turkish Century Maarif Model.',
     social: 'Social Media',
     links: 'Useful Links',
   }
@@ -495,11 +499,11 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
                 <div>
                     <h3 className="font-semibold text-gray-800 mb-2 flex items-center justify-center md:justify-start gap-2"><Atom className="w-5 h-5"/> {t.tubitak}</h3>
-                    <p className="text-sm text-gray-500">Bu proje, TÜBİTAK 2204-A Lise Öğrencileri Araştırma Projeleri Yarışması kapsamında desteklenmektedir.</p>
+                    <p className="text-sm text-gray-500">{t.tubitakDesc}</p>
                 </div>
                 <div>
                     <h3 className="font-semibold text-gray-800 mb-2 flex items-center justify-center md:justify-start gap-2"><CreativeCommons className="w-5 h-5"/> {t.maarif}</h3>
-                    <p className="text-sm text-gray-500">Türkiye Yüzyılı Maarif Modeli'nin öğrenci merkezli ve beceri odaklı yaklaşımını destekler.</p>
+                    <p className="text-sm text-gray-500">{t.maarifDesc}</p>
                 </div>
                 <div>
                     <h3 className="font-semibold text-gray-800 mb-2">{t.social}</h3>
@@ -518,3 +522,5 @@ export default function Home() {
     </div>
   );
 }
+
+    

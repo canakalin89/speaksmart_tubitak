@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
@@ -227,7 +228,7 @@ export default function Home() {
                               <Instagram className="h-5 w-5" />
                           </Button>
                       </a>
-                      <a href="https://x.com/asalanadolulise" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
+                      <a href="https://x.com/asalkapakli2019" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
                           <Button variant="ghost" size="icon">
                               <Twitter className="h-5 w-5" />
                           </Button>

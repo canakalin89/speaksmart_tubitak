@@ -37,10 +37,10 @@ const GenAiAssistedFeedbackOutputSchema = z.object({
   deliveryFeedback: z.string().describe('Feedback on the student’s delivery (pace, intonation, clarity, and pronunciation).'),
   deliveryScore: z.number().describe('A score from 0-100 for the student\'s delivery.'),
 
-  languageUseFeedback: z.string().describe('Feedback on the student\'s language use (grammar and vocabulary).'),
+  languageUseFeedback: z.string().describe('Feedback on the student’s language use (grammar and vocabulary).'),
   languageUseScore: z.number().describe('A score from 0-100 for the student\'s language use.'),
 
-  creativityFeedback: z.string().describe('Feedback on the student\'s creativity (originality of ideas, vivid language).'),
+  creativityFeedback: z.string().describe('Feedback on the student’s creativity (originality of ideas, vivid language).'),
   creativityScore: z.number().describe('A score from 0-100 for the student\'s creativity.'),
 
   overallFeedback: z.string().describe('Overall feedback on the student’s speaking performance.'),
@@ -63,7 +63,13 @@ const prompt = ai.definePrompt({
 
   Then, based on the audio and the provided task description, provide feedback on the following 5 criteria:
 
-  1.  Rapport with the audience: From the audio, analyze the speaker's tone of voice. Is it engaging, enthusiastic, and friendly? Do they use rhetorical questions or other techniques to connect with the listener? Provide a score from 0-100.
+  1.  Rapport with the audience: From the audio and transcribed text, analyze the speaker's connection with the audience.
+      - Demonstrates understanding of the subject.
+      - Addresses all parts of the given task accurately.
+      - Provides additional relevant details when needed.
+      - The presentation has a clear beginning, middle, and end.
+      Provide a score from 0-100 for this category.
+
   2.  Organisation: Analyze the structure of the speech. Does it have a clear beginning, middle, and end? Is the flow of ideas well-sequenced? Provide a score from 0-100.
   3.  Delivery: Analyze the delivery from the audio. Comment on pace, intonation, clarity and pronunciation. Is the voice strong and clear? Provide a score from 0-100.
   4.  Language use: Analyze the grammar and vocabulary from the transcribed text. Is the grammar accurate? Is the vocabulary varied and used correctly? Provide a score from 0-100.

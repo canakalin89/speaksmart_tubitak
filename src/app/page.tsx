@@ -125,6 +125,9 @@ export default function Home() {
             <p className="mt-2 text-lg text-muted-foreground">
               <span className="font-semibold">Türkiye Yüzyılı Maarif Modeli</span> ile İngilizce konuşma becerilerinizi geliştirin.
             </p>
+            <p className="mt-2 text-md text-muted-foreground">
+              Aziz Sancar Anadolu Lisesi - TÜBİTAK 4006-B Projesi
+            </p>
           </div>
       </header>
       <main className="container mx-auto p-4 md:p-8">

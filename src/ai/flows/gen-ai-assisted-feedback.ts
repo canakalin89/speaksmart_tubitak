@@ -3,7 +3,7 @@
 
 /**
  * @fileOverview Provides AI-powered feedback on a student's spoken English by directly analyzing audio.
- * It assesses pronunciation, fluency, and grammar, and also provides a transcription.
+ * It assesses organisation, delivery, and language use, and also provides a transcription.
  *
  * - genAiAssistedFeedback - A function that handles the process of generating feedback for student's speech.
  * - GenAiAssistedFeedbackInput - The input type for the genAiAssistedFeedback function.
@@ -27,12 +27,12 @@ export type GenAiAssistedFeedbackInput = z.infer<typeof GenAiAssistedFeedbackInp
 
 const GenAiAssistedFeedbackOutputSchema = z.object({
   transcribedText: z.string().describe('The transcription of the spoken audio.'),
-  pronunciationFeedback: z.string().describe('Feedback on the student’s pronunciation based on the audio.'),
-  pronunciationScore: z.number().describe('A score from 0-100 for the student\'s pronunciation.'),
-  fluencyFeedback: z.string().describe('Feedback on the student’s fluency based on the audio.'),
-  fluencyScore: z.number().describe('A score from 0-100 for the student\'s fluency.'),
-  grammarFeedback: z.string().describe('Feedback on the student’s grammar based on the transcribed text.'),
-  grammarScore: z.number().describe('A score from 0-100 for the student\'s grammar.'),
+  organisationFeedback: z.string().describe('Feedback on the student’s organisation based on the audio (clarity of beginning, middle, end, and flow of ideas).'),
+  organisationScore: z.number().describe('A score from 0-100 for the student\'s organisation.'),
+  deliveryFeedback: z.string().describe('Feedback on the student’s delivery based on the audio (strong/clear voice, pronunciation).'),
+  deliveryScore: z.number().describe('A score from 0-100 for the student\'s delivery.'),
+  languageUseFeedback: z.string().describe('Feedback on the student’s language use based on the transcribed text (grammar and vocabulary).'),
+  languageUseScore: z.number().describe('A score from 0-100 for the student\'s language use.'),
   overallFeedback: z.string().describe('Overall feedback on the student’s speaking performance.'),
   overallScore: z.number().describe('An overall score from 0-100 for the student\'s performance.'),
 });
@@ -53,9 +53,9 @@ const prompt = ai.definePrompt({
 
   Then, based on the audio and the provided task description, provide feedback on the following aspects:
 
-  1.  Pronunciation: Directly analyze the student's pronunciation from the audio. Highlight any mispronounced words or sounds. Suggest ways to improve their pronunciation. Then, provide a score for their pronunciation on a scale of 0 to 100.
-  2.  Fluency: Assess the student's fluency from the audio, commenting on their pace, rhythm, and use of pauses. Provide tips on how to speak more fluently. Then, provide a score for their fluency on a scale of 0 to 100.
-  3.  Grammar: Review the grammar of the transcribed text, pointing out any errors and suggesting corrections. Explain the grammatical rules involved. Then, provide a score for their grammar on a scale of 0 to 100.
+  1.  Organisation: Analyze the structure of the speech. Does it have a clear beginning, middle, and end? Is the flow of ideas well-sequenced? Provide a score from 0-100.
+  2.  Delivery: Analyze the delivery from the audio. Is the voice strong and clear? Is the pronunciation clear and accurate? Comment on pace and rhythm. Provide a score from 0-100.
+  3.  Language Use: Review the grammar and vocabulary of the transcribed text. Is the grammar accurate? Is the vocabulary relevant and varied? Provide a score from 0-100.
   4.  Overall: Provide overall feedback on the student's speaking performance, summarizing their strengths and weaknesses, and offering actionable advice for improvement. Then, provide an overall score as the average of the other three scores.
 
   Task Description: {{{taskDescription}}}
@@ -78,5 +78,3 @@ const genAiAssistedFeedbackFlow = ai.defineFlow(
     return output!;
   }
 );
-
-    

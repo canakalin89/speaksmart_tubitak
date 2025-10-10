@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from '@/components/ui/textarea';
 import { Progress } from "@/components/ui/progress";
-import { Mic, MicOff, Loader2, Languages, GraduationCap, Zap, BrainCircuit, Speech, FileUp, School, Link as LinkIcon, Instagram, Twitter, Youtube } from 'lucide-react';
+import { Mic, MicOff, Loader2, Languages, GraduationCap, Zap, BrainCircuit, Speech, FileUp, School, Link as LinkIcon, Instagram, Twitter, Youtube, CheckSquare, MessageSquare, Presentation } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Mascot, MascotLoading } from '@/components/mascot';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -336,17 +336,17 @@ export default function Home() {
                               <p className="text-6xl font-bold text-primary">{feedback.overallScore}</p>
                             </div>
                             <div className="space-y-4">
-                              <ScoreDisplay score={feedback.pronunciationScore} label="Telaffuz" />
-                              <ScoreDisplay score={feedback.fluencyScore} label="Akıcılık" />
-                              <ScoreDisplay score={feedback.grammarScore} label="Dil Bilgisi" />
+                              <ScoreDisplay score={feedback.organisationScore} label="Organizasyon" />
+                              <ScoreDisplay score={feedback.deliveryScore} label="Sunum" />
+                              <ScoreDisplay score={feedback.languageUseScore} label="Dil Kullanımı" />
                             </div>
                           </div>
                           <Tabs defaultValue="overall" className="w-full">
                             <TabsList className="grid w-full grid-cols-4">
                               <TabsTrigger value="overall">Genel</TabsTrigger>
-                              <TabsTrigger value="pronunciation">Telaffuz</TabsTrigger>
-                              <TabsTrigger value="fluency">Akıcılık</TabsTrigger>
-                              <TabsTrigger value="grammar">Dil Bilgisi</TabsTrigger>
+                              <TabsTrigger value="organisation">Organizasyon</TabsTrigger>
+                              <TabsTrigger value="delivery">Sunum</TabsTrigger>
+                              <TabsTrigger value="languageUse">Dil Kullanımı</TabsTrigger>
                             </TabsList>
                              <ScrollArea className="h-48 md:h-56 mt-4">
                                 <TabsContent value="overall">
@@ -359,33 +359,33 @@ export default function Home() {
                                     </CardContent>
                                   </Card>
                                 </TabsContent>
-                                <TabsContent value="pronunciation">
+                                <TabsContent value="organisation">
                                   <Card>
                                     <CardHeader>
-                                      <CardTitle className="flex items-center gap-2"><Speech /> Telaffuz Geri Bildirimi</CardTitle>
+                                      <CardTitle className="flex items-center gap-2"><Presentation /> Organizasyon Geri Bildirimi</CardTitle>
                                     </CardHeader>
                                     <CardContent>
-                                      <p>{feedback.pronunciationFeedback}</p>
+                                      <p>{feedback.organisationFeedback}</p>
                                     </CardContent>
                                   </Card>
                                 </TabsContent>
-                                <TabsContent value="fluency">
+                                <TabsContent value="delivery">
                                   <Card>
                                     <CardHeader>
-                                      <CardTitle className="flex items-center gap-2"><Zap /> Akıcılık Geri Bildirimi</CardTitle>
+                                      <CardTitle className="flex items-center gap-2"><CheckSquare /> Sunum Geri Bildirimi</CardTitle>
                                     </CardHeader>
                                     <CardContent>
-                                      <p>{feedback.fluencyFeedback}</p>
+                                      <p>{feedback.deliveryFeedback}</p>
                                     </CardContent>
                                   </Card>
                                 </TabsContent>
-                                <TabsContent value="grammar">
+                                <TabsContent value="languageUse">
                                   <Card>
                                     <CardHeader>
-                                      <CardTitle className="flex items-center gap-2"><GraduationCap /> Dil Bilgisi Geri Bildirimi</CardTitle>
+                                      <CardTitle className="flex items-center gap-2"><MessageSquare /> Dil Kullanımı Geri Bildirimi</CardTitle>
                                     </CardHeader>
                                     <CardContent>
-                                      <p>{feedback.grammarFeedback}</p>
+                                      <p>{feedback.languageUseFeedback}</p>
                                     </CardContent>
                                   </Card>
                                 </TabsContent>
@@ -407,5 +407,3 @@ export default function Home() {
     </div>
   );
 }
-
-    

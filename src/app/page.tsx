@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from '@/components/ui/textarea';
 import { Progress } from "@/components/ui/progress";
-import { Mic, MicOff, Loader2, Languages, GraduationCap, Zap, BrainCircuit, Speech, FileUp } from 'lucide-react';
+import { Mic, MicOff, Loader2, Languages, GraduationCap, Zap, BrainCircuit, Speech, FileUp, School, Link as LinkIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Mascot, MascotLoading } from '@/components/mascot';
 
@@ -148,18 +148,36 @@ export default function Home() {
       const timer = setTimeout(() => setProgress(score), 300);
       return () => clearTimeout(timer);
     }, [score]);
+    
+    // Determine color based on score
+    const getScoreColor = (score: number) => {
+      if (score < 50) return 'red';
+      if (score < 75) return 'yellow';
+      return 'green';
+    }
+    
+    const color = getScoreColor(score);
+    
+    const indicatorColorClass = {
+        'red': 'bg-red-500',
+        'yellow': 'bg-yellow-500',
+        'green': 'bg-green-500'
+    }[color];
+    
+    const textColorClass = {
+        'red': 'text-red-500',
+        'yellow': 'text-yellow-500',
+        'green': 'text-green-500'
+    }[color];
 
-    let colorClass = 'bg-primary';
-    if (score < 50) colorClass = 'bg-red-500';
-    else if (score < 75) colorClass = 'bg-yellow-500';
 
     return (
       <div className="space-y-2">
         <div className="flex justify-between items-baseline">
           <span className="font-medium">{label}</span>
-          <span className={`text-xl font-bold ${colorClass.replace('bg-','text-')}`}>{score} / 100</span>
+          <span className={`text-xl font-bold ${textColorClass}`}>{score} / 100</span>
         </div>
-        <Progress value={progress} indicatorClassName={colorClass} />
+        <Progress value={progress} indicatorClassName={indicatorColorClass} />
       </div>
     );
   };
@@ -168,21 +186,44 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="py-6 px-4 md:px-8 border-b border-border shadow-sm">
+       <header className="py-6 px-4 md:px-8 bg-secondary text-secondary-foreground shadow-lg">
           <div className="container mx-auto text-center">
             <div className="flex justify-center items-center gap-4 mb-2">
-              <GraduationCap className="w-12 h-12 text-primary"/>
-              <h1 className="text-4xl font-bold text-primary tracking-tight">AI İngilizce Eğitmeni</h1>
+              <School className="w-12 h-12 text-primary"/>
+              <div>
+                 <h1 className="text-4xl font-bold text-primary tracking-tight">AI İngilizce Eğitmeni</h1>
+                 <p className="text-lg text-secondary-foreground/80">
+                   Aziz Sancar Anadolu Lisesi - TÜBİTAK 4006-B Projesi
+                 </p>
+              </div>
             </div>
-            <p className="mt-2 text-lg text-muted-foreground">
+            <p className="mt-4 text-lg text-secondary-foreground/90">
               <span className="font-semibold">Türkiye Yüzyılı Maarif Modeli</span> ile İngilizce konuşma becerilerinizi geliştirin.
-            </p>
-            <p className="mt-2 text-md text-muted-foreground">
-              Aziz Sancar Anadolu Lisesi - TÜBİTAK 4006-B Projesi
             </p>
           </div>
       </header>
       <main className="container mx-auto p-4 md:p-8">
+        <Card className="mb-8 bg-card/80 backdrop-blur-sm border-primary/20">
+            <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                    <GraduationCap className="text-primary" />
+                    TÜBİTAK 4006-B Bilim Fuarı Projesi
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                <p className="text-muted-foreground mb-4">
+                    Bu proje, Aziz Sancar Anadolu Lisesi öğrencileri tarafından TÜBİTAK 4006-B Bilim Fuarı için geliştirilmiştir. Amacımız, Türkiye Yüzyılı Maarif Modeli hedefleri doğrultusunda, yapay zeka teknolojisini kullanarak İngilizce konuşma becerilerini geliştirmeye yönelik yenilikçi ve interaktif bir araç sunmaktır.
+                </p>
+                <a href="http://azizsancaranadolu.meb.k12.tr" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2">
+                    <Button variant="outline">
+                        <LinkIcon />
+                        Okul Web Sitesini Ziyaret Et
+                    </Button>
+                </a>
+            </CardContent>
+        </Card>
+
+
         <div className="grid gap-8 lg:grid-cols-5">
           <Card className="lg:col-span-2">
             <CardHeader>
@@ -274,7 +315,7 @@ export default function Home() {
                   {transcribedText && (
                     <div className="space-y-4 mb-6">
                        <h4 className="font-semibold flex items-center gap-2"><Languages/> Konuşmanızın Metni</h4>
-                       <p className="italic text-muted-foreground bg-secondary/50 p-4 rounded-md">{transcribedText}</p>
+                       <p className="italic text-muted-foreground bg-muted p-4 rounded-md">{transcribedText}</p>
                     </div>
                   )}
 
@@ -355,5 +396,3 @@ export default function Home() {
     </div>
   );
 }
-
-    

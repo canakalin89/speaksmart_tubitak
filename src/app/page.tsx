@@ -15,6 +15,8 @@ import { Progress } from "@/components/ui/progress";
 import { Mic, MicOff, Loader2, Languages, GraduationCap, Zap, BrainCircuit, Speech, FileUp, School, Link as LinkIcon, Instagram, Twitter, Youtube } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Mascot, MascotLoading } from '@/components/mascot';
+import { ScrollArea } from '@/components/ui/scroll-area';
+
 
 export default function Home() {
   const [taskDescription, setTaskDescription] = useState('');
@@ -186,7 +188,7 @@ export default function Home() {
   const canSubmit = taskDescription.trim().length > 0;
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
        <header className="py-2 px-4 md:px-8 bg-secondary text-secondary-foreground shadow-lg">
           <div className="container mx-auto text-center">
             <div className="flex justify-center items-center gap-3">
@@ -198,12 +200,9 @@ export default function Home() {
                  </p>
               </div>
             </div>
-            <p className="mt-1 text-sm text-secondary-foreground/90">
-              <span className="font-semibold">Türkiye Yüzyılı Maarif Modeli</span> ile İngilizce konuşma becerilerinizi geliştirin.
-            </p>
           </div>
       </header>
-      <main className="container mx-auto p-4 md:p-8">
+      <main className="container mx-auto p-4 md:p-8 flex-grow">
         <Card className="mb-8 bg-card/80 backdrop-blur-sm border-primary/20">
             <CardHeader>
                 <CardTitle className="flex items-center gap-3">
@@ -244,11 +243,11 @@ export default function Home() {
         </Card>
 
 
-        <div className="grid gap-8 lg:grid-cols-5">
-          <Card className="lg:col-span-2">
+        <div className="grid gap-8 lg:grid-cols-2">
+          <Card>
             <CardHeader>
-              <CardTitle>1. Görevinizi Tanımlayın</CardTitle>
-              <CardDescription>Konuşma görevinizi açıklayın ve başlayın.</CardDescription>
+              <CardTitle>1. Görevinizi Tanımlayın ve Konuşun</CardTitle>
+              <CardDescription>Konuşma görevinizi açıklayın ve sesinizi kaydedin veya yükleyin.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <Textarea
@@ -306,106 +305,110 @@ export default function Home() {
             </CardContent>
           </Card>
 
-          <div className="lg:col-span-3 space-y-8">
-            {isLoading && !feedback && (
-               <Card className="flex flex-col items-center justify-center p-8 h-full min-h-[400px]">
-                  <MascotLoading />
-                  <h3 className="text-2xl font-semibold text-primary mb-2 mt-6">Analiz Ediliyor...</h3>
-                  <p className="text-lg text-muted-foreground">Yapay zeka konuşmanızı değerlendiriyor, lütfen bekleyin.</p>
-               </Card>
-            )}
+          <Card className="flex flex-col h-full">
+             <CardHeader>
+                <CardTitle>3. Sonuçlar ve Geri Bildirim</CardTitle>
+                <CardDescription>Konuşmanızın analizi ve gelişim önerileri.</CardDescription>
+             </CardHeader>
+             <CardContent className="flex-grow flex flex-col">
+                 {isLoading && !feedback && (
+                   <div className="flex-grow flex flex-col items-center justify-center p-8">
+                      <MascotLoading />
+                      <h3 className="text-2xl font-semibold text-primary mb-2 mt-6">Analiz Ediliyor...</h3>
+                      <p className="text-lg text-muted-foreground">Yapay zeka konuşmanızı değerlendiriyor, lütfen bekleyin.</p>
+                   </div>
+                )}
 
-            {!isLoading && !feedback && !transcribedText && (
-              <Card className="flex flex-col items-center justify-center p-8 h-full min-h-[400px] text-center border-dashed">
-                  <Mascot />
-                  <h3 className="text-xl font-semibold mb-2 mt-4">Başlamaya Hazır mısınız?</h3>
-                  <p className="text-muted-foreground max-w-md">
-                    Görevinizi tanımlayın, kayda başlayın ve yapay zeka destekli anında geri bildirim alarak İngilizce konuşmanızı mükemmelleştirin!
-                  </p>
-              </Card>
-            )}
+                {!isLoading && !feedback && !transcribedText && (
+                  <div className="flex-grow flex flex-col items-center justify-center p-8 text-center border-dashed border-2 rounded-lg">
+                      <Mascot />
+                      <h3 className="text-xl font-semibold mb-2 mt-4">Başlamaya Hazır mısınız?</h3>
+                      <p className="text-muted-foreground max-w-md">
+                        Görevinizi tanımlayın, kayda başlayın ve yapay zeka destekli anında geri bildirim alarak İngilizce konuşmanızı mükemmelleştirin!
+                      </p>
+                  </div>
+                )}
 
-            {(transcribedText || feedback) && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>3. Sonuçlar ve Geri Bildirim</CardTitle>
-                  <CardDescription>Konuşmanızın analizi ve gelişim önerileri.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {transcribedText && (
-                    <div className="space-y-4 mb-6">
-                       <h4 className="font-semibold flex items-center gap-2"><Languages/> Konuşmanızın Metni</h4>
-                       <p className="italic text-muted-foreground bg-muted p-4 rounded-md">{transcribedText}</p>
+                {(transcribedText || feedback) && (
+                   <div className='flex flex-col h-full'>
+                      {transcribedText && (
+                        <div className="space-y-4 mb-6">
+                          <h4 className="font-semibold flex items-center gap-2"><Languages/> Konuşmanızın Metni</h4>
+                          <ScrollArea className="h-24 md:h-28">
+                             <p className="italic text-muted-foreground bg-muted p-4 rounded-md">{transcribedText}</p>
+                          </ScrollArea>
+                        </div>
+                      )}
+
+                      {feedback && (
+                        <div className="flex-grow">
+                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 p-4 border rounded-lg">
+                            <div className="flex flex-col items-center justify-center gap-2">
+                              <span className="text-lg font-medium text-muted-foreground">Genel Puan</span>
+                              <p className="text-6xl font-bold text-primary">{feedback.overallScore}</p>
+                            </div>
+                            <div className="space-y-4">
+                              <ScoreDisplay score={feedback.pronunciationScore} label="Telaffuz" />
+                              <ScoreDisplay score={feedback.fluencyScore} label="Akıcılık" />
+                              <ScoreDisplay score={feedback.grammarScore} label="Dil Bilgisi" />
+                            </div>
+                          </div>
+                          <Tabs defaultValue="overall" className="w-full">
+                            <TabsList className="grid w-full grid-cols-4">
+                              <TabsTrigger value="overall">Genel</TabsTrigger>
+                              <TabsTrigger value="pronunciation">Telaffuz</TabsTrigger>
+                              <TabsTrigger value="fluency">Akıcılık</TabsTrigger>
+                              <TabsTrigger value="grammar">Dil Bilgisi</TabsTrigger>
+                            </TabsList>
+                             <ScrollArea className="h-48 md:h-56 mt-4">
+                                <TabsContent value="overall">
+                                  <Card>
+                                    <CardHeader>
+                                      <CardTitle className="flex items-center gap-2"><BrainCircuit /> Genel Değerlendirme</CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                      <p>{feedback.overallFeedback}</p>
+                                    </CardContent>
+                                  </Card>
+                                </TabsContent>
+                                <TabsContent value="pronunciation">
+                                  <Card>
+                                    <CardHeader>
+                                      <CardTitle className="flex items-center gap-2"><Speech /> Telaffuz Geri Bildirimi</CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                      <p>{feedback.pronunciationFeedback}</p>
+                                    </CardContent>
+                                  </Card>
+                                </TabsContent>
+                                <TabsContent value="fluency">
+                                  <Card>
+                                    <CardHeader>
+                                      <CardTitle className="flex items-center gap-2"><Zap /> Akıcılık Geri Bildirimi</CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                      <p>{feedback.fluencyFeedback}</p>
+                                    </CardContent>
+                                  </Card>
+                                </TabsContent>
+                                <TabsContent value="grammar">
+                                  <Card>
+                                    <CardHeader>
+                                      <CardTitle className="flex items-center gap-2"><GraduationCap /> Dil Bilgisi Geri Bildirimi</CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                      <p>{feedback.grammarFeedback}</p>
+                                    </CardContent>
+                                  </Card>
+                                </TabsContent>
+                             </ScrollArea>
+                          </Tabs>
+                        </div>
+                      )}
                     </div>
-                  )}
-
-                  {feedback && (
-                    <>
-                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 p-4 border rounded-lg">
-                        <div className="flex flex-col items-center justify-center gap-2">
-                          <span className="text-lg font-medium text-muted-foreground">Genel Puan</span>
-                          <p className="text-6xl font-bold text-primary">{feedback.overallScore}</p>
-                        </div>
-                        <div className="space-y-4">
-                          <ScoreDisplay score={feedback.pronunciationScore} label="Telaffuz" />
-                          <ScoreDisplay score={feedback.fluencyScore} label="Akıcılık" />
-                          <ScoreDisplay score={feedback.grammarScore} label="Dil Bilgisi" />
-                        </div>
-                      </div>
-                      <Tabs defaultValue="overall" className="w-full">
-                        <TabsList className="grid w-full grid-cols-4">
-                          <TabsTrigger value="overall">Genel</TabsTrigger>
-                          <TabsTrigger value="pronunciation">Telaffuz</TabsTrigger>
-                          <TabsTrigger value="fluency">Akıcılık</TabsTrigger>
-                          <TabsTrigger value="grammar">Dil Bilgisi</TabsTrigger>
-                        </TabsList>
-                        <TabsContent value="overall" className="mt-4">
-                          <Card>
-                            <CardHeader>
-                              <CardTitle className="flex items-center gap-2"><BrainCircuit /> Genel Değerlendirme</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                              <p>{feedback.overallFeedback}</p>
-                            </CardContent>
-                          </Card>
-                        </TabsContent>
-                        <TabsContent value="pronunciation" className="mt-4">
-                          <Card>
-                            <CardHeader>
-                              <CardTitle className="flex items-center gap-2"><Speech /> Telaffuz Geri Bildirimi</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                              <p>{feedback.pronunciationFeedback}</p>
-                            </CardContent>
-                          </Card>
-                        </TabsContent>
-                        <TabsContent value="fluency" className="mt-4">
-                          <Card>
-                            <CardHeader>
-                              <CardTitle className="flex items-center gap-2"><Zap /> Akıcılık Geri Bildirimi</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                              <p>{feedback.fluencyFeedback}</p>
-                            </CardContent>
-                          </Card>
-                        </TabsContent>
-                        <TabsContent value="grammar" className="mt-4">
-                          <Card>
-                            <CardHeader>
-                              <CardTitle className="flex items-center gap-2"><GraduationCap /> Dil Bilgisi Geri Bildirimi</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                              <p>{feedback.grammarFeedback}</p>
-                            </CardContent>
-                          </Card>
-                        </TabsContent>
-                      </Tabs>
-                    </>
-                  )}
-                </CardContent>
-              </Card>
-            )}
-          </div>
+                )}
+             </CardContent>
+          </Card>
         </div>
       </main>
       <footer className="py-4 px-4 md:px-8 border-t border-border mt-8">

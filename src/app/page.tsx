@@ -18,7 +18,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 
 const content = {
   tr: {
-    title: 'Yapay Zeka İngilizce Eğitmeni',
+    title: 'SpeakSmart',
     subtitle: 'Türkiye Yüzyılı Maarif Modeli ile İngilizce konuşma pratiği yapın.',
     step1: 'Görevinizi Tanımlayın ve Konuşun',
     step1Desc: 'Konuşma görevinizi açıklayın ve sesinizi kaydedin veya yükleyin.',
@@ -68,7 +68,7 @@ const content = {
     links: 'Faydalı Linkler',
   },
   en: {
-    title: 'AI English Tutor',
+    title: 'SpeakSmart',
     subtitle: 'Practice English speaking with the Turkish Century Maarif Model.',
     step1: 'Define Your Task and Speak',
     step1Desc: 'Describe your speaking task, then record or upload your audio.',

@@ -3,7 +3,7 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'Yapay Zeka İngilizce Eğitmeni',
+  title: 'SpeakSmart',
   description:
     'Türkiye Yüzyılı Maarif Modeli ile İngilizce konuşma pratiği yapın.',
 };

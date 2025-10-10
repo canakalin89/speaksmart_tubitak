@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from '@/components/ui/textarea';
 import { Progress } from "@/components/ui/progress";
-import { Mic, MicOff, Loader2, Languages, GraduationCap, Zap, BrainCircuit, Speech, FileUp, School, Link as LinkIcon, Instagram, Twitter, Youtube, CheckSquare, MessageSquare, Presentation, BookOpen, PenTool } from 'lucide-react';
+import { Mic, MicOff, Loader2, Languages, GraduationCap, Zap, BrainCircuit, Speech, FileUp, School, Link as LinkIcon, Instagram, Twitter, Youtube, Users, Atom, CreativeCommons, MessageCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Mascot, MascotLoading } from '@/components/mascot';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -177,12 +177,12 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
-       <header className="py-2 px-4 md:px-8 bg-secondary text-secondary-foreground shadow-lg">
+       <header className="py-2 px-4 md:px-6 bg-secondary text-secondary-foreground shadow-lg">
           <div className="container mx-auto text-center">
             <div className="flex justify-center items-center gap-3">
-              <School className="w-6 h-6 text-primary"/>
+              <School className="w-5 h-5 text-primary"/>
               <div>
-                 <h1 className="text-xl font-bold text-primary tracking-tight">AI İngilizce Eğitmeni</h1>
+                 <h1 className="text-lg font-bold text-primary tracking-tight">AI İngilizce Eğitmeni</h1>
                  <p className="text-xs text-secondary-foreground/80">
                    Aziz Sancar Anadolu Lisesi - TÜBİTAK 4006-B Projesi
                  </p>
@@ -333,11 +333,11 @@ export default function Home() {
                             <p className="text-6xl font-bold text-primary">{feedback.overallScore}</p>
                           </div>
                           <div className="space-y-3">
+                            <ScoreDisplay score={feedback.rapportScore} label="Dinleyici ile Bağ Kurma" />
                             <ScoreDisplay score={feedback.organisationScore} label="Organizasyon" />
-                            <ScoreDisplay score={feedback.contentScore} label="İçerik" />
                             <ScoreDisplay score={feedback.deliveryScore} label="Sunum" />
-                            <ScoreDisplay score={feedback.grammarScore} label="Dil Bilgisi" />
-                            <ScoreDisplay score={feedback.vocabularyScore} label="Kelime Bilgisi" />
+                            <ScoreDisplay score={feedback.languageUseScore} label="Dil Kullanımı" />
+                            <ScoreDisplay score={feedback.creativityScore} label="Yaratıcılık" />
                           </div>
                         </div>
                         <Tabs defaultValue="overall" className="w-full">
@@ -360,24 +360,24 @@ export default function Home() {
                             <TabsContent value="strengths">
                                 <div className="space-y-4">
                                     <Card>
-                                        <CardHeader><CardTitle className="flex items-center gap-2 text-base"><Presentation /> Organizasyon</CardTitle></CardHeader>
-                                        <CardContent><p>{feedback.organisationFeedback}</p></CardContent>
+                                        <CardHeader><CardTitle className="flex items-center gap-2 text-base"><Users /> Dinleyici ile Bağ Kurma</CardTitle></CardHeader>
+                                        <CardContent><p>{feedback.rapportFeedback}</p></CardContent>
                                     </Card>
                                      <Card>
-                                        <CardHeader><CardTitle className="flex items-center gap-2 text-base"><BookOpen /> İçerik</CardTitle></CardHeader>
-                                        <CardContent><p>{feedback.contentFeedback}</p></CardContent>
+                                        <CardHeader><CardTitle className="flex items-center gap-2 text-base"><Atom /> Organizasyon</CardTitle></CardHeader>
+                                        <CardContent><p>{feedback.organisationFeedback}</p></CardContent>
                                     </Card>
                                     <Card>
-                                        <CardHeader><CardTitle className="flex items-center gap-2 text-base"><CheckSquare /> Sunum</CardTitle></CardHeader>
+                                        <CardHeader><CardTitle className="flex items-center gap-2 text-base"><Speech /> Sunum</CardTitle></CardHeader>
                                         <CardContent><p>{feedback.deliveryFeedback}</p></CardContent>
                                     </Card>
                                     <Card>
-                                        <CardHeader><CardTitle className="flex items-center gap-2 text-base"><PenTool /> Dil Bilgisi</CardTitle></CardHeader>
-                                        <CardContent><p>{feedback.grammarFeedback}</p></CardContent>
+                                        <CardHeader><CardTitle className="flex items-center gap-2 text-base"><MessageCircle /> Dil Kullanımı</CardTitle></CardHeader>
+                                        <CardContent><p>{feedback.languageUseFeedback}</p></CardContent>
                                     </Card>
                                     <Card>
-                                        <CardHeader><CardTitle className="flex items-center gap-2 text-base"><MessageSquare /> Kelime Bilgisi</CardTitle></CardHeader>
-                                        <CardContent><p>{feedback.vocabularyFeedback}</p></CardContent>
+                                        <CardHeader><CardTitle className="flex items-center gap-2 text-base"><CreativeCommons /> Yaratıcılık</CardTitle></CardHeader>
+                                        <CardContent><p>{feedback.creativityFeedback}</p></CardContent>
                                     </Card>
                                 </div>
                             </TabsContent>

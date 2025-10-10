@@ -3,7 +3,7 @@
 
 /**
  * @fileOverview Provides AI-powered feedback on a student's spoken English by directly analyzing audio.
- * It assesses organisation, delivery, and language use, and also provides a transcription.
+ * It assesses rapport, organisation, delivery, language use, and creativity, and also provides a transcription.
  *
  * - genAiAssistedFeedback - A function that handles the process of generating feedback for student's speech.
  * - GenAiAssistedFeedbackInput - The input type for the genAiAssistedFeedback function.
@@ -28,20 +28,20 @@ export type GenAiAssistedFeedbackInput = z.infer<typeof GenAiAssistedFeedbackInp
 const GenAiAssistedFeedbackOutputSchema = z.object({
   transcribedText: z.string().describe('The transcription of the spoken audio.'),
   
+  rapportFeedback: z.string().describe('Feedback on the student’s rapport with the audience (based on tone, engagement).'),
+  rapportScore: z.number().describe('A score from 0-100 for the student\'s rapport.'),
+
   organisationFeedback: z.string().describe('Feedback on the student’s organisation (clarity of beginning, middle, end, and flow of ideas).'),
   organisationScore: z.number().describe('A score from 0-100 for the student\'s organisation.'),
   
-  contentFeedback: z.string().describe('Feedback on the content of the speech (relevance, depth, and accuracy).'),
-  contentScore: z.number().describe('A score from 0-100 for the content.'),
-
   deliveryFeedback: z.string().describe('Feedback on the student’s delivery (pace, intonation, clarity, and pronunciation).'),
   deliveryScore: z.number().describe('A score from 0-100 for the student\'s delivery.'),
 
-  grammarFeedback: z.string().describe('Feedback on the student\'s grammar usage.'),
-  grammarScore: z.number().describe('A score from 0-100 for the student\'s grammar.'),
+  languageUseFeedback: z.string().describe('Feedback on the student\'s language use (grammar and vocabulary).'),
+  languageUseScore: z.number().describe('A score from 0-100 for the student\'s language use.'),
 
-  vocabularyFeedback: z.string().describe('Feedback on the student\'s vocabulary usage (range and accuracy).'),
-  vocabularyScore: z.number().describe('A score from 0-100 for the student\'s vocabulary.'),
+  creativityFeedback: z.string().describe('Feedback on the student\'s creativity (originality of ideas, vivid language).'),
+  creativityScore: z.number().describe('A score from 0-100 for the student\'s creativity.'),
 
   overallFeedback: z.string().describe('Overall feedback on the student’s speaking performance.'),
   overallScore: z.number().describe('An overall score from 0-100 for the student\'s performance.'),
@@ -63,11 +63,11 @@ const prompt = ai.definePrompt({
 
   Then, based on the audio and the provided task description, provide feedback on the following 5 criteria:
 
-  1.  Organisation: Analyze the structure of the speech. Does it have a clear beginning, middle, and end? Is the flow of ideas well-sequenced? Provide a score from 0-100.
-  2.  Content: Analyze the content of the speech. How relevant, deep, and accurate is the content in relation to the task? Provide a score from 0-100.
+  1.  Rapport with the audience: From the audio, analyze the speaker's tone of voice. Is it engaging, enthusiastic, and friendly? Do they use rhetorical questions or other techniques to connect with the listener? Provide a score from 0-100.
+  2.  Organisation: Analyze the structure of the speech. Does it have a clear beginning, middle, and end? Is the flow of ideas well-sequenced? Provide a score from 0-100.
   3.  Delivery: Analyze the delivery from the audio. Comment on pace, intonation, clarity and pronunciation. Is the voice strong and clear? Provide a score from 0-100.
-  4.  Grammar: Review the grammar of the transcribed text. Is it accurate? Are sentence structures correct? Provide a score from 0-100.
-  5.  Vocabulary: Review the vocabulary of the transcribed text. Is it relevant, varied, and used accurately? Provide a score from 0-100.
+  4.  Language use: Analyze the grammar and vocabulary from the transcribed text. Is the grammar accurate? Is the vocabulary varied and used correctly? Provide a score from 0-100.
+  5.  Creativity: Analyze the originality of the ideas and the language used. Is the approach to the topic unique? Is the language vivid and imaginative? Provide a score from 0-100.
 
   Finally, provide overall feedback on the student's speaking performance, summarizing their strengths and weaknesses, and offering actionable advice for improvement. Then, provide an overall score as the average of the other five scores.
 

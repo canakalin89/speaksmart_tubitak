@@ -65,9 +65,8 @@ const prompt = ai.definePrompt({
 
   1.  Rapport with the audience: From the audio and transcribed text, analyze the speaker's connection with the audience.
       - Demonstrates understanding of the subject.
-      - Addresses all parts of the given task accurately.
+      - Answers class questions accurately.
       - Provides additional relevant details when needed.
-      - The presentation has a clear beginning, middle, and end.
       Provide a score from 0-100 for this category.
 
   2.  Organisation: Analyze the structure of the speech. Does it have a clear beginning, middle, and end? Is the flow of ideas well-sequenced? Provide a score from 0-100.

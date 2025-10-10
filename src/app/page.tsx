@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Progress } from "@/components/ui/progress";
-import { Mic, MicOff, Languages, FileUp, History, Users, Atom, CreativeCommons, User as UserIcon } from 'lucide-react';
+import { Mic, MicOff, Languages, FileUp, History, Users, Atom, CreativeCommons, User as UserIcon, Building, Link as LinkIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Mascot, MascotLoading } from '@/components/mascot';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -67,10 +67,10 @@ const content = {
     footerRights: 'Tüm hakları saklıdır.',
     tubitak: 'TÜBİTAK 4006-B Projesi',
     tubitakDesc: 'Bu proje, Tekirdağ Kapaklı Aziz Sancar Anadolu Lisesi tarafından yürütülen TÜBİTAK 4006-B Bilim Fuarları Destekleme Programı kapsamında geliştirilmiştir.',
-    maarif: 'Türkiye Yüzyılı Maarif Modeli',
-    maarifDesc: 'Supports the student-centered and skill-oriented approach of the Turkish Century Maarif Model.',
+    supporters: 'Destekleyen Kurumlar',
     social: 'Sosyal Medya',
-    links: 'Faydalı Linkler',
+    usefulLinks: 'Faydalı Linkler',
+    kapakliMeb: 'Kapaklı İlçe Milli Eğitim Müdürlüğü',
     continueAsGuest: 'Misafir Olarak Devam Et',
     welcomeGuest: 'Hoş Geldin, Misafir!',
     loginToSave: 'İlerlemenizi kaydetmek için giriş yapın veya kaydolun.',
@@ -88,7 +88,7 @@ const content = {
     or: 'OR',
     startRecording: 'Start Recording',
     stopRecording: 'Stop Recording',
-uploadAudio: 'Upload Audio',
+    uploadAudio: 'Upload Audio',
     recording: 'Recording...',
     howItWorks: 'How It Works',
     howItWorksSteps: [
@@ -124,10 +124,10 @@ uploadAudio: 'Upload Audio',
     footerRights: 'All rights reserved.',
     tubitak: 'TÜBİTAK 4006-B Project',
     tubitakDesc: 'This project was developed within the scope of the TÜBİTAK 4006-B Science Fairs Support Program, conducted by Tekirdağ Kapaklı Aziz Sancar Anatolian High School.',
-    maarif: 'Turkish Century Maarif Model',
-    maarifDesc: 'Supports the student-centered and skill-oriented approach of the Turkish Century Maarif Model.',
+    supporters: 'Supporters',
     social: 'Social Media',
-    links: 'Useful Links',
+    usefulLinks: 'Useful Links',
+    kapakliMeb: 'Kapaklı District Directorate of National Education',
     continueAsGuest: 'Continue as Guest',
     welcomeGuest: 'Welcome, Guest!',
     loginToSave: 'Log in or sign up to save your progress.',
@@ -614,22 +614,31 @@ export default function Home() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
                 <div>
-                    <div className="flex flex-col items-center md:items-start gap-4 mb-4">
-                        <Image src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/T%C3%9CB%C4%B0TAK_logo.svg/1848px-T%C3%9CB%C4%B0TAK_logo.svg.png" alt="TÜBİTAK Logo" width={140} height={40} />
-                        <h3 className="font-semibold text-foreground flex items-center gap-2"><Atom className="w-5 h-5 text-primary"/> {t.tubitak}</h3>
-                    </div>
+                    <h3 className="font-semibold text-foreground mb-4 flex items-center justify-center md:justify-start gap-2"><Atom className="w-5 h-5 text-primary"/> {t.tubitak}</h3>
                     <p className="text-sm text-muted-foreground">{t.tubitakDesc}</p>
                 </div>
                 <div>
-                    <h3 className="font-semibold text-foreground mb-4 flex items-center justify-center md:justify-start gap-2"><CreativeCommons className="w-5 h-5 text-primary"/> {t.maarif}</h3>
-                    <p className="text-sm text-muted-foreground">{t.maarifDesc}</p>
+                    <h3 className="font-semibold text-foreground mb-4 flex items-center justify-center md:justify-start gap-2"><Building className="w-5 h-5 text-primary"/> {t.supporters}</h3>
+                     <div className="flex justify-center md:justify-start gap-6 items-center">
+                        <a href="https://www.meb.gov.tr/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:opacity-80">
+                           <Image src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Milli_E%C4%9Fitim_Bakanl%C4%B1%C4%9F%C4%B1_Logo.svg/1200px-Milli_E%C4%9Fitim_Bakanl%C4%B1%C4%9F%C4%B1_Logo.svg.png" alt="Milli Eğitim Bakanlığı Logo" width={80} height={80} />
+                        </a>
+                        <a href="https://www.tubitak.gov.tr/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:opacity-80">
+                           <Image src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/T%C3%9CB%C4%B0TAK_logo.svg/1848px-T%C3%9CB%C4%B0TAK_logo.svg.png" alt="TÜBİTAK Logo" width={140} height={40} />
+                        </a>
+                    </div>
                 </div>
                 <div>
-                    <h3 className="font-semibold text-foreground mb-4 flex items-center justify-center md:justify-start gap-2"><Users className="w-5 h-5 text-primary"/>{t.social}</h3>
-                    <div className="flex justify-center md:justify-start gap-4">
-                        <a href="https://www.instagram.com/k.azizsancar_al/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><Image src="https://img.icons8.com/fluent/48/000000/instagram-new.png" width={24} height={24} alt="Instagram" /></a>
-                        <a href="https://x.com/ka_sancar_al" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><Image src="https://img.icons8.com/fluent/48/000000/twitterx.png" width={24} height={24} alt="Twitter" /></a>
-                        <a href="https://www.youtube.com/@KapakliAzizSancarAL" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><Image src="https://img.icons8.com/fluent/48/000000/youtube-play.png" width={24} height={24} alt="Youtube" /></a>
+                    <h3 className="font-semibold text-foreground mb-4 flex items-center justify-center md:justify-start gap-2"><LinkIcon className="w-5 h-5 text-primary"/>{t.usefulLinks}</h3>
+                    <div className="flex flex-col items-center md:items-start space-y-2">
+                        <div className="flex justify-center md:justify-start gap-4 mb-2">
+                            <a href="https://www.instagram.com/k.azizsancar_al/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><Image src="https://img.icons8.com/fluent/48/000000/instagram-new.png" width={24} height={24} alt="Instagram" /></a>
+                            <a href="https://x.com/ka_sancar_al" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><Image src="https://img.icons8.com/fluent/48/000000/twitterx.png" width={24} height={24} alt="Twitter" /></a>
+                            <a href="https://www.youtube.com/@KapakliAzizSancarAL" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><Image src="https://img.icons8.com/fluent/48/000000/youtube-play.png" width={24} height={24} alt="Youtube" /></a>
+                        </div>
+                        <a href="https://kapakli.meb.gov.tr/" target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-primary hover:underline">
+                            {t.kapakliMeb}
+                        </a>
                     </div>
                 </div>
             </div>

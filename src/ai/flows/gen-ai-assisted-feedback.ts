@@ -22,6 +22,7 @@ const GenAiAssistedFeedbackInputSchema = z.object({
   taskDescription: z
     .string()
     .describe('The description of the speaking task the student completed.'),
+  language: z.enum(['tr', 'en']).describe('The language for the feedback response.'),
 });
 export type GenAiAssistedFeedbackInput = z.infer<typeof GenAiAssistedFeedbackInputSchema>;
 
@@ -92,7 +93,7 @@ const prompt = ai.definePrompt({
   Task Description: {{{taskDescription}}}
   Audio for analysis: {{media url=audio}}
 
-  Respond in Turkish.
+  Respond in {{#if language}}{{#ifeq language "tr"}}Turkish{{else}}English{{/ifeq}}{{else}}Turkish{{/if}}.
   The scores should be numbers between 0-100.
   `,
 });
@@ -109,3 +110,4 @@ const genAiAssistedFeedbackFlow = ai.defineFlow(
     return output!;
   }
 );
+

@@ -140,20 +140,40 @@ const content = {
 
 const predefinedTasks = {
   tr: [
-    { id: 'task-1', text: 'Bir iş görüşmesinde kendinizi tanıtın.' },
-    { id: 'task-2', text: 'En sevdiğiniz filmi ve neden sevdiğinizi anlatın.' },
-    { id: 'task-3', text: 'Hayalinizdeki tatili tarif edin.' },
-    { id: 'task-4', text: 'Bir restoranda nasıl sipariş verileceğini rol yaparak gösterin.' },
-    { id: 'task-5', text: 'Size verilen bir görseli detaylı bir şekilde betimleyin.' }
+    { id: 'task-1', text: 'Kendini ve Türkiye\'deki okul hayatını tanıt.' },
+    { id: 'task-2', text: 'Ülkendeki milli bayramlardan ve turistik bir yerden bahset.' },
+    { id: 'task-3', text: 'Günlük ve ders çalışma rutinini anlat.' },
+    { id: 'task-4', text: 'Kendi günlük rutinini bir arkadaşınınkiyle karşılaştır.' },
+    { id: 'task-5', text: 'Hayranlık duyduğun bir kişiden bahset. Dış görünüşünü ve kişiliğini tarif et.' },
+    { id: 'task-6', text: 'Aile üyelerini ve mesleklerini tanıt.' },
+    { id: 'task-7', text: 'Evini ve mahallenizi tarif et.' },
+    { id: 'task-8', text: 'Evde ne yapmaktan hoşlandığından bahset.' },
+    { id: 'task-9', text: 'Şehirde ve kırsalda yaşamaktan bahset.' },
+    { id: 'task-10', text: 'Şehrindeki yerel bir yiyecekten veya bir festivalden bahset.' },
+    { id: 'task-11', text: 'Nesli tükenmekte olan bir hayvan seç ve yaşam alanını tarif et.' },
+    { id: 'task-12', text: 'Nesli tükenmekte olan hayvanları nasıl koruyabileceğimizi açıkla.' },
+    { id: 'task-13', text: 'Gelecekle ilgili en sevdiğin filmden bahset.' },
+    { id: 'task-14', text: '2050 yılında insanların ne tür teknolojiler kullanabileceğini anlat.' },
+    { id: 'task-15', text: 'Tüm temaları birleştiren "Ben ve Dünyam" başlıklı kısa bir konuşma hazırla.' }
   ],
   en: [
-    { id: 'task-1', text: 'Introduce yourself in a job interview.' },
-    { id: 'task-2', text: 'Describe your favorite movie and why you love it.' },
-    { id: 'task-3', text: 'Describe your dream vacation.' },
-    { id: 'task-4', text: 'Role-play ordering food at a restaurant.' },
-    { id: 'task-5', text: 'Describe a picture you are given in detail.' }
+    { id: 'task-1', text: 'Introduce yourself and your school life in Türkiye.' },
+    { id: 'task-2', text: 'Talk about national celebrations and a tourist attraction in your country.' },
+    { id: 'task-3', text: 'Describe your daily and study routine.' },
+    { id: 'task-4', text: 'Compare your daily routine with your friend’s routine.' },
+    { id: 'task-5', text: 'Talk about a person you admire. Describe their appearance and personality.' },
+    { id: 'task-6', text: 'Introduce your family members and their jobs.' },
+    { id: 'task-7', text: 'Describe your house and neighbourhood.' },
+    { id: 'task-8', text: 'Talk about what you like doing at home.' },
+    { id: 'task-9', text: 'Talk about living in a city and in the countryside.' },
+    { id: 'task-10', text: 'Mention local food or a festival in your city.' },
+    { id: 'task-11', text: 'Choose an endangered animal and describe its habitat.' },
+    { id: 'task-12', text: 'Explain how we can protect endangered animals.' },
+    { id: 'task-13', text: 'Talk about your favourite film about the future.' },
+    { id: 'task-14', text: 'Describe what kind of technology people might use in 2050.' },
+    { id: 'task-15', text: 'Prepare a short talk titled “Me and My World” combining all themes.' }
   ]
-}
+};
 
 
 export default function Home() {
@@ -650,5 +670,3 @@ export default function Home() {
     </div>
   );
 }
-
-    

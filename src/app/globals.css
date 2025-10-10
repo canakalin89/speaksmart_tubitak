@@ -3,30 +3,30 @@
 @tailwind utilities;
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Poppins', sans-serif;
 }
 
 @layer base {
   :root {
-    --background: 220 20% 97%; /* Light grayish blue */
+    --background: 220 30% 98%; /* Lighter, slightly creamy off-white */
     --foreground: 222 47% 11%; /* Dark blue */
     --card: 0 0% 100%;
     --card-foreground: 222 47% 11%;
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
-    --primary: 217 89% 35%; /* Academic Blue/Navy */
-    --primary-foreground: 45 100% 98%; /* White */
+    --primary: 220 80% 40%; /* Deeper, more saturated Navy Blue */
+    --primary-foreground: 210 40% 98%; /* White */
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 45 93% 58%; /* Gold/Yellow */
+    --accent: 45 95% 55%; /* Brighter, richer Gold/Yellow */
     --accent-foreground: 222.2 47.4% 11.2%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 217 91% 60%;
+    --ring: 220 80% 50%;
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;

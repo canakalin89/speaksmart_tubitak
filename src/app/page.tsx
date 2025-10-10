@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Progress } from "@/components/ui/progress";
-import { Mic, MicOff, Languages, FileUp, History, Users, Atom, CreativeCommons, User as UserIcon, Building, Link as LinkIcon } from 'lucide-react';
+import { Mic, MicOff, Languages, FileUp, History, Atom, Link as LinkIcon, Building, User as UserIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Mascot, MascotLoading } from '@/components/mascot';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -210,11 +210,11 @@ export default function Home() {
     try {
       toast({ title: t.toastGenerating, description: t.toastGeneratingDesc });
       const currentTask = tasks.find(task => task.id === taskDescription) || { id: `custom-${Date.now()}`, text: taskDescription };
-
+      
       const feedbackResult = await genAiAssistedFeedback({
         audio: base64Audio,
         taskDescription: currentTask.text,
-        language,
+        language: language,
       });
       setFeedback(feedbackResult);
 
@@ -337,33 +337,20 @@ export default function Home() {
     }, [score]);
     
     const getScoreColor = (score: number) => {
-      if (score < 50) return 'red';
-      if (score < 75) return 'yellow';
-      return 'green';
+      if (score < 50) return 'hsl(var(--destructive))';
+      if (score < 75) return 'hsl(var(--accent))';
+      return 'hsl(var(--primary))';
     }
     
     const color = getScoreColor(score);
     
-    const indicatorColorClass = {
-        'red': 'bg-red-500',
-        'yellow': 'bg-yellow-500',
-        'green': 'bg-green-500'
-    }[color];
-    
-    const textColorClass = {
-        'red': 'text-red-500',
-        'yellow': 'text-yellow-500',
-        'green': 'text-green-500'
-    }[color];
-
-
     return (
       <div className="space-y-2">
         <div className="flex justify-between items-baseline">
-          <span className="font-medium text-sm text-foreground/80">{label}</span>
-          <span className={`text-base font-bold ${textColorClass}`}>{score}</span>
+          <p className="font-medium text-sm text-foreground/80">{label}</p>
+          <p className="text-base font-bold" style={{ color }}>{score}</p>
         </div>
-        <Progress value={progress} indicatorClassName={indicatorColorClass} className="h-2" />
+        <Progress value={progress} indicatorClassName="bg-primary" style={{backgroundColor: color}}/>
       </div>
     );
   };
@@ -373,10 +360,10 @@ export default function Home() {
     const offset = circumference - (score / 100) * circumference;
 
     return (
-      <div className="relative flex items-center justify-center w-32 h-32">
+      <div className="relative flex items-center justify-center w-36 h-36">
         <svg className="absolute top-0 left-0 w-full h-full" viewBox="0 0 100 100">
           <circle
-            className="text-secondary"
+            className="text-muted/50"
             strokeWidth="10"
             stroke="currentColor"
             fill="transparent"
@@ -392,16 +379,17 @@ export default function Home() {
             r="45"
             cx="50"
             cy="50"
+            strokeLinecap="round"
             style={{
               strokeDasharray: circumference,
               strokeDashoffset: offset,
-              transition: 'stroke-dashoffset 0.5s ease-out',
+              transition: 'stroke-dashoffset 0.8s ease-out',
               transform: 'rotate(-90deg)',
               transformOrigin: '50% 50%'
             }}
           />
         </svg>
-        <span className="text-3xl font-bold text-primary">{score}</span>
+        <span className="text-4xl font-bold text-primary">{score}</span>
       </div>
     );
   };
@@ -419,27 +407,31 @@ export default function Home() {
   }, [progressData]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-background">
-      <header className="bg-card shadow-sm sticky top-0 z-10 border-b">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-            <div className="flex items-center gap-3">
-                <Image src="http://azizsancaranadolu.meb.k12.tr/meb_iys_dosyalar/59/11/765062/resimler/2025_06/03222921_logolar3.jpg" alt="Okul Logosu" width={40} height={40} className="rounded-full object-contain" />
-                <h1 className="text-2xl font-bold text-foreground tracking-tight">{t.title}</h1>
-            </div>
+    <div className="flex flex-col min-h-screen bg-background text-foreground">
+      <header className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-20 border-b">
             <div className="flex items-center gap-4">
-              <p className="text-sm text-muted-foreground hidden md:block">
-                {user ? `${t.welcome}, ${user.isAnonymous ? 'Misafir' : user.email}` : t.subtitle}
-              </p>
+                <Image src="http://azizsancaranadolu.meb.k12.tr/meb_iys_dosyalar/59/11/765062/resimler/2025_06/03222921_logolar3.jpg" alt="Okul Logosu" width={48} height={48} className="rounded-full object-contain" />
+                <h1 className="text-2xl font-semibold text-foreground tracking-tight">{t.title}</h1>
+            </div>
+            <div className="flex items-center gap-2">
+              {user && (
+                <p className="text-sm text-muted-foreground hidden md:block">
+                  {user.isAnonymous ? t.welcomeGuest : `${t.welcome}, ${user.email}`}
+                </p>
+              )}
               <Button variant="ghost" size="icon" onClick={toggleLanguage} aria-label="Change language">
                 <Languages className="w-5 h-5"/>
               </Button>
             </div>
+          </div>
         </div>
       </header>
 
       <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {!isReady && !isUserLoading && (
-          <Card className="max-w-md mx-auto text-center">
+          <Card className="max-w-md mx-auto text-center shadow-md">
             <CardHeader>
               <CardTitle>{t.welcomeGuest}</CardTitle>
               <CardDescription>{t.loginToSave}</CardDescription>
@@ -454,7 +446,7 @@ export default function Home() {
         )}
 
         {isUserLoading && (
-           <div className="text-center space-y-4">
+           <div className="text-center space-y-4 pt-16">
               <MascotLoading />
               <h3 className="text-xl font-semibold text-primary">Yükleniyor...</h3>
             </div>
@@ -463,34 +455,33 @@ export default function Home() {
         {isReady && (
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
             <div className="lg:col-span-2 flex flex-col gap-8">
-              <Card>
+              <Card className="shadow-md">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2"><span className="flex items-center justify-center w-6 h-6 bg-primary text-primary-foreground rounded-full text-sm font-bold">1</span><span>{t.step1}</span></CardTitle>
+                  <CardTitle className="flex items-center gap-3"><span className="flex items-center justify-center w-7 h-7 bg-primary text-primary-foreground rounded-full text-base font-bold">1</span><span>{t.step1}</span></CardTitle>
                   <CardDescription>{t.step1Desc}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <Select onValueChange={setTaskDescription} value={taskDescription}>
-                    <SelectTrigger>
+                    <SelectTrigger className="text-base py-6">
                       <SelectValue placeholder={t.taskSelectPlaceholder} />
                     </SelectTrigger>
                     <SelectContent>
                       {tasks.map(task => (
-                        <SelectItem key={task.id} value={task.id}>{task.text}</SelectItem>
+                        <SelectItem key={task.id} value={task.id} className="py-2">{task.text}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
 
                    <div className="flex items-center gap-4">
                       <div className="flex-grow border-t"></div>
-                      <span className="text-xs text-muted-foreground">{t.or}</span>
+                      <span className="text-xs text-muted-foreground tracking-wider">{t.or}</span>
                       <div className="flex-grow border-t"></div>
                   </div>
-                  <div className="flex gap-4">
+                  <div className="grid grid-cols-2 gap-4">
                     <Button
                       onClick={toggleRecording}
                       disabled={!canSubmit || isLoading}
-                      className="w-full"
-                      size="lg"
+                      className="w-full py-6 text-base"
                     >
                       {isRecording ? (
                         <><MicOff className="mr-2"/> {t.stopRecording}</>
@@ -503,14 +494,13 @@ export default function Home() {
                       onClick={triggerFileSelect} 
                       disabled={!canSubmit || isLoading || isRecording} 
                       variant="outline" 
-                      size="lg"
-                      className="w-full"
+                      className="w-full py-6 text-base"
                     >
                       <FileUp className="mr-2"/> {t.uploadAudio}
                     </Button>
                   </div>
                   {isRecording && (
-                      <div className="flex items-center justify-center text-sm text-red-500 animate-pulse">
+                      <div className="flex items-center justify-center text-sm text-red-500 animate-pulse font-medium">
                           <div className="w-2 h-2 rounded-full bg-red-500 mr-2 animate-ping"></div>
                           {t.recording}
                       </div>
@@ -518,24 +508,24 @@ export default function Home() {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="shadow-md">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-base"><History className="w-5 h-5 text-primary"/>{t.pastResults}</CardTitle>
+                  <CardTitle className="flex items-center gap-2 text-lg"><History className="w-5 h-5 text-primary"/>{t.pastResults}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <ScrollArea className="h-48">
+                  <ScrollArea className="h-48 pr-4">
                     {sortedProgressData && sortedProgressData.length > 0 ? (
-                      <div className="space-y-4">
+                      <div className="space-y-3">
                         {sortedProgressData.map((item) => (
-                           <div key={item.id} className="flex items-center justify-between p-3 bg-secondary/50 rounded-lg">
-                             <div className="flex-grow overflow-hidden">
-                               <p className="font-semibold truncate text-sm">{(item as any).taskDescription}</p>
+                           <div key={item.id} className="flex items-center justify-between p-3 bg-secondary/30 rounded-lg border">
+                             <div className="flex-grow overflow-hidden mr-4">
+                               <p className="font-semibold truncate text-sm">{item.taskDescription}</p>
                                <p className="text-xs text-muted-foreground">
-                                { (item as any).createdAt ? formatDistanceToNow((item as any).createdAt.toDate(), { addSuffix: true, locale: language === 'tr' ? tr : undefined }) : ''}
+                                { item.createdAt ? formatDistanceToNow(item.createdAt.toDate(), { addSuffix: true, locale: language === 'tr' ? tr : undefined }) : ''}
                                </p>
                              </div>
-                             <div className="flex items-center gap-2 flex-shrink-0 ml-4">
-                                <span className="font-bold text-primary text-lg">{(item as any).overallScore}</span>
+                             <div className="flex items-center gap-2 flex-shrink-0">
+                                <span className="font-bold text-primary text-xl">{item.overallScore}</span>
                                 <Button size="sm" variant="ghost" onClick={() => setFeedback(item)}>
                                     {t.viewResult}
                                 </Button>
@@ -552,9 +542,9 @@ export default function Home() {
             </div>
 
             <div className="lg:col-span-3">
-              <Card className="h-full flex flex-col">
+              <Card className="h-full flex flex-col shadow-md">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2"><span className="flex items-center justify-center w-6 h-6 bg-primary text-primary-foreground rounded-full text-sm font-bold">2</span><span>{t.step2}</span></CardTitle>
+                  <CardTitle className="flex items-center gap-3"><span className="flex items-center justify-center w-7 h-7 bg-primary text-primary-foreground rounded-full text-base font-bold">2</span><span>{t.step2}</span></CardTitle>
                   <CardDescription>{t.step2Desc}</CardDescription>
                 </CardHeader>
                 <CardContent className="flex-grow flex items-center justify-center">
@@ -570,7 +560,7 @@ export default function Home() {
                   {!isLoading && !feedback && (
                     <div className="text-center space-y-4">
                       <Mascot />
-                      <h3 className="text-xl font-semibold">{t.readyToStart}</h3>
+                      <h3 className="text-2xl font-semibold">{t.readyToStart}</h3>
                       <p className="text-muted-foreground max-w-sm mx-auto">{t.readyToStartDesc}</p>
                     </div>
                   )}
@@ -578,17 +568,17 @@ export default function Home() {
                   {feedback && (
                    <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-6">
                      <div className="flex flex-col gap-6">
-                        <Card>
+                        <Card className="shadow-sm">
                           <CardHeader>
-                              <CardTitle className="text-lg">{t.overallScore}</CardTitle>
+                              <CardTitle className="text-xl">{t.overallScore}</CardTitle>
                           </CardHeader>
-                          <CardContent className="flex items-center justify-center">
+                          <CardContent className="flex items-center justify-center pt-2">
                               <OverallScoreIndicator score={feedback.overallScore} />
                           </CardContent>
                         </Card>
-                        <Card className="flex-grow">
+                        <Card className="flex-grow shadow-sm">
                           <CardHeader>
-                              <CardTitle className="text-lg">{t.detailedScores}</CardTitle>
+                              <CardTitle className="text-xl">{t.detailedScores}</CardTitle>
                           </CardHeader>
                           <CardContent className="space-y-4">
                               <ScoreDisplay score={feedback.rapportScore} label={t.rapport} />
@@ -600,33 +590,33 @@ export default function Home() {
                         </Card>
                      </div>
                      <div className="flex flex-col gap-6">
-                        <Card>
-                          <CardHeader><CardTitle className="text-lg">{t.transcript}</CardTitle></CardHeader>
+                        <Card className="shadow-sm">
+                          <CardHeader><CardTitle className="text-xl">{t.transcript}</CardTitle></CardHeader>
                           <CardContent>
-                            <ScrollArea className="h-28">
-                                <p className="italic text-muted-foreground">{feedback.transcribedText}</p>
+                            <ScrollArea className="h-28 pr-4">
+                                <p className="italic text-muted-foreground leading-relaxed">{feedback.transcribedText}</p>
                             </ScrollArea>
                           </CardContent>
                         </Card>
-                        <Card className="flex-grow">
-                          <CardHeader><CardTitle className="text-lg">{t.improvementAreas}</CardTitle></CardHeader>
+                        <Card className="flex-grow shadow-sm">
+                          <CardHeader><CardTitle className="text-xl">{t.improvementAreas}</CardTitle></CardHeader>
                           <CardContent>
                              <Tabs defaultValue="overall" className="w-full">
                               <TabsList className="grid w-full grid-cols-2">
                                   <TabsTrigger value="overall">{t.overallFeedback}</TabsTrigger>
                                   <TabsTrigger value="details">{t.detailedAnalysis}</TabsTrigger>
                               </TabsList>
-                               <ScrollArea className="h-56 mt-4">
+                               <ScrollArea className="h-56 mt-4 pr-4">
                                   <TabsContent value="overall">
-                                      <p className="text-sm">{feedback.overallFeedback}</p>
+                                      <p className="text-sm leading-relaxed">{feedback.overallFeedback}</p>
                                   </TabsContent>
                                   <TabsContent value="details">
                                       <div className="space-y-4 text-sm">
-                                        <div><h4 className="font-semibold">{t.rapport}</h4><p className="text-muted-foreground">{feedback.rapportFeedback}</p></div>
-                                        <div><h4 className="font-semibold">{t.organisation}</h4><p className="text-muted-foreground">{feedback.organisationFeedback}</p></div>
-                                        <div><h4 className="font-semibold">{t.delivery}</h4><p className="text-muted-foreground">{feedback.deliveryFeedback}</p></div>
-                                        <div><h4 className="font-semibold">{t.languageUse}</h4><p className="text-muted-foreground">{feedback.languageUseFeedback}</p></div>
-                                        <div><h4 className="font-semibold">{t.creativity}</h4><p className="text-muted-foreground">{feedback.creativityFeedback}</p></div>
+                                        <div><h4 className="font-semibold">{t.rapport}</h4><p className="text-muted-foreground leading-relaxed">{feedback.rapportFeedback}</p></div>
+                                        <div><h4 className="font-semibold">{t.organisation}</h4><p className="text-muted-foreground leading-relaxed">{feedback.organisationFeedback}</p></div>
+                                        <div><h4 className="font-semibold">{t.delivery}</h4><p className="text-muted-foreground leading-relaxed">{feedback.deliveryFeedback}</p></div>
+                                        <div><h4 className="font-semibold">{t.languageUse}</h4><p className="text-muted-foreground leading-relaxed">{feedback.languageUseFeedback}</p></div>
+                                        <div><h4 className="font-semibold">{t.creativity}</h4><p className="text-muted-foreground leading-relaxed">{feedback.creativityFeedback}</p></div>
                                       </div>
                                   </TabsContent>
                                 </ScrollArea>
@@ -643,8 +633,8 @@ export default function Home() {
         )}
       </main>
 
-      <footer className="bg-card mt-12 border-t">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <footer className="bg-card mt-16 border-t">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
                 <div>
                     <h3 className="font-semibold text-foreground mb-4 flex items-center justify-center md:justify-start gap-2"><Atom className="w-5 h-5 text-primary"/> {t.tubitak}</h3>
@@ -653,10 +643,10 @@ export default function Home() {
                 <div>
                     <h3 className="font-semibold text-foreground mb-4 flex items-center justify-center md:justify-start gap-2"><Building className="w-5 h-5 text-primary"/> {t.supporters}</h3>
                      <div className="flex justify-center md:justify-start gap-6 items-center">
-                        <a href="https://www.meb.gov.tr/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:opacity-80">
+                        <a href="https://www.meb.gov.tr/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground transition-opacity hover:opacity-80">
                            <Image src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Milli_E%C4%9Fitim_Bakanl%C4%B1%C4%9F%C4%B1_Logo.svg/1200px-Milli_E%C4%9Fitim_Bakanl%C4%B1%C4%9F%C4%B1_Logo.svg.png" alt="Milli Eğitim Bakanlığı Logo" width={80} height={80} />
                         </a>
-                        <a href="https://www.tubitak.gov.tr/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:opacity-80">
+                        <a href="https://www.tubitak.gov.tr/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground transition-opacity hover:opacity-80">
                            <Image src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/T%C3%9CB%C4%B0TAK_logo.svg/1848px-T%C3%9CB%C4%B0TAK_logo.svg.png" alt="TÜBİTAK Logo" width={140} height={40} />
                         </a>
                     </div>
@@ -683,3 +673,5 @@ export default function Home() {
     </div>
   );
 }
+
+    

@@ -27,12 +27,22 @@ export type GenAiAssistedFeedbackInput = z.infer<typeof GenAiAssistedFeedbackInp
 
 const GenAiAssistedFeedbackOutputSchema = z.object({
   transcribedText: z.string().describe('The transcription of the spoken audio.'),
-  organisationFeedback: z.string().describe('Feedback on the student’s organisation based on the audio (clarity of beginning, middle, end, and flow of ideas).'),
+  
+  organisationFeedback: z.string().describe('Feedback on the student’s organisation (clarity of beginning, middle, end, and flow of ideas).'),
   organisationScore: z.number().describe('A score from 0-100 for the student\'s organisation.'),
-  deliveryFeedback: z.string().describe('Feedback on the student’s delivery based on the audio (strong/clear voice, pronunciation).'),
+  
+  contentFeedback: z.string().describe('Feedback on the content of the speech (relevance, depth, and accuracy).'),
+  contentScore: z.number().describe('A score from 0-100 for the content.'),
+
+  deliveryFeedback: z.string().describe('Feedback on the student’s delivery (pace, intonation, clarity, and pronunciation).'),
   deliveryScore: z.number().describe('A score from 0-100 for the student\'s delivery.'),
-  languageUseFeedback: z.string().describe('Feedback on the student’s language use based on the transcribed text (grammar and vocabulary).'),
-  languageUseScore: z.number().describe('A score from 0-100 for the student\'s language use.'),
+
+  grammarFeedback: z.string().describe('Feedback on the student\'s grammar usage.'),
+  grammarScore: z.number().describe('A score from 0-100 for the student\'s grammar.'),
+
+  vocabularyFeedback: z.string().describe('Feedback on the student\'s vocabulary usage (range and accuracy).'),
+  vocabularyScore: z.number().describe('A score from 0-100 for the student\'s vocabulary.'),
+
   overallFeedback: z.string().describe('Overall feedback on the student’s speaking performance.'),
   overallScore: z.number().describe('An overall score from 0-100 for the student\'s performance.'),
 });
@@ -51,12 +61,15 @@ const prompt = ai.definePrompt({
 
   First, transcribe the spoken words in the audio file accurately.
 
-  Then, based on the audio and the provided task description, provide feedback on the following aspects:
+  Then, based on the audio and the provided task description, provide feedback on the following 5 criteria:
 
   1.  Organisation: Analyze the structure of the speech. Does it have a clear beginning, middle, and end? Is the flow of ideas well-sequenced? Provide a score from 0-100.
-  2.  Delivery: Analyze the delivery from the audio. Is the voice strong and clear? Is the pronunciation clear and accurate? Comment on pace and rhythm. Provide a score from 0-100.
-  3.  Language Use: Review the grammar and vocabulary of the transcribed text. Is the grammar accurate? Is the vocabulary relevant and varied? Provide a score from 0-100.
-  4.  Overall: Provide overall feedback on the student's speaking performance, summarizing their strengths and weaknesses, and offering actionable advice for improvement. Then, provide an overall score as the average of the other three scores.
+  2.  Content: Analyze the content of the speech. How relevant, deep, and accurate is the content in relation to the task? Provide a score from 0-100.
+  3.  Delivery: Analyze the delivery from the audio. Comment on pace, intonation, clarity and pronunciation. Is the voice strong and clear? Provide a score from 0-100.
+  4.  Grammar: Review the grammar of the transcribed text. Is it accurate? Are sentence structures correct? Provide a score from 0-100.
+  5.  Vocabulary: Review the vocabulary of the transcribed text. Is it relevant, varied, and used accurately? Provide a score from 0-100.
+
+  Finally, provide overall feedback on the student's speaking performance, summarizing their strengths and weaknesses, and offering actionable advice for improvement. Then, provide an overall score as the average of the other five scores.
 
   Task Description: {{{taskDescription}}}
   Audio for analysis: {{media url=audio}}

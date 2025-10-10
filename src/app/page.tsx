@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from '@/components/ui/textarea';
 import { Progress } from "@/components/ui/progress";
-import { Mic, MicOff, Loader2, Languages, GraduationCap, Zap, BrainCircuit, Speech, FileUp, School, Link as LinkIcon, Instagram, Twitter, Youtube, CheckSquare, MessageSquare, Presentation } from 'lucide-react';
+import { Mic, MicOff, Loader2, Languages, GraduationCap, Zap, BrainCircuit, Speech, FileUp, School, Link as LinkIcon, Instagram, Twitter, Youtube, CheckSquare, MessageSquare, Presentation, BookOpen, PenTool } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Mascot, MascotLoading } from '@/components/mascot';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -165,8 +165,8 @@ export default function Home() {
     return (
       <div className="space-y-2">
         <div className="flex justify-between items-baseline">
-          <span className="font-medium">{label}</span>
-          <span className={`text-xl font-bold ${textColorClass}`}>{score} / 100</span>
+          <span className="font-medium text-sm">{label}</span>
+          <span className={`text-lg font-bold ${textColorClass}`}>{score}</span>
         </div>
         <Progress value={progress} indicatorClassName={indicatorColorClass} />
       </div>
@@ -319,80 +319,81 @@ export default function Home() {
 
                 {feedback && (
                    <div className='flex flex-col h-full'>
-                      {feedback.transcribedText && (
-                        <div className="space-y-4 mb-6">
-                          <h4 className="font-semibold flex items-center gap-2"><Languages/> Konuşmanızın Metni</h4>
-                          <ScrollArea className="h-24 md:h-28">
-                             <p className="italic text-muted-foreground bg-muted p-4 rounded-md">{feedback.transcribedText}</p>
-                          </ScrollArea>
-                        </div>
-                      )}
+                      <div className="space-y-4 mb-6">
+                        <h4 className="font-semibold flex items-center gap-2"><Languages/> Konuşmanızın Metni</h4>
+                        <ScrollArea className="h-24 md:h-28">
+                            <p className="italic text-muted-foreground bg-muted p-4 rounded-md">{feedback.transcribedText}</p>
+                        </ScrollArea>
+                      </div>
 
-                      {feedback && (
-                        <div className="flex-grow">
-                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 p-4 border rounded-lg">
-                            <div className="flex flex-col items-center justify-center gap-2">
-                              <span className="text-lg font-medium text-muted-foreground">Genel Puan</span>
-                              <p className="text-6xl font-bold text-primary">{feedback.overallScore}</p>
-                            </div>
-                            <div className="space-y-4">
-                              <ScoreDisplay score={feedback.organisationScore} label="Organizasyon" />
-                              <ScoreDisplay score={feedback.deliveryScore} label="Sunum" />
-                              <ScoreDisplay score={feedback.languageUseScore} label="Dil Kullanımı" />
-                            </div>
+                      <div className="flex-grow">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 mb-6 p-4 border rounded-lg">
+                          <div className="flex flex-col items-center justify-center gap-2">
+                            <span className="text-lg font-medium text-muted-foreground">Genel Puan</span>
+                            <p className="text-6xl font-bold text-primary">{feedback.overallScore}</p>
                           </div>
-                          <Tabs defaultValue="overall" className="w-full">
-                            <TabsList className="grid w-full grid-cols-4">
-                              <TabsTrigger value="overall">Genel</TabsTrigger>
-                              <TabsTrigger value="organisation">Organizasyon</TabsTrigger>
-                              <TabsTrigger value="delivery">Sunum</TabsTrigger>
-                              <TabsTrigger value="languageUse">Dil Kullanımı</TabsTrigger>
-                            </TabsList>
-                             <ScrollArea className="h-48 md:h-56 mt-4">
-                                <TabsContent value="overall">
-                                  <Card>
-                                    <CardHeader>
-                                      <CardTitle className="flex items-center gap-2"><BrainCircuit /> Genel Değerlendirme</CardTitle>
-                                    </CardHeader>
-                                    <CardContent>
-                                      <p>{feedback.overallFeedback}</p>
-                                    </CardContent>
-                                  </Card>
-                                </TabsContent>
-                                <TabsContent value="organisation">
-                                  <Card>
-                                    <CardHeader>
-                                      <CardTitle className="flex items-center gap-2"><Presentation /> Organizasyon Geri Bildirimi</CardTitle>
-                                    </CardHeader>
-                                    <CardContent>
-                                      <p>{feedback.organisationFeedback}</p>
-                                    </CardContent>
-                                  </Card>
-                                </TabsContent>
-                                <TabsContent value="delivery">
-                                  <Card>
-                                    <CardHeader>
-                                      <CardTitle className="flex items-center gap-2"><CheckSquare /> Sunum Geri Bildirimi</CardTitle>
-                                    </CardHeader>
-                                    <CardContent>
-                                      <p>{feedback.deliveryFeedback}</p>
-                                    </CardContent>
-                                  </Card>
-                                </TabsContent>
-                                <TabsContent value="languageUse">
-                                  <Card>
-                                    <CardHeader>
-                                      <CardTitle className="flex items-center gap-2"><MessageSquare /> Dil Kullanımı Geri Bildirimi</CardTitle>
-                                    </CardHeader>
-                                    <CardContent>
-                                      <p>{feedback.languageUseFeedback}</p>
-                                    </CardContent>
-                                  </Card>
-                                </TabsContent>
-                             </ScrollArea>
-                          </Tabs>
+                          <div className="space-y-3">
+                            <ScoreDisplay score={feedback.organisationScore} label="Organizasyon" />
+                            <ScoreDisplay score={feedback.contentScore} label="İçerik" />
+                            <ScoreDisplay score={feedback.deliveryScore} label="Sunum" />
+                            <ScoreDisplay score={feedback.grammarScore} label="Dil Bilgisi" />
+                            <ScoreDisplay score={feedback.vocabularyScore} label="Kelime Bilgisi" />
+                          </div>
                         </div>
-                      )}
+                        <Tabs defaultValue="overall" className="w-full">
+                          <TabsList className="grid w-full grid-cols-3">
+                            <TabsTrigger value="overall">Genel</TabsTrigger>
+                            <TabsTrigger value="strengths">Güçlü Yönler</TabsTrigger>
+                            <TabsTrigger value="improvements">Gelişim Alanları</TabsTrigger>
+                          </TabsList>
+                          <ScrollArea className="h-48 md:h-56 mt-4">
+                            <TabsContent value="overall">
+                                <Card>
+                                <CardHeader>
+                                    <CardTitle className="flex items-center gap-2"><BrainCircuit /> Genel Değerlendirme</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <p>{feedback.overallFeedback}</p>
+                                </CardContent>
+                                </Card>
+                            </TabsContent>
+                            <TabsContent value="strengths">
+                                <div className="space-y-4">
+                                    <Card>
+                                        <CardHeader><CardTitle className="flex items-center gap-2 text-base"><Presentation /> Organizasyon</CardTitle></CardHeader>
+                                        <CardContent><p>{feedback.organisationFeedback}</p></CardContent>
+                                    </Card>
+                                     <Card>
+                                        <CardHeader><CardTitle className="flex items-center gap-2 text-base"><BookOpen /> İçerik</CardTitle></CardHeader>
+                                        <CardContent><p>{feedback.contentFeedback}</p></CardContent>
+                                    </Card>
+                                    <Card>
+                                        <CardHeader><CardTitle className="flex items-center gap-2 text-base"><CheckSquare /> Sunum</CardTitle></CardHeader>
+                                        <CardContent><p>{feedback.deliveryFeedback}</p></CardContent>
+                                    </Card>
+                                    <Card>
+                                        <CardHeader><CardTitle className="flex items-center gap-2 text-base"><PenTool /> Dil Bilgisi</CardTitle></CardHeader>
+                                        <CardContent><p>{feedback.grammarFeedback}</p></CardContent>
+                                    </Card>
+                                    <Card>
+                                        <CardHeader><CardTitle className="flex items-center gap-2 text-base"><MessageSquare /> Kelime Bilgisi</CardTitle></CardHeader>
+                                        <CardContent><p>{feedback.vocabularyFeedback}</p></CardContent>
+                                    </Card>
+                                </div>
+                            </TabsContent>
+                            <TabsContent value="improvements">
+                                 <Card>
+                                    <CardHeader>
+                                      <CardTitle className="flex items-center gap-2"><Zap /> Nasıl Geliştirebilirim?</CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                      <p>Yapay zeka yakında burada gelişim önerileri sunacak.</p>
+                                    </CardContent>
+                                  </Card>
+                            </TabsContent>
+                          </ScrollArea>
+                        </Tabs>
+                      </div>
                     </div>
                 )}
              </CardContent>

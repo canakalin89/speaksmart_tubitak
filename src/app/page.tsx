@@ -16,10 +16,11 @@ import { Mascot, MascotLoading } from '@/components/mascot';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAuth, useUser, useCollection, useMemoFirebase, useFirestore } from '@/firebase';
 import { initiateAnonymousSignIn } from '@/firebase/non-blocking-login';
-import { collection } from 'firebase/firestore';
+import { collection, serverTimestamp } from 'firebase/firestore';
 import { formatDistanceToNow } from 'date-fns';
 import { tr } from 'date-fns/locale';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 
 const content = {
   tr: {
@@ -214,10 +215,22 @@ export default function Home() {
         audio: base64Audio,
         taskDescription: currentTask.text,
         language,
-        userId: user?.uid,
-        taskId: currentTask.id
       });
       setFeedback(feedbackResult);
+
+      if (user?.uid && progressCollectionRef) {
+        addDocumentNonBlocking(progressCollectionRef, {
+            userId: user.uid,
+            taskId: currentTask.id,
+            taskDescription: currentTask.text,
+            completionStatus: 'completed',
+            attempts: 1, // This could be incremented in a more complex scenario
+            feedback: JSON.stringify(feedbackResult), // Storing the full feedback
+            createdAt: serverTimestamp(),
+            ...feedbackResult
+        });
+      }
+
       toast({
         title: t.toastReady,
         description: t.toastReadyDesc,

@@ -68,7 +68,7 @@ const content = {
     tubitak: 'TÜBİTAK 4006-B Projesi',
     tubitakDesc: 'Bu proje, Tekirdağ Kapaklı Aziz Sancar Anadolu Lisesi tarafından yürütülen TÜBİTAK 4006-B Bilim Fuarları Destekleme Programı kapsamında geliştirilmiştir.',
     maarif: 'Türkiye Yüzyılı Maarif Modeli',
-    maarifDesc: 'Türkiye Yüzyılı Maarif Modeli\'nin öğrenci merkezli ve beceri odaklı yaklaşımını destekler.',
+    maarifDesc: 'Supports the student-centered and skill-oriented approach of the Turkish Century Maarif Model.',
     social: 'Sosyal Medya',
     links: 'Faydalı Linkler',
     continueAsGuest: 'Misafir Olarak Devam Et',
@@ -149,7 +149,7 @@ const predefinedTasks = {
   en: [
     { id: 'task-1', text: 'Introduce yourself in a job interview.' },
     { id: 'task-2', text: 'Describe your favorite movie and why you love it.' },
-    { id'task-3', text: 'Describe your dream vacation.' },
+    { id: 'task-3', text: 'Describe your dream vacation.' },
     { id: 'task-4', text: 'Role-play ordering food at a restaurant.' },
     { id: 'task-5', text: 'Describe a picture you are given in detail.' }
   ]
@@ -614,7 +614,10 @@ export default function Home() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
                 <div>
-                    <h3 className="font-semibold text-foreground mb-4 flex items-center justify-center md:justify-start gap-2"><Atom className="w-5 h-5 text-primary"/> {t.tubitak}</h3>
+                    <div className="flex flex-col items-center md:items-start gap-4 mb-4">
+                        <Image src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/T%C3%9CB%C4%B0TAK_logo.svg/1848px-T%C3%9CB%C4%B0TAK_logo.svg.png" alt="TÜBİTAK Logo" width={140} height={40} />
+                        <h3 className="font-semibold text-foreground flex items-center gap-2"><Atom className="w-5 h-5 text-primary"/> {t.tubitak}</h3>
+                    </div>
                     <p className="text-sm text-muted-foreground">{t.tubitakDesc}</p>
                 </div>
                 <div>
@@ -638,4 +641,3 @@ export default function Home() {
     </div>
   );
 }
-    

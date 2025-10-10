@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from '@/components/ui/textarea';
 import { Progress } from "@/components/ui/progress";
-import { Mic, MicOff, Loader2, Languages, GraduationCap, Zap, BrainCircuit, Speech } from 'lucide-react';
+import { Mic, MicOff, Loader2, Languages, GraduationCap, Zap, BrainCircuit, Speech, FileUp } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Mascot, MascotLoading } from '@/components/mascot';
 
@@ -25,8 +25,46 @@ export default function Home() {
   const [transcribedText, setTranscribedText] = useState<string | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { toast } = useToast();
 
+
+  const handleAudioAnalysis = async (base64Audio: string) => {
+    setIsLoading(true);
+    setFeedback(null);
+    setTranscribedText(null);
+    
+    try {
+      toast({ title: 'Konuşmanız metne dönüştürülüyor...', description: 'Lütfen bekleyin.' });
+      const sttResult = await speechToText({ audio: base64Audio });
+      setTranscribedText(sttResult.text);
+
+      if (!sttResult.text) {
+        throw new Error('Metne dönüştürme başarısız. Dönen metin boş.');
+      }
+      
+      toast({ title: 'Geri bildirim oluşturuluyor...', description: 'Yapay zeka konuşmanızı analiz ediyor.' });
+      const feedbackResult = await genAiAssistedFeedback({
+        spokenText: sttResult.text,
+        taskDescription,
+      });
+      setFeedback(feedbackResult);
+      toast({
+        title: 'Geri Bildirim Hazır!',
+        description: 'Yapay zeka destekli geri bildiriminiz oluşturuldu.',
+      });
+
+    } catch (error: any) {
+      console.error('Yapay zeka işleme sırasında hata:', error);
+      toast({
+        variant: 'destructive',
+        title: 'Bir Hata Oluştu',
+        description: error.message || 'Yapay zekadan geri bildirim alınamadı. Lütfen tekrar deneyin.',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   const handleStartRecording = async () => {
     try {
@@ -38,7 +76,18 @@ export default function Home() {
         audioChunksRef.current.push(event.data);
       };
 
-      mediaRecorderRef.current.onstop = handleStopRecording;
+      mediaRecorderRef.current.onstop = () => {
+        setIsRecording(false);
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        mediaRecorderRef.current?.stream.getTracks().forEach(track => track.stop());
+
+        const reader = new FileReader();
+        reader.readAsDataURL(audioBlob);
+        reader.onloadend = async () => {
+          const base64Audio = reader.result as string;
+          handleAudioAnalysis(base64Audio);
+        };
+      };
 
       mediaRecorderRef.current.start();
       setIsRecording(true);
@@ -54,56 +103,13 @@ export default function Home() {
     }
   };
 
-  const handleStopRecording = async () => {
+  const handleStopRecording = () => {
     if (
       mediaRecorderRef.current &&
       mediaRecorderRef.current.state === 'recording'
     ) {
       mediaRecorderRef.current.stop();
     }
-    setIsRecording(false);
-    setIsLoading(true);
-
-    const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-
-    mediaRecorderRef.current?.stream.getTracks().forEach(track => track.stop());
-
-    const reader = new FileReader();
-    reader.readAsDataURL(audioBlob);
-    reader.onloadend = async () => {
-      const base64Audio = reader.result as string;
-
-      try {
-        toast({ title: 'Konuşmanız metne dönüştürülüyor...', description: 'Lütfen bekleyin.' });
-        const sttResult = await speechToText({ audio: base64Audio });
-        setTranscribedText(sttResult.text);
-
-        if (!sttResult.text) {
-          throw new Error('Metne dönüştürme başarısız. Dönen metin boş.');
-        }
-        
-        toast({ title: 'Geri bildirim oluşturuluyor...', description: 'Yapay zeka konuşmanızı analiz ediyor.' });
-        const feedbackResult = await genAiAssistedFeedback({
-          spokenText: sttResult.text,
-          taskDescription,
-        });
-        setFeedback(feedbackResult);
-        toast({
-          title: 'Geri Bildirim Hazır!',
-          description: 'Yapay zeka destekli geri bildiriminiz oluşturuldu.',
-        });
-
-      } catch (error: any) {
-        console.error('Yapay zeka işleme sırasında hata:', error);
-        toast({
-          variant: 'destructive',
-          title: 'Bir Hata Oluştu',
-          description: error.message || 'Yapay zekadan geri bildirim alınamadı. Lütfen tekrar deneyin.',
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
   };
 
   const toggleRecording = () => {
@@ -113,6 +119,26 @@ export default function Home() {
       handleStartRecording();
     }
   };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64Audio = e.target?.result as string;
+        if (base64Audio) {
+          handleAudioAnalysis(base64Audio);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+     // Reset file input to allow uploading the same file again
+     if(fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const triggerFileSelect = () => fileInputRef.current?.click();
 
   const ScoreDisplay = ({ score, label }: { score: number, label: string }) => {
     const [progress, setProgress] = useState(0);
@@ -138,7 +164,6 @@ export default function Home() {
     );
   };
 
-
   const canSubmit = taskDescription.trim().length > 0;
 
   return (
@@ -162,7 +187,7 @@ export default function Home() {
           <Card className="lg:col-span-2">
             <CardHeader>
               <CardTitle>1. Görevinizi Tanımlayın</CardTitle>
-              <CardDescription>Konuşma görevinizi açıklayın ve kayda başlayın.</CardDescription>
+              <CardDescription>Konuşma görevinizi açıklayın ve başlayın.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <Textarea
@@ -172,24 +197,45 @@ export default function Home() {
                 rows={4}
                 className="resize-none text-base"
               />
-              <Button
-                onClick={toggleRecording}
-                disabled={!canSubmit || isLoading}
-                className="w-full flex items-center justify-center gap-2 transition-all duration-300 transform hover:scale-105"
-                size="lg"
-              >
-                {isLoading ? (
-                  <Loader2 className="animate-spin" />
-                ) : isRecording ? (
-                  <>
-                    <MicOff /> Kaydı Durdur
-                  </>
-                ) : (
-                  <>
-                    <Mic /> 2. Kayda Başla
-                  </>
-                )}
-              </Button>
+              <div className="space-y-4">
+                <p className="text-center text-sm font-medium text-muted-foreground">2. Analiz için Ses Ekleyin</p>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button
+                    onClick={toggleRecording}
+                    disabled={!canSubmit || isLoading}
+                    className="w-full flex items-center justify-center gap-2 transition-all duration-300 transform hover:scale-105"
+                    size="lg"
+                  >
+                    {isLoading && !isRecording ? (
+                      <Loader2 className="animate-spin" />
+                    ) : isRecording ? (
+                      <>
+                        <MicOff /> Kaydı Durdur
+                      </>
+                    ) : (
+                      <>
+                        <Mic /> Kayıt Yap
+                      </>
+                    )}
+                  </Button>
+                  <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="audio/*" />
+                   <Button
+                    onClick={triggerFileSelect}
+                    disabled={!canSubmit || isLoading || isRecording}
+                    variant="outline"
+                    className="w-full flex items-center justify-center gap-2 transition-all duration-300 transform hover:scale-105"
+                    size="lg"
+                  >
+                     {isLoading && !isRecording ? (
+                      <Loader2 className="animate-spin" />
+                    ) : (
+                      <>
+                        <FileUp /> Dosya Yükle
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
                {isRecording && (
                 <div className="flex items-center justify-center text-sm text-red-500 animate-pulse">
                   <div className="w-3 h-3 rounded-full bg-red-500 mr-2 animate-ping"></div>
@@ -309,3 +355,5 @@ export default function Home() {
     </div>
   );
 }
+
+    

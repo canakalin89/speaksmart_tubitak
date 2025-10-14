@@ -155,7 +155,7 @@ const predefinedTasks = {
     { id: 'task-12', text: 'Nesli tükenmekte olan hayvanları nasıl koruyabileceğimizi açıkla.' },
     { id: 'task-13', text: 'Gelecekle ilgili en sevdiğin filmden bahset.' },
     { id: 'task-14', text: '2050 yılında insanların ne tür teknolojiler kullanabileceğini anlat.' },
-    { idอ: 'task-15', text: 'Tüm temaları birleştiren "Ben ve Dünyam" başlıklı kısa bir konuşma hazırla.' }
+    { id: 'task-15', text: 'Tüm temaları birleştiren "Ben ve Dünyam" başlıklı kısa bir konuşma hazırla.' }
   ],
   en: [
     { id: 'task-1', text: 'Introduce yourself and your school life in Türkiye.' },
@@ -682,5 +682,3 @@ export default function Home() {
     </div>
   );
 }
-
-    

@@ -13,9 +13,11 @@ import { SignUpForm } from '@/components/auth/signup-form';
 import { useFirebase } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { initiateAnonymousSignIn } from '@/firebase/non-blocking-login';
 
 export default function SignUpPage() {
-  const { user, isUserLoading } = useFirebase();
+  const { auth, user, isUserLoading } = useFirebase();
   const router = useRouter();
 
   useEffect(() => {
@@ -23,6 +25,10 @@ export default function SignUpPage() {
       router.push('/');
     }
   }, [user, isUserLoading, router]);
+  
+  const handleAnonymousSignIn = async () => {
+    initiateAnonymousSignIn(auth);
+  };
 
   if (isUserLoading || user) {
      return <div className="flex h-screen items-center justify-center">Yönlendiriliyor...</div>;
@@ -40,6 +46,19 @@ export default function SignUpPage() {
             </CardHeader>
             <CardContent>
                 <SignUpForm />
+                 <div className="relative my-6">
+                    <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-background px-2 text-muted-foreground">
+                        Veya
+                    </span>
+                    </div>
+                </div>
+                <Button variant="outline" className="w-full" onClick={handleAnonymousSignIn}>
+                    Misafir Olarak Devam Et (Demo)
+                </Button>
                 <div className="mt-4 text-center text-sm">
                     Zaten bir hesabın var mı?{' '}
                     <Link href="/login" className="underline">

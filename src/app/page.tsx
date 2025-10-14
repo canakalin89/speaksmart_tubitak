@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Progress } from "@/components/ui/progress";
-import { Mic, MicOff, Languages, FileUp, History, Atom, Link as LinkIcon, Building, LayoutDashboard, LogOut, PanelLeft, MailWarning, Send } from 'lucide-react';
+import { Mic, MicOff, Languages, FileUp, History, Atom, Link as LinkIcon, Building, LayoutDashboard, LogOut, PanelLeft, MailWarning, Send, Users } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Mascot, MascotLoading } from '@/components/mascot';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -78,6 +78,9 @@ const content = {
     footerRights: 'Tüm hakları saklıdır.',
     tubitak: 'TÜBİTAK 4006-B Projesi',
     tubitakDesc: 'Bu proje, Tekirdağ Kapaklı Aziz Sancar Anadolu Lisesi tarafından TÜBİTAK 4006-B Bilim Fuarları Destekleme Programı kapsamında geliştirilmiştir.',
+    projectTeam: 'Proje Ekibi',
+    teacher: 'Danışman Öğretmen: Can AKALIN',
+    students: 'Proje Öğrencileri: [Öğrenci İsimleri Buraya Gelecek]',
     supporters: 'Destekleyen Kurumlar',
     social: 'Sosyal Medya',
     usefulLinks: 'Faydalı Linkler',
@@ -136,6 +139,9 @@ const content = {
     footerRights: 'All rights reserved.',
     tubitak: 'TÜBİTAK 4006-B Project',
     tubitakDesc: 'This project was developed by Tekirdağ Kapaklı Aziz Sancar Anatolian High School within the scope of the TÜBİTAK 4006-B Science Fairs Support Program.',
+    projectTeam: 'Project Team',
+    teacher: 'Supervising Teacher: Can AKALIN',
+    students: 'Project Students: [Student Names Will Be Here]',
     supporters: 'Supporters',
     social: 'Social Media',
     usefulLinks: 'Useful Links',
@@ -707,10 +713,17 @@ function DashboardLayout() {
         
         <footer className="bg-card mt-12 border-t">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-center md:text-left">
                   <div>
                       <h3 className="font-semibold text-foreground mb-4 flex items-center justify-center md:justify-start gap-2"><Atom className="w-5 h-5 text-primary"/> {t.tubitak}</h3>
                       <p className="text-sm text-muted-foreground">{t.tubitakDesc}</p>
+                  </div>
+                  <div>
+                      <h3 className="font-semibold text-foreground mb-4 flex items-center justify-center md:justify-start gap-2"><Users className="w-5 h-5 text-primary"/> {t.projectTeam}</h3>
+                      <div className="text-sm text-muted-foreground space-y-1">
+                          <p className="font-medium">{t.teacher}</p>
+                          <p>{t.students}</p>
+                      </div>
                   </div>
                   <div>
                       <h3 className="font-semibold text-foreground mb-4 flex items-center justify-center md:justify-start gap-2"><Building className="w-5 h-5 text-primary"/> {t.supporters}</h3>

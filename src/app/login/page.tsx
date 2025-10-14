@@ -74,7 +74,7 @@ export default function LoginPage() {
             <h2 className="text-4xl font-bold">SpeakSmart</h2>
             <p className="text-xl text-muted-foreground mt-2">Yapay Zekâ Destekli Konuşma Asistanı</p>
              <div className="relative mx-auto my-6 w-24 h-24">
-              <Image src="http://azizsancaranadolu.meb.k12.tr/meb_iys_dosyalar/59/11/765062/resimler/2025_06/03222921_logolar3.jpg" alt="Okul Logosu" fill className="object-contain rounded-full bg-white p-2" />
+              <Image src="https://azizsancaranadolu.meb.k12.tr/meb_iys_dosyalar/59/11/765062/resimler/2025_06/03222921_logolar3.jpg" alt="Okul Logosu" fill className="object-contain rounded-full bg-white p-2" />
             </div>
             <p className="text-sm text-muted-foreground max-w-md mt-4">
                 Bu platform, Tekirdağ Kapaklı Aziz Sancar Anadolu Lisesi öğrenci ve öğretmenlerinin bir araya gelerek, TÜBİTAK 4006-B Bilim Fuarları Destekleme Programı'nın vizyonuyla hayata geçirdiği bir projedir. Amacımız, dil eğitiminde teknolojinin sınırlarını zorlayarak yenilikçi bir çözüm sunmaktır.

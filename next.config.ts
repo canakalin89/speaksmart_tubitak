@@ -64,5 +64,3 @@ pathname: '/**',
 };
 
 export default nextConfig;
-
-    

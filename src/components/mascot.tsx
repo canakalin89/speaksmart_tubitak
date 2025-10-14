@@ -1,28 +1,29 @@
 'use client';
 import Image from 'next/image';
 
-const illustrationUrl = 'https://picsum.photos/seed/education-concept/600/400';
+const videoUrl = 'https://azizsancaranadolu.meb.k12.tr/meb_iys_dosyalar/59/11/765062/dosyalar/2025_10/14225159_social_u6212943116_bir_maskot_tasarlayacak_olsaydm_ad_lexi_olan_tekn_e86b296bfb7d4fa0bef163b6d354440f_2.mp4';
 
 export function Mascot() {
   return (
-    <div className="relative w-64 h-48 md:w-80 md:h-60">
-      <Image
-        src={illustrationUrl}
-        alt="AI English Tutor Illustration"
-        fill
-        className="object-contain"
-        data-ai-hint="illustration person speaking"
-        priority
+    <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden shadow-lg">
+      <video
+        src={videoUrl}
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="w-full h-full object-cover"
+        data-ai-hint="animated mascot video"
       />
     </div>
   );
 }
 
 export function MascotLoading() {
-  return (
-    <div className="relative w-64 h-48 md:w-80 md:h-60">
-       <style jsx>{`
-        .pulsing-image {
+    return (
+    <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden shadow-lg">
+        <style jsx>{`
+        .pulsing-video {
           animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
 
@@ -35,12 +36,14 @@ export function MascotLoading() {
           }
         }
       `}</style>
-      <Image
-        src={illustrationUrl}
-        alt="AI English Tutor Illustration - Analyzing"
-        fill
-        className="object-contain pulsing-image"
-        data-ai-hint="illustration person speaking"
+      <video
+        src={videoUrl}
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="w-full h-full object-cover pulsing-video"
+        data-ai-hint="animated mascot video"
       />
     </div>
   )

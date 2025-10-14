@@ -357,7 +357,21 @@ export default function Home() {
   
   const OverallScoreIndicator = ({ score } : {score: number}) => {
     const circumference = 2 * Math.PI * 45; // radius = 45
-    const offset = circumference - (score / 100) * circumference;
+    const [offset, setOffset] = useState(circumference);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setOffset(circumference - (score / 100) * circumference);
+        }, 300);
+        return () => clearTimeout(timer);
+    }, [score, circumference]);
+
+    const getScoreColor = (score: number) => {
+      if (score < 50) return 'hsl(var(--destructive))';
+      if (score < 75) return 'hsl(var(--accent))';
+      return 'hsl(var(--primary))';
+    }
+    const color = getScoreColor(score);
 
     return (
       <div className="relative flex items-center justify-center w-36 h-36">
@@ -372,9 +386,8 @@ export default function Home() {
             cy="50"
           />
           <circle
-            className="text-primary"
             strokeWidth="10"
-            stroke="currentColor"
+            stroke={color}
             fill="transparent"
             r="45"
             cx="50"
@@ -389,7 +402,7 @@ export default function Home() {
             }}
           />
         </svg>
-        <span className="text-4xl font-bold text-primary">{score}</span>
+        <span className="text-4xl font-bold" style={{color: color}}>{score}</span>
       </div>
     );
   };
@@ -431,7 +444,7 @@ export default function Home() {
 
       <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {!isReady && !isUserLoading && (
-          <Card className="max-w-md mx-auto text-center shadow-md">
+          <Card className="max-w-md mx-auto text-center shadow-lg border-0 mt-16">
             <CardHeader>
               <CardTitle>{t.welcomeGuest}</CardTitle>
               <CardDescription>{t.loginToSave}</CardDescription>
@@ -566,64 +579,57 @@ export default function Home() {
                   )}
                   
                   {feedback && (
-                   <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-6">
-                     <div className="flex flex-col gap-6">
-                        <Card className="shadow-sm">
-                          <CardHeader>
-                              <CardTitle className="text-xl">{t.overallScore}</CardTitle>
-                          </CardHeader>
-                          <CardContent className="flex items-center justify-center pt-2">
-                              <OverallScoreIndicator score={feedback.overallScore} />
-                          </CardContent>
-                        </Card>
-                        <Card className="flex-grow shadow-sm">
-                          <CardHeader>
-                              <CardTitle className="text-xl">{t.detailedScores}</CardTitle>
-                          </CardHeader>
-                          <CardContent className="space-y-4">
-                              <ScoreDisplay score={feedback.rapportScore} label={t.rapport} />
-                              <ScoreDisplay score={feedback.organisationScore} label={t.organisation} />
-                              <ScoreDisplay score={feedback.deliveryScore} label={t.delivery} />
-                              <ScoreDisplay score={feedback.languageUseScore} label={t.languageUse} />
-                              <ScoreDisplay score={feedback.creativityScore} label={t.creativity} />
-                          </CardContent>
-                        </Card>
-                     </div>
-                     <div className="flex flex-col gap-6">
-                        <Card className="shadow-sm">
-                          <CardHeader><CardTitle className="text-xl">{t.transcript}</CardTitle></CardHeader>
-                          <CardContent>
-                            <ScrollArea className="h-28 pr-4">
-                                <p className="italic text-muted-foreground leading-relaxed">{feedback.transcribedText}</p>
-                            </ScrollArea>
-                          </CardContent>
-                        </Card>
-                        <Card className="flex-grow shadow-sm">
-                          <CardHeader><CardTitle className="text-xl">{t.improvementAreas}</CardTitle></CardHeader>
-                          <CardContent>
-                             <Tabs defaultValue="overall" className="w-full">
-                              <TabsList className="grid w-full grid-cols-2">
-                                  <TabsTrigger value="overall">{t.overallFeedback}</TabsTrigger>
-                                  <TabsTrigger value="details">{t.detailedAnalysis}</TabsTrigger>
-                              </TabsList>
-                               <ScrollArea className="h-56 mt-4 pr-4">
-                                  <TabsContent value="overall">
-                                      <p className="text-sm leading-relaxed">{feedback.overallFeedback}</p>
-                                  </TabsContent>
-                                  <TabsContent value="details">
-                                      <div className="space-y-4 text-sm">
-                                        <div><h4 className="font-semibold">{t.rapport}</h4><p className="text-muted-foreground leading-relaxed">{feedback.rapportFeedback}</p></div>
-                                        <div><h4 className="font-semibold">{t.organisation}</h4><p className="text-muted-foreground leading-relaxed">{feedback.organisationFeedback}</p></div>
-                                        <div><h4 className="font-semibold">{t.delivery}</h4><p className="text-muted-foreground leading-relaxed">{feedback.deliveryFeedback}</p></div>
-                                        <div><h4 className="font-semibold">{t.languageUse}</h4><p className="text-muted-foreground leading-relaxed">{feedback.languageUseFeedback}</p></div>
-                                        <div><h4 className="font-semibold">{t.creativity}</h4><p className="text-muted-foreground leading-relaxed">{feedback.creativityFeedback}</p></div>
-                                      </div>
-                                  </TabsContent>
-                                </ScrollArea>
-                              </Tabs>
-                          </CardContent>
-                        </Card>
-                     </div>
+                   <div className="w-full flex flex-col gap-6">
+                      <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                         <Card className="shadow-sm">
+                           <CardHeader>
+                               <CardTitle className="text-xl">{t.overallScore}</CardTitle>
+                           </CardHeader>
+                           <CardContent className="flex items-center justify-center pt-2">
+                               <OverallScoreIndicator score={feedback.overallScore} />
+                           </CardContent>
+                         </Card>
+                         <Card className="flex-grow shadow-sm">
+                           <CardHeader>
+                               <CardTitle className="text-xl">{t.detailedScores}</CardTitle>
+                           </CardHeader>
+                           <CardContent className="space-y-4">
+                               <ScoreDisplay score={feedback.rapportScore} label={t.rapport} />
+                               <ScoreDisplay score={feedback.organisationScore} label={t.organisation} />
+                               <ScoreDisplay score={feedback.deliveryScore} label={t.delivery} />
+                               <ScoreDisplay score={feedback.languageUseScore} label={t.languageUse} />
+                               <ScoreDisplay score={feedback.creativityScore} label={t.creativity} />
+                           </CardContent>
+                         </Card>
+                      </div>
+                      <Card className="flex-grow shadow-sm">
+                           <CardContent className="p-4">
+                              <Tabs defaultValue="overall" className="w-full">
+                               <TabsList className="grid w-full grid-cols-3">
+                                   <TabsTrigger value="overall">{t.overallFeedback}</TabsTrigger>
+                                   <TabsTrigger value="details">{t.detailedAnalysis}</TabsTrigger>
+                                   <TabsTrigger value="transcript">{t.transcript}</TabsTrigger>
+                               </TabsList>
+                                <ScrollArea className="h-64 mt-4 pr-4">
+                                   <TabsContent value="overall">
+                                       <p className="text-sm leading-relaxed">{feedback.overallFeedback}</p>
+                                   </TabsContent>
+                                   <TabsContent value="details">
+                                       <div className="space-y-4 text-sm">
+                                         <div><h4 className="font-semibold">{t.rapport}</h4><p className="text-muted-foreground leading-relaxed">{feedback.rapportFeedback}</p></div>
+                                         <div><h4 className="font-semibold">{t.organisation}</h4><p className="text-muted-foreground leading-relaxed">{feedback.organisationFeedback}</p></div>
+                                         <div><h4 className="font-semibold">{t.delivery}</h4><p className="text-muted-foreground leading-relaxed">{feedback.deliveryFeedback}</p></div>
+                                         <div><h4 className="font-semibold">{t.languageUse}</h4><p className="text-muted-foreground leading-relaxed">{feedback.languageUseFeedback}</p></div>
+                                         <div><h4 className="font-semibold">{t.creativity}</h4><p className="text-muted-foreground leading-relaxed">{feedback.creativityFeedback}</p></div>
+                                       </div>
+                                   </TabsContent>
+                                    <TabsContent value="transcript">
+                                     <p className="italic text-muted-foreground leading-relaxed">{feedback.transcribedText}</p>
+                                   </TabsContent>
+                                 </ScrollArea>
+                               </Tabs>
+                           </CardContent>
+                         </Card>
                    </div>
                 )}
                 </CardContent>

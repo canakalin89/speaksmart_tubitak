@@ -328,7 +328,6 @@ function DashboardLayout() {
       setFeedback(feedbackResult);
 
       if (user?.uid && progressCollectionRef) {
-        // Non-blocking write to Firestore
         addDoc(progressCollectionRef, {
             userId: user.uid,
             taskId: currentTask.id,
@@ -340,7 +339,6 @@ function DashboardLayout() {
             ...feedbackResult
         }).catch(error => {
           console.error("Error writing progress to Firestore:", error);
-          // Optionally, inform the user that progress couldn't be saved
         });
       }
 
@@ -438,9 +436,9 @@ function DashboardLayout() {
   const triggerFileSelect = () => fileInputRef.current?.click();
   
   const handleSetFeedback = (item: any) => {
-    // The feedback from firestore is stored as a JSON string
     const feedbackData = typeof item.feedback === 'string' ? JSON.parse(item.feedback) : item;
     setFeedback(feedbackData);
+    setTaskDescription(''); // Clear task selection when viewing past results
     setOpenMobile(false);
   }
 
@@ -721,7 +719,7 @@ function DashboardLayout() {
                   <div>
                       <h3 className="font-semibold text-foreground mb-4 flex items-center justify-center md:justify-start gap-2"><Users className="w-5 h-5 text-primary"/> {t.projectTeam}</h3>
                       <div className="text-sm text-muted-foreground space-y-1">
-                          <p className="font-medium">{t.teacher}</p>
+                          <p className="font-semibold">{t.teacher}</p>
                           <p>{t.students}</p>
                       </div>
                   </div>

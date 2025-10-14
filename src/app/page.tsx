@@ -428,7 +428,7 @@ function DashboardLayout() {
       <Sidebar>
         <SidebarHeader className="border-b border-sidebar-border">
           <div className="flex items-center gap-2">
-            <Image src="http://azizsancaranadolu.meb.k12.tr/meb_iys_dosyalar/59/11/765062/resimler/2025_06/03222921_logolar3.jpg" alt="Okul Logosu" width={40} height={40} className="rounded-full object-contain bg-white p-1" />
+            <Image src="https://azizsancaranadolu.meb.k12.tr/meb_iys_dosyalar/59/11/765062/resimler/2025_06/03222921_logolar3.jpg" alt="Okul Logosu" width={40} height={40} className="rounded-full object-contain bg-white p-1" />
             <div className="flex flex-col">
               <h1 className="text-lg font-semibold tracking-tight text-sidebar-foreground">{t.title}</h1>
             </div>

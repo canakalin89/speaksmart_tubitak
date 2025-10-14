@@ -74,7 +74,7 @@ export default function LoginPage() {
             <p className="text-xl text-muted-foreground mt-2">Yapay Zekâ Destekli Konuşma Asistanı</p>
             <Mascot />
              <p className="text-sm text-muted-foreground max-w-md mt-6">
-                Bu proje, Tekirdağ Kapaklı Aziz Sancar Anadolu Lisesi tarafından TÜBİTAK 4006-B Bilim Fuarları Destekleme Programı kapsamında geliştirilmiştir.
+                Bu platform, Tekirdağ Kapaklı Aziz Sancar Anadolu Lisesi öğrenci ve öğretmenlerinin bir araya gelerek, TÜBİTAK 4006-B Bilim Fuarları Destekleme Programı'nın vizyonuyla hayata geçirdiği bir projedir. Amacımız, dil eğitiminde teknolojinin sınırlarını zorlayarak yenilikçi bir çözüm sunmaktır.
              </p>
          </div>
       </div>

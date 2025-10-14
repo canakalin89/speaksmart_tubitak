@@ -424,7 +424,7 @@ function DashboardLayout() {
   const canSubmit = taskDescription.trim().length > 0;
 
   return (
-    <SidebarProvider>
+    <>
       <Sidebar>
         <SidebarHeader className="border-b border-sidebar-border">
           <div className="flex items-center gap-2">
@@ -685,7 +685,7 @@ function DashboardLayout() {
           </div>
         </footer>
       </SidebarInset>
-    </SidebarProvider>
+    </>
   );
 }
 
@@ -708,5 +708,9 @@ export default function Home() {
     );
   }
   
-  return <DashboardLayout />
+  return (
+    <SidebarProvider>
+      <DashboardLayout />
+    </SidebarProvider>
+  );
 }

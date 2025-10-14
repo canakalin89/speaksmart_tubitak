@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Progress } from "@/components/ui/progress";
-import { Mic, MicOff, Languages, FileUp, History, Atom, Link as LinkIcon, Building, LayoutDashboard, LogOut, PanelLeft } from 'lucide-react';
+import { Mic, MicOff, Languages, FileUp, History, Atom, Link as LinkIcon, Building, LayoutDashboard, LogOut, PanelLeft, MailWarning, Send } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Mascot, MascotLoading } from '@/components/mascot';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -37,6 +37,7 @@ import {
   useSidebar
 } from '@/components/ui/sidebar';
 import { useRouter } from 'next/navigation';
+import { sendEmailVerification } from 'firebase/auth';
 
 const content = {
   tr: {
@@ -90,7 +91,12 @@ const content = {
     noPastResults: 'Henüz bir deneme yapmadınız.',
     viewResult: 'Görüntüle',
     logout: 'Çıkış Yap',
-    dashboard: 'Kontrol Paneli'
+    dashboard: 'Kontrol Paneli',
+    verifyEmailTitle: 'E-postanızı Doğrulayın',
+    verifyEmailDesc: 'Uygulamayı kullanmaya başlamadan önce e-posta adresinizi doğrulamanız gerekmektedir. Lütfen gelen kutunuzu kontrol edin.',
+    resendVerification: 'Doğrulama E-postasını Tekrar Gönder',
+    verificationSent: 'Doğrulama e-postası gönderildi!',
+    verificationFailed: 'E-posta gönderilemedi. Lütfen daha sonra tekrar deneyin.'
   },
   en: {
     title: 'SpeakSmart',
@@ -143,7 +149,12 @@ const content = {
     noPastResults: 'You haven\'t made any attempts yet.',
     viewResult: 'View',
     logout: 'Log Out',
-    dashboard: 'Dashboard'
+    dashboard: 'Dashboard',
+    verifyEmailTitle: 'Verify Your Email',
+    verifyEmailDesc: 'You need to verify your email address before you can start using the application. Please check your inbox.',
+    resendVerification: 'Resend Verification Email',
+    verificationSent: 'Verification email sent!',
+    verificationFailed: 'Failed to send email. Please try again later.'
   }
 };
 
@@ -278,6 +289,7 @@ function DashboardLayout() {
   const t = content[language];
   const tasks = predefinedTasks[language];
   const { setOpenMobile } = useSidebar();
+  const [isSendingVerification, setIsSendingVerification] = useState(false);
 
   const progressCollectionRef = useMemoFirebase(() => {
     if (!firestore || !user?.uid) return null;
@@ -421,7 +433,50 @@ function DashboardLayout() {
     setOpenMobile(false);
   }
 
+  const handleResendVerification = async () => {
+    if (user) {
+      setIsSendingVerification(true);
+      try {
+        await sendEmailVerification(user);
+        toast({ title: t.verificationSent });
+      } catch (error) {
+        toast({ variant: 'destructive', title: t.verificationFailed });
+        console.error(error);
+      } finally {
+        setIsSendingVerification(false);
+      }
+    }
+  };
+  
   const canSubmit = taskDescription.trim().length > 0;
+
+  if (user && !user.emailVerified && !user.isAnonymous) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-background text-center p-4">
+        <Card className="max-w-md w-full">
+          <CardHeader>
+            <CardTitle className="flex items-center justify-center gap-2 text-2xl">
+              <MailWarning className="w-8 h-8 text-primary" />
+              {t.verifyEmailTitle}
+            </CardTitle>
+            <CardDescription>{t.verifyEmailDesc}</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+             <p className="text-sm text-muted-foreground">
+              Doğrulama e-postasını <strong>{user.email}</strong> adresine gönderdik.
+            </p>
+            <Button onClick={handleResendVerification} disabled={isSendingVerification} className="w-full">
+              {isSendingVerification ? "Gönderiliyor..." : <><Send className="mr-2 h-4 w-4" />{t.resendVerification}</>}
+            </Button>
+            <Button variant="outline" onClick={() => auth.signOut()} className="w-full">
+              <LogOut className="mr-2 h-4 w-4" />
+              {t.logout}
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <>

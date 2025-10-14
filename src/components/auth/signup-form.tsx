@@ -15,11 +15,10 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useFirebase } from '@/firebase';
-import { initiateEmailSignUp } from '@/firebase/non-blocking-login';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
-import { collection, doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
+import { sendEmailVerification } from 'firebase/auth';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Geçerli bir e-posta adresi girin.' }),
@@ -44,11 +43,13 @@ export function SignUpForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
-      // Use a custom method that allows us to get the user credential
       const userCredential = await auth.createUserWithEmailAndPassword(values.email, values.password);
       const user = userCredential.user;
       
       if (user) {
+        // Send verification email
+        await sendEmailVerification(user);
+
         // Create a user document in Firestore
         const userRef = doc(firestore, 'users', user.uid);
         await setDoc(userRef, {
@@ -56,13 +57,19 @@ export function SignUpForm() {
             email: user.email,
             role: values.role
         });
+
+         toast({
+          title: 'Kayıt Başarılı!',
+          description: 'Lütfen e-postanızı kontrol ederek hesabınızı doğrulayın.',
+        });
+
+        // Sign the user out until they verify
+        await auth.signOut();
+
+      } else {
+         throw new Error("Kullanıcı oluşturulamadı.");
       }
       
-      toast({
-        title: 'Kayıt Başarılı!',
-        description: 'Giriş sayfasına yönlendiriliyorsunuz.',
-      });
-      // onAuthStateChanged will handle the redirection
     } catch (error: any) {
         console.error(error);
         let description = 'Kayıt sırasında bir hata oluştu. Lütfen tekrar deneyin.';
@@ -74,6 +81,7 @@ export function SignUpForm() {
             title: 'Kayıt Başarısız',
             description: description,
         });
+    } finally {
         setIsLoading(false);
     }
   }
@@ -94,7 +102,7 @@ export function SignUpForm() {
             </FormItem>
           )}
         />
-        <FormField
+        <FormField-
           control={form.control}
           name="password"
           render={({ field }) => (

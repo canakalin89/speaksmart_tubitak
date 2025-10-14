@@ -10,15 +10,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Progress } from "@/components/ui/progress";
-import { Mic, MicOff, Languages, FileUp, History, Atom, Link as LinkIcon, Building, User as UserIcon, LayoutDashboard, LogOut, PanelLeft } from 'lucide-react';
+import { Mic, MicOff, Languages, FileUp, History, Atom, Link as LinkIcon, Building, LayoutDashboard, LogOut, PanelLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Mascot, MascotLoading } from '@/components/mascot';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAuth, useUser, useCollection, useMemoFirebase, useFirestore, useFirebase } from '@/firebase';
-import { initiateAnonymousSignIn } from '@/firebase/non-blocking-login';
 import { collection, serverTimestamp } from 'firebase/firestore';
 import { formatDistanceToNow } from 'date-fns';
-import { tr } from 'date-fns/locale';
+import { tr, enUS } from 'date-fns/locale';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import {
@@ -37,6 +36,7 @@ import {
   SidebarInset,
   useSidebar
 } from '@/components/ui/sidebar';
+import { useRouter } from 'next/navigation';
 
 const content = {
   tr: {
@@ -310,7 +310,7 @@ function DashboardLayout() {
       });
       setFeedback(feedbackResult);
 
-      if (user?.uid && progressCollectionRef) {
+      if (user?.uid && progressCollectionRef && !user.isAnonymous) {
         addDocumentNonBlocking(progressCollectionRef, {
             userId: user.uid,
             taskId: currentTask.id,
@@ -424,7 +424,7 @@ function DashboardLayout() {
   const canSubmit = taskDescription.trim().length > 0;
 
   return (
-    <>
+    <SidebarProvider>
       <Sidebar>
         <SidebarHeader className="border-b border-sidebar-border">
           <div className="flex items-center gap-2">
@@ -442,6 +442,7 @@ function DashboardLayout() {
                 {t.dashboard}
               </SidebarMenuButton>
             </SidebarMenuItem>
+            {!user?.isAnonymous && (
             <SidebarGroup>
               <SidebarGroupLabel className="flex items-center gap-2"><History className="w-4 h-4"/>{t.pastResults}</SidebarGroupLabel>
               <SidebarGroupContent>
@@ -453,7 +454,7 @@ function DashboardLayout() {
                             <div className="flex-grow overflow-hidden mr-2">
                                <p className="font-semibold truncate text-sm">{item.taskDescription}</p>
                                <p className="text-xs text-sidebar-foreground/70">
-                                { item.createdAt ? formatDistanceToNow(item.createdAt.toDate(), { addSuffix: true, locale: language === 'tr' ? tr : undefined }) : ''}
+                                { item.createdAt ? formatDistanceToNow(item.createdAt.toDate(), { addSuffix: true, locale: language === 'tr' ? tr : enUS }) : ''}
                                </p>
                              </div>
                              <div className="flex-shrink-0 font-bold text-lg text-sidebar-primary">{item.overallScore}</div>
@@ -466,6 +467,7 @@ function DashboardLayout() {
                 )}
               </SidebarGroupContent>
             </SidebarGroup>
+            )}
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter className="border-t border-sidebar-border">
@@ -683,15 +685,21 @@ function DashboardLayout() {
           </div>
         </footer>
       </SidebarInset>
-    </>
+    </SidebarProvider>
   );
 }
 
-function AppContent() {
-  const { auth, isUserLoading, user } = useFirebase();
-  const t = content['tr']; // Using a default for GuestLogin
+export default function Home() {
+  const { isUserLoading, user } = useFirebase();
+  const router = useRouter();
 
-  if (isUserLoading) {
+  useEffect(() => {
+    if (!isUserLoading && !user) {
+      router.push('/login');
+    }
+  }, [isUserLoading, user, router]);
+
+  if (isUserLoading || !user) {
     return (
       <div className="flex flex-col items-center justify-center h-full min-h-screen text-center space-y-4">
         <MascotLoading />
@@ -699,38 +707,6 @@ function AppContent() {
       </div>
     );
   }
-
-  if (!user) {
-    return <GuestLogin onLogin={() => initiateAnonymousSignIn(auth)} t={t} />;
-  }
   
-  return (
-    <SidebarProvider>
-      <DashboardLayout />
-    </SidebarProvider>
-  )
-}
-
-function GuestLogin({ onLogin, t }: { onLogin: () => void, t: any }) {
-  return (
-    <div className="flex items-center justify-center min-h-screen -mt-20">
-      <Card className="max-w-md mx-auto text-center shadow-lg border-0">
-        <CardHeader>
-          <CardTitle>{t.welcomeGuest}</CardTitle>
-          <CardDescription>{t.loginToSave}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Button onClick={onLogin} size="lg">
-            <UserIcon className="mr-2" />
-            {t.continueAsGuest}
-          </Button>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
-
-
-export default function Home() {
-  return <AppContent />
+  return <DashboardLayout />
 }

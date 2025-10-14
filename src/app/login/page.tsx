@@ -73,6 +73,9 @@ export default function LoginPage() {
             <h2 className="text-4xl font-bold">SpeakSmart</h2>
             <p className="text-xl text-muted-foreground mt-2">Yapay Zekâ Destekli Konuşma Asistanı</p>
             <Mascot />
+             <p className="text-sm text-muted-foreground max-w-md mt-6">
+                Bu proje, Tekirdağ Kapaklı Aziz Sancar Anadolu Lisesi tarafından TÜBİTAK 4006-B Bilim Fuarları Destekleme Programı kapsamında geliştirilmiştir.
+             </p>
          </div>
       </div>
     </div>

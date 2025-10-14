@@ -655,9 +655,9 @@ export default function Home() {
                     <h3 className="font-semibold text-foreground mb-4 flex items-center justify-center md:justify-start gap-2"><LinkIcon className="w-5 h-5 text-primary"/>{t.usefulLinks}</h3>
                     <div className="flex flex-col items-center md:items-start space-y-2">
                         <div className="flex justify-center md:justify-start gap-4 mb-2">
-                            <a href="https://www.instagram.com/k.azizsancar_al/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><Image src="https://img.icons8.com/fluent/48/000000/instagram-new.png" width={24} height={24} alt="Instagram" /></a>
-                            <a href="https://x.com/ka_sancar_al" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><Image src="https://img.icons8.com/fluent/48/000000/twitterx.png" width={24} height={24} alt="Twitter" /></a>
-                            <a href="https://www.youtube.com/@KapakliAzizSancarAL" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><Image src="https://img.icons8.com/fluent/48/000000/youtube-play.png" width={24} height={24} alt="Youtube" /></a>
+                            <a href="https://www.instagram.com/asalkapakli2019/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><Image src="https://img.icons8.com/fluent/48/000000/instagram-new.png" width={24} height={24} alt="Instagram" /></a>
+                            <a href="https://x.com/asalkapakli2019" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><Image src="https://img.icons8.com/fluent/48/000000/twitterx.png" width={24} height={24} alt="Twitter" /></a>
+                            <a href="https://www.youtube.com/@AzizSancarAnadoluLisesi" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><Image src="https://img.icons8.com/fluent/48/000000/youtube-play.png" width={24} height={24} alt="Youtube" /></a>
                         </div>
                         <a href="https://kapakli.meb.gov.tr/" target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-primary hover:underline">
                             {t.kapakliMeb}

@@ -69,7 +69,7 @@ export default function LoginPage() {
       <div className="hidden bg-muted lg:flex lg:flex-col lg:items-center lg:justify-center p-10">
          <div className="text-center">
             <div className="relative mx-auto mb-4 w-40 h-40">
-              <Image src="http://azizsancaranadolu.meb.k12.tr/meb_iys_dosyalar/59/11/765062/resimler/2025_06/03222921_logolar3.jpg" alt="SpeakSmart Logo" fill className="object-contain" />
+              <Image src="https://picsum.photos/seed/app-logo/200" alt="Uygulama Logosu" fill className="object-contain" />
             </div>
             <h2 className="text-4xl font-bold">SpeakSmart</h2>
             <p className="text-xl text-muted-foreground mt-2">Yapay Zekâ Destekli Konuşma Asistanı</p>

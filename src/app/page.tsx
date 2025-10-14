@@ -15,11 +15,10 @@ import { useToast } from '@/hooks/use-toast';
 import { Mascot, MascotLoading } from '@/components/mascot';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAuth, useUser, useCollection, useMemoFirebase, useFirestore, useFirebase } from '@/firebase';
-import { collection, serverTimestamp } from 'firebase/firestore';
+import { collection, serverTimestamp, addDoc } from 'firebase/firestore';
 import { formatDistanceToNow } from 'date-fns';
 import { tr, enUS } from 'date-fns/locale';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import {
   SidebarProvider,
   Sidebar,
@@ -296,7 +295,7 @@ function DashboardLayout() {
     return collection(firestore, 'users', user.uid, 'progress');
   }, [firestore, user?.uid]);
 
-  const { data: progressData } = useCollection<GenAiAssistedFeedbackOutput>(progressCollectionRef);
+  const { data: progressData } = useCollection<any>(progressCollectionRef);
 
   const sortedProgressData = useMemo(() => {
     if (!progressData) return [];
@@ -323,7 +322,8 @@ function DashboardLayout() {
       setFeedback(feedbackResult);
 
       if (user?.uid && progressCollectionRef) {
-        addDocumentNonBlocking(progressCollectionRef, {
+        // Non-blocking write to Firestore
+        addDoc(progressCollectionRef, {
             userId: user.uid,
             taskId: currentTask.id,
             taskDescription: currentTask.text,
@@ -332,6 +332,9 @@ function DashboardLayout() {
             feedback: JSON.stringify(feedbackResult), // Storing the full feedback
             createdAt: serverTimestamp(),
             ...feedbackResult
+        }).catch(error => {
+          console.error("Error writing progress to Firestore:", error);
+          // Optionally, inform the user that progress couldn't be saved
         });
       }
 
@@ -429,7 +432,9 @@ function DashboardLayout() {
   const triggerFileSelect = () => fileInputRef.current?.click();
   
   const handleSetFeedback = (item: any) => {
-    setFeedback(item);
+    // The feedback from firestore is stored as a JSON string
+    const feedbackData = typeof item.feedback === 'string' ? JSON.parse(item.feedback) : item;
+    setFeedback(feedbackData);
     setOpenMobile(false);
   }
 

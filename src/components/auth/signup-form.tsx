@@ -18,8 +18,8 @@ import { useFirebase } from '@/firebase';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { doc, setDoc } from 'firebase/firestore';
-import { sendEmailVerification } from 'firebase/auth';
-import { initiateEmailSignUp } from '@/firebase/non-blocking-login';
+import { sendEmailVerification, createUserWithEmailAndPassword } from 'firebase/auth';
+
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Geçerli bir e-posta adresi girin.' }),
@@ -44,10 +44,10 @@ export function SignUpForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
-      const userCredential = await initiateEmailSignUp(auth, values.email, values.password);
+      const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
       const user = userCredential.user;
       
-      if (user) {
+      if (user && firestore) {
         // Send verification email
         await sendEmailVerification(user);
 
@@ -64,11 +64,11 @@ export function SignUpForm() {
           description: 'Lütfen e-postanızı kontrol ederek hesabınızı doğrulayın.',
         });
 
-        // Sign the user out until they verify
+        // Sign the user out until they verify. This will trigger the auth listener to redirect.
         await auth.signOut();
 
       } else {
-         throw new Error("Kullanıcı oluşturulamadı.");
+         throw new Error("Kullanıcı oluşturulamadı veya Firestore başlatılamadı.");
       }
       
     } catch (error: any) {

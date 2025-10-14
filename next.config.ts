@@ -47,7 +47,7 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
       {
-        protocol: 'http',
+        protocol: 'https',
         hostname: 'azizsancaranadolu.meb.k12.tr',
         port: '',
         pathname: '/**',

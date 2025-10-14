@@ -4,7 +4,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 
 export const metadata: Metadata = {
-  title: 'SpeakSmart',
+  title: 'SpeakSmart: Yapay Zekâ Destekli Konuşma Asistanı',
   description:
     'Türkiye Yüzyılı Maarif Modeli ile İngilizce konuşma pratiği yapın.',
 };
@@ -39,3 +39,5 @@ export default function RootLayout({
     </html>
   );
 }
+
+    

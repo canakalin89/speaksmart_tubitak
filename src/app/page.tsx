@@ -25,7 +25,7 @@ import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 const content = {
   tr: {
     title: 'SpeakSmart',
-    subtitle: 'Türkiye Yüzyılı Maarif Modeli ile İngilizce konuşma pratiği yapın.',
+    subtitle: 'Yapay Zekâ Destekli Konuşma Asistanı',
     step1: 'Görevinizi Seçin ve Konuşun',
     step1Desc: 'Aşağıdaki görevlerden birini seçin, ardından sesinizi kaydedin veya yükleyin.',
     taskSelectPlaceholder: 'Bir konuşma görevi seçin...',
@@ -82,7 +82,7 @@ const content = {
   },
   en: {
     title: 'SpeakSmart',
-    subtitle: 'Practice English speaking with the Turkish Century Maarif Model.',
+    subtitle: 'AI-Powered Speaking Assistant',
     step1: 'Select Your Task and Speak',
     step1Desc: 'Choose a task from the list below, then record or upload your audio.',
     taskSelectPlaceholder: 'Select a speaking task...',
@@ -155,7 +155,7 @@ const predefinedTasks = {
     { id: 'task-12', text: 'Nesli tükenmekte olan hayvanları nasıl koruyabileceğimizi açıkla.' },
     { id: 'task-13', text: 'Gelecekle ilgili en sevdiğin filmden bahset.' },
     { id: 'task-14', text: '2050 yılında insanların ne tür teknolojiler kullanabileceğini anlat.' },
-    { id: 'task-15', text: 'Tüm temaları birleştiren "Ben ve Dünyam" başlıklı kısa bir konuşma hazırla.' }
+    { idอ: 'task-15', text: 'Tüm temaları birleştiren "Ben ve Dünyam" başlıklı kısa bir konuşma hazırla.' }
   ],
   en: [
     { id: 'task-1', text: 'Introduce yourself and your school life in Türkiye.' },
@@ -426,7 +426,10 @@ export default function Home() {
           <div className="flex justify-between items-center h-20 border-b">
             <div className="flex items-center gap-4">
                 <Image src="http://azizsancaranadolu.meb.k12.tr/meb_iys_dosyalar/59/11/765062/resimler/2025_06/03222921_logolar3.jpg" alt="Okul Logosu" width={48} height={48} className="rounded-full object-contain" />
-                <h1 className="text-2xl font-semibold text-foreground tracking-tight">{t.title}</h1>
+                <div>
+                  <h1 className="text-2xl font-semibold text-foreground tracking-tight">{t.title}</h1>
+                  <p className="text-sm text-muted-foreground">{t.subtitle}</p>
+                </div>
             </div>
             <div className="flex items-center gap-2">
               {user && (
@@ -679,3 +682,5 @@ export default function Home() {
     </div>
   );
 }
+
+    

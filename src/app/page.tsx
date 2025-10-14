@@ -10,15 +10,26 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Progress } from "@/components/ui/progress";
-import { Mic, MicOff, Languages, FileUp, History, Atom, Link as LinkIcon, Building, LayoutDashboard, LogOut, PanelLeft, MailWarning, Send, Users } from 'lucide-react';
+import { Mic, MicOff, Languages, FileUp, History, Atom, Link as LinkIcon, Building, LayoutDashboard, LogOut, PanelLeft, MailWarning, Send, Users, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Mascot, MascotLoading } from '@/components/mascot';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAuth, useUser, useCollection, useMemoFirebase, useFirestore, useFirebase } from '@/firebase';
-import { collection, serverTimestamp, addDoc } from 'firebase/firestore';
+import { collection, serverTimestamp, addDoc, doc, deleteDoc, writeBatch } from 'firebase/firestore';
 import { formatDistanceToNow } from 'date-fns';
 import { tr, enUS } from 'date-fns/locale';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import {
   SidebarProvider,
   Sidebar,
@@ -98,7 +109,16 @@ const content = {
     verifyEmailDesc: 'Uygulamayı kullanmaya başlamadan önce e-posta adresinizi doğrulamanız gerekmektedir. Lütfen gelen kutunuzu kontrol edin.',
     resendVerification: 'Doğrulama E-postasını Tekrar Gönder',
     verificationSent: 'Doğrulama e-postası gönderildi!',
-    verificationFailed: 'E-posta gönderilemedi. Lütfen daha sonra tekrar deneyin.'
+    verificationFailed: 'E-posta gönderilemedi. Lütfen daha sonra tekrar deneyin.',
+    deleteAttempt: 'Denemeyi Sil',
+    clearAll: 'Tümünü Temizle',
+    deleteConfirmTitle: 'Emin misiniz?',
+    deleteConfirmDesc: 'Bu işlem geri alınamaz. Bu denemeyi kalıcı olarak silmek istediğinizden emin misiniz?',
+    clearAllConfirmDesc: 'Bu işlem geri alınamaz. Tüm geçmiş denemelerinizi kalıcı olarak silmek istediğinizden emin misiniz?',
+    cancel: 'İptal',
+    delete: 'Sil',
+    deletedToast: 'Deneme silindi.',
+    clearedToast: 'Tüm denemeler silindi.'
   },
   en: {
     title: 'SpeakSmart',
@@ -159,7 +179,16 @@ const content = {
     verifyEmailDesc: 'You need to verify your email address before you can start using the application. Please check your inbox.',
     resendVerification: 'Resend Verification Email',
     verificationSent: 'Verification email sent!',
-    verificationFailed: 'Failed to send email. Please try again later.'
+    verificationFailed: 'Failed to send email. Please try again later.',
+    deleteAttempt: 'Delete Attempt',
+    clearAll: 'Clear All',
+    deleteConfirmTitle: 'Are you sure?',
+    deleteConfirmDesc: 'This action cannot be undone. Are you sure you want to permanently delete this attempt?',
+    clearAllConfirmDesc: 'This action cannot be undone. Are you sure you want to permanently delete all your past attempts?',
+    cancel: 'Cancel',
+    delete: 'Delete',
+    deletedToast: 'Attempt deleted.',
+    clearedToast: 'All attempts cleared.'
   }
 };
 
@@ -459,6 +488,36 @@ function DashboardLayout() {
   
   const canSubmit = taskDescription.trim().length > 0;
 
+  const handleDeleteAttempt = async (attemptId: string) => {
+    if (!progressCollectionRef) return;
+    try {
+      await deleteDoc(doc(progressCollectionRef, attemptId));
+      toast({ title: t.deletedToast });
+      if (feedback && sortedProgressData.find(d => d.id === attemptId)) {
+        setFeedback(null);
+      }
+    } catch (error) {
+      console.error("Error deleting document:", error);
+      toast({ variant: 'destructive', title: 'Error', description: 'Could not delete attempt.' });
+    }
+  };
+
+  const handleClearAllAttempts = async () => {
+    if (!progressCollectionRef || !progressData) return;
+    try {
+      const batch = writeBatch(firestore);
+      progressData.forEach((attempt) => {
+        batch.delete(doc(progressCollectionRef, attempt.id));
+      });
+      await batch.commit();
+      setFeedback(null);
+      toast({ title: t.clearedToast });
+    } catch (error) {
+      console.error("Error clearing all attempts:", error);
+      toast({ variant: 'destructive', title: 'Error', description: 'Could not clear all attempts.' });
+    }
+  };
+
   if (user && !user.emailVerified && !user.isAnonymous) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-background text-center p-4">
@@ -507,22 +566,58 @@ function DashboardLayout() {
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarGroup>
-              <SidebarGroupLabel className="flex items-center gap-2"><History className="w-4 h-4"/>{t.pastResults}</SidebarGroupLabel>
+               <SidebarGroupLabel className="flex items-center justify-between">
+                <span className="flex items-center gap-2"><History className="w-4 h-4"/>{t.pastResults}</span>
+                {sortedProgressData && sortedProgressData.length > 0 && (
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-auto p-1 text-xs text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-red-500">
+                        {t.clearAll}
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>{t.deleteConfirmTitle}</AlertDialogTitle>
+                        <AlertDialogDescription>{t.clearAllConfirmDesc}</AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>{t.cancel}</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleClearAllAttempts} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">{t.delete}</AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                )}
+              </SidebarGroupLabel>
               <SidebarGroupContent>
                 {sortedProgressData && sortedProgressData.length > 0 ? (
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     {sortedProgressData.map((item) => (
-                       <button key={item.id} onClick={() => handleSetFeedback(item)} className="w-full text-left p-2 rounded-md hover:bg-sidebar-accent transition-colors">
-                         <div className="flex items-center justify-between">
-                            <div className="flex-grow overflow-hidden mr-2">
-                               <p className="font-semibold truncate text-sm">{item.taskDescription}</p>
-                               <p className="text-xs text-sidebar-foreground/70">
-                                { item.createdAt ? formatDistanceToNow(item.createdAt.toDate(), { addSuffix: true, locale: language === 'tr' ? tr : enUS }) : ''}
-                               </p>
-                             </div>
-                             <div className="flex-shrink-0 font-bold text-lg text-sidebar-primary">{item.overallScore}</div>
-                         </div>
-                       </button>
+                       <div key={item.id} className="group relative w-full text-left p-2 rounded-md hover:bg-sidebar-accent transition-colors flex items-center justify-between">
+                         <button onClick={() => handleSetFeedback(item)} className="flex-grow overflow-hidden mr-2 text-left">
+                           <p className="font-semibold truncate text-sm">{item.taskDescription}</p>
+                           <p className="text-xs text-sidebar-foreground/70">
+                            { item.createdAt ? formatDistanceToNow(item.createdAt.toDate(), { addSuffix: true, locale: language === 'tr' ? tr : enUS }) : ''}
+                           </p>
+                         </button>
+                         <div className="flex-shrink-0 font-bold text-lg text-sidebar-primary pr-8">{item.overallScore}</div>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                             <Button variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 text-sidebar-foreground/60 opacity-0 group-hover:opacity-100 hover:bg-red-500/10 hover:text-red-500 transition-opacity">
+                               <Trash2 className="w-4 h-4"/>
+                             </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>{t.deleteConfirmTitle}</AlertDialogTitle>
+                              <AlertDialogDescription>{t.deleteConfirmDesc}</AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>{t.cancel}</AlertDialogCancel>
+                              <AlertDialogAction onClick={() => handleDeleteAttempt(item.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">{t.delete}</AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                       </div>
                     ))}
                   </div>
                 ) : (
@@ -783,3 +878,5 @@ export default function Home() {
     </SidebarProvider>
   );
 }
+
+    

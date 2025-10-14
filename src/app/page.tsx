@@ -322,7 +322,7 @@ function DashboardLayout() {
       });
       setFeedback(feedbackResult);
 
-      if (user?.uid && progressCollectionRef && !user.isAnonymous) {
+      if (user?.uid && progressCollectionRef) {
         addDocumentNonBlocking(progressCollectionRef, {
             userId: user.uid,
             taskId: currentTask.id,
@@ -497,7 +497,6 @@ function DashboardLayout() {
                 {t.dashboard}
               </SidebarMenuButton>
             </SidebarMenuItem>
-            {!user?.isAnonymous && (
             <SidebarGroup>
               <SidebarGroupLabel className="flex items-center gap-2"><History className="w-4 h-4"/>{t.pastResults}</SidebarGroupLabel>
               <SidebarGroupContent>
@@ -522,7 +521,6 @@ function DashboardLayout() {
                 )}
               </SidebarGroupContent>
             </SidebarGroup>
-            )}
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter className="border-t border-sidebar-border">

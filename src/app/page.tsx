@@ -67,7 +67,7 @@ const content = {
     toastMicErrorDesc: 'Mikrofona erişilemedi. Lütfen tarayıcı izinlerinizi kontrol edin.',
     footerRights: 'Tüm hakları saklıdır.',
     tubitak: 'TÜBİTAK 4006-B Projesi',
-    tubitakDesc: 'Bu proje, Tekirdağ Kapaklı Aziz Sancar Anadolu Lisesi tarafından yürütülen TÜBİTAK 4006-B Bilim Fuarları Destekleme Programı kapsamında geliştirilmiştir.',
+    tubitakDesc: 'Bu proje, Tekirdağ Kapaklı Aziz Sancar Anadolu Lisesi tarafından TÜBİTAK 4006-B Bilim Fuarları Destekleme Programı kapsamında geliştirilmiştir.',
     supporters: 'Destekleyen Kurumlar',
     social: 'Sosyal Medya',
     usefulLinks: 'Faydalı Linkler',
@@ -124,7 +124,7 @@ const content = {
     toastMicErrorDesc: 'Could not access the microphone. Please check your browser permissions.',
     footerRights: 'All rights reserved.',
     tubitak: 'TÜBİTAK 4006-B Project',
-    tubitakDesc: 'This project was developed within the scope of the TÜBİTAK 4006-B Science Fairs Support Program, conducted by Tekirdağ Kapaklı Aziz Sancar Anatolian High School.',
+    tubitakDesc: 'This project was developed by Tekirdağ Kapaklı Aziz Sancar Anatolian High School within the scope of the TÜBİTAK 4006-B Science Fairs Support Program.',
     supporters: 'Supporters',
     social: 'Social Media',
     usefulLinks: 'Useful Links',
@@ -673,5 +673,3 @@ export default function Home() {
     </div>
   );
 }
-
-    

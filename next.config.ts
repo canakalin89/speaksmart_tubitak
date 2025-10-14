@@ -51,6 +51,12 @@ const nextConfig: NextConfig = {
         hostname: 'azizsancaranadolu.meb.k12.tr',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.ibb.co',
+        port: '',
+        pathname: '/**',
       }
     ],
   },

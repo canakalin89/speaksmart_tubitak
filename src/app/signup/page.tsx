@@ -52,7 +52,7 @@ export default function SignUpPage() {
         <div className="hidden bg-muted lg:flex lg:flex-col lg:items-center lg:justify-center p-10">
          <div className="text-center">
             <div className="relative mx-auto mb-4 w-40 h-40">
-              <Image src="/logo.png" alt="SpeakSmart Logo" fill className="object-contain" />
+              <Image src="https://i.ibb.co/3k5gNTs/logo.png" alt="SpeakSmart Logo" fill className="object-contain" />
             </div>
             <h2 className="text-4xl font-bold">SpeakSmart</h2>
             <p className="text-xl text-muted-foreground mt-2">Yapay Zekâ Destekli Konuşma Asistanı</p>

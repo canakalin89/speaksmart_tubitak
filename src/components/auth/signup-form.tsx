@@ -19,6 +19,7 @@ import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { doc, setDoc } from 'firebase/firestore';
 import { sendEmailVerification } from 'firebase/auth';
+import { initiateEmailSignUp } from '@/firebase/non-blocking-login';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Geçerli bir e-posta adresi girin.' }),
@@ -43,7 +44,7 @@ export function SignUpForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
-      const userCredential = await auth.createUserWithEmailAndPassword(values.email, values.password);
+      const userCredential = await initiateEmailSignUp(auth, values.email, values.password);
       const user = userCredential.user;
       
       if (user) {
@@ -102,7 +103,7 @@ export function SignUpForm() {
             </FormItem>
           )}
         />
-        <FormField-
+        <FormField
           control={form.control}
           name="password"
           render={({ field }) => (

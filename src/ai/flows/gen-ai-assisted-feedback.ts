@@ -56,7 +56,7 @@ export async function genAiAssistedFeedback(input: GenAiAssistedFeedbackInput): 
 
 const prompt = ai.definePrompt({
   name: 'genAiAssistedFeedbackPrompt',
-  input: {schema: GenAiAssistedFeedbackInputSchema},
+  input: {schema: GenAiAssistedFeedbackInputSchema.extend({ languageFullName: z.string() })},
   output: {schema: GenAiAssistedFeedbackOutputSchema},
   model: 'googleai/gemini-2.5-pro',
   prompt: `You are an AI-powered English language tutor providing feedback to students on their spoken English.
@@ -98,7 +98,7 @@ const prompt = ai.definePrompt({
   Task Description: {{{taskDescription}}}
   Audio for analysis: {{media url=audio}}
 
-  Respond in {{language}}.
+  Respond in {{languageFullName}}.
   The scores should be numbers between 0-100.
   Each feedback text should clearly state the mistakes and offer concrete suggestions for improvement.
   `,
@@ -112,7 +112,7 @@ const genAiAssistedFeedbackFlow = ai.defineFlow(
   },
   async input => {
     const languageFullName = input.language === 'tr' ? 'Turkish' : 'English';
-    const {output} = await prompt({...input, language: languageFullName});
+    const {output} = await prompt({...input, languageFullName: languageFullName});
     return output!;
   }
 );

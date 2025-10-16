@@ -58,6 +58,7 @@ const prompt = ai.definePrompt({
   name: 'genAiAssistedFeedbackPrompt',
   input: {schema: GenAiAssistedFeedbackInputSchema},
   output: {schema: GenAiAssistedFeedbackOutputSchema},
+  model: 'googleai/gemini-2.5-pro',
   prompt: `You are an AI-powered English language tutor providing feedback to students on their spoken English.
   Your task is to analyze the provided audio recording directly.
 
@@ -108,7 +109,6 @@ const genAiAssistedFeedbackFlow = ai.defineFlow(
     name: 'genAiAssistedFeedbackFlow',
     inputSchema: GenAiAssistedFeedbackInputSchema,
     outputSchema: GenAiAssistedFeedbackOutputSchema,
-    model: 'googleai/gemini-2.5-pro'
   },
   async input => {
     const languageFullName = input.language === 'tr' ? 'Turkish' : 'English';

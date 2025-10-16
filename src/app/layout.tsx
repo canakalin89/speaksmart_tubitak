@@ -27,6 +27,7 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
           rel="stylesheet"
         />
+        <link rel="icon" href="https://azizsancaranadolu.meb.k12.tr/meb_iys_dosyalar/59/11/765062/dosyalar/2025_10/14223632_adsiztasarim.png" type="image/png" />
       </head>
       <body className="font-body antialiased">
         <FirebaseClientProvider>

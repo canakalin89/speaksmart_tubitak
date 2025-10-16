@@ -195,6 +195,8 @@ const content = {
 const predefinedTasks = {
   tr: [
     { id: 'task-free', text: 'Serbest Konuşma (İstediğiniz bir konu hakkında konuşun)' },
+    { id: 'task-16', text: 'Ülkeni ve ziyaretçilerini tanıt. (Başkent, insanlar, dil, kutlamalar vb.)' },
+    { id: 'task-17', text: 'Kendini, yeni okulunu ve yeni arkadaşlarını tanıt.' },
     { id: 'task-1', text: 'Kendini ve Türkiye\'deki okul hayatını tanıt.' },
     { id: 'task-2', text: 'Ülkendeki milli bayramlardan ve turistik bir yerden bahset.' },
     { id: 'task-3', text: 'Günlük ve ders çalışma rutinini anlat.' },
@@ -213,6 +215,8 @@ const predefinedTasks = {
   ],
   en: [
     { id: 'task-free', text: 'Freestyle (Talk about any topic you want)' },
+    { id: 'task-16', text: 'Talk about your country and its visitors. (Capital, people, language, celebrations etc.)' },
+    { id: 'task-17', text: 'Introduce yourself, your new school, and your new friends.' },
     { id: 'task-1', text: 'Introduce yourself and your school life in Türkiye.' },
     { id: 'task-2', text: 'Talk about national celebrations and a tourist attraction in your country.' },
     { id: 'task-3', text: 'Describe your daily and study routine.' },

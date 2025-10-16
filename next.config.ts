@@ -55,6 +55,11 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  webpack: (config, { isServer }) => {
+    // Ignore the problematic favicon.ico file during build
+    config.watchOptions.ignored = /src\/app\/favicon\.ico/;
+    return config;
+  },
 };
 
 export default nextConfig;

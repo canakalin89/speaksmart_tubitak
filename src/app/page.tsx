@@ -743,7 +743,7 @@ function DashboardLayout() {
                     )}
   
                     {!isLoading && !feedback && (
-                      <div className="text-center space-y-4">
+                      <div className="text-center space-y-4 flex flex-col items-center">
                         <Mascot />
                         <h3 className="text-2xl font-semibold">{t.readyToStart}</h3>
                         <p className="text-muted-foreground max-w-sm mx-auto">{t.readyToStartDesc}</p>

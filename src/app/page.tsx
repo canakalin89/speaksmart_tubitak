@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Progress } from "@/components/ui/progress";
-import { Mic, MicOff, Languages, FileUp, History, Atom, Link as LinkIcon, Building, LayoutDashboard, PanelLeft, Trash2 } from 'lucide-react';
+import { Mic, MicOff, Languages, FileUp, History, Atom, Users, Link as LinkIcon, Building, LayoutDashboard, PanelLeft, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Mascot, MascotLoading } from '@/components/mascot';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -73,7 +73,7 @@ const content = {
     transcript: 'Konuşma Metni',
     improvementAreas: 'Gelişim Önerileri',
     overallFeedback: 'Genel Öneri',
-    detailedAnalysis: 'Detaylı Analiz',
+detailedAnalysis: 'Detaylı Analiz',
     toastGenerating: 'Geri bildirim oluşturuluyor...',
     toastGeneratingDesc: 'Yapay zeka konuşmanızı analiz ediyor.',
     toastReady: 'Geri Bildirim Hazır!',
@@ -92,7 +92,7 @@ const content = {
     social: 'Sosyal Medya',
     usefulLinks: 'Faydalı Linkler',
     kapakliMeb: 'Kapaklı İlçe Milli Eğitim Müdürlüğü',
-    welcome: 'Hoş Geldin',
+    welcome: 'Hoş Geldiniz',
     pastResults: 'Geçmiş Denemelerim',
     noPastResults: 'Henüz bir deneme yapmadınız.',
     deleteAttempt: 'Denemeyi Sil',
@@ -362,7 +362,7 @@ function DashboardLayout() {
         feedback: feedbackResult,
       };
 
-      saveProgress([...progressData, newProgressItem]);
+      saveProgress([newProgressItem, ...progressData]);
 
 
       toast({
@@ -527,36 +527,38 @@ function DashboardLayout() {
               </SidebarGroupLabel>
               <SidebarGroupContent>
                 {sortedProgressData && sortedProgressData.length > 0 ? (
-                  <div className="space-y-1">
-                    {sortedProgressData.map((item) => (
-                       <div key={item.id} className="group relative w-full text-left p-2 rounded-md hover:bg-sidebar-accent transition-colors flex items-center justify-between">
-                         <button onClick={() => handleSetFeedback(item)} className="flex-grow overflow-hidden mr-2 text-left">
-                           <p className="font-semibold truncate text-sm">{item.taskDescription}</p>
-                           <p className="text-xs text-sidebar-foreground/70">
-                            { formatDistanceToNow(new Date(item.createdAt), { addSuffix: true, locale: language === 'tr' ? tr : enUS }) }
-                           </p>
-                         </button>
-                         <div className="flex-shrink-0 font-bold text-lg text-sidebar-primary pr-8">{item.feedback.overallScore}</div>
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                             <Button variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 text-sidebar-foreground/60 opacity-0 group-hover:opacity-100 hover:bg-red-500/10 hover:text-red-500 transition-opacity">
-                               <Trash2 className="w-4 h-4"/>
-                             </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>{t.deleteConfirmTitle}</AlertDialogTitle>
-                              <AlertDialogDescription>{t.deleteConfirmDesc}</AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>{t.cancel}</AlertDialogCancel>
-                              <AlertDialogAction onClick={() => handleDeleteAttempt(item.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">{t.delete}</AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                       </div>
-                    ))}
-                  </div>
+                  <ScrollArea className="h-[calc(100vh-250px)]">
+                    <div className="space-y-1 pr-2">
+                      {sortedProgressData.map((item) => (
+                        <div key={item.id} className="group relative w-full text-left p-2 rounded-md hover:bg-sidebar-accent transition-colors flex items-center justify-between">
+                          <button onClick={() => handleSetFeedback(item)} className="flex-grow overflow-hidden mr-2 text-left">
+                            <p className="font-semibold truncate text-sm">{item.taskDescription}</p>
+                            <p className="text-xs text-sidebar-foreground/70">
+                              { formatDistanceToNow(new Date(item.createdAt), { addSuffix: true, locale: language === 'tr' ? tr : enUS }) }
+                            </p>
+                          </button>
+                          <div className="flex-shrink-0 font-bold text-lg text-sidebar-primary pr-8">{item.feedback.overallScore}</div>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 text-sidebar-foreground/60 opacity-0 group-hover:opacity-100 hover:bg-red-500/10 hover:text-red-500 transition-opacity">
+                                <Trash2 className="w-4 h-4"/>
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>{t.deleteConfirmTitle}</AlertDialogTitle>
+                                <AlertDialogDescription>{t.deleteConfirmDesc}</AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>{t.cancel}</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => handleDeleteAttempt(item.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">{t.delete}</AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
+                      ))}
+                    </div>
+                  </ScrollArea>
                 ) : (
                   <p className="text-center text-sm text-sidebar-foreground/60 p-4">{t.noPastResults}</p>
                 )}
@@ -574,7 +576,7 @@ function DashboardLayout() {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <div className="flex items-center gap-2">
-                <SidebarTrigger className="md:hidden">
+                <SidebarTrigger className="lg:hidden">
                   <PanelLeft />
                 </SidebarTrigger>
                 <div>
@@ -593,12 +595,12 @@ function DashboardLayout() {
           </div>
         </header>
 
-        <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-           <div className="grid grid-cols-1 xl:grid-cols-5 gap-8">
-              <div className="xl:col-span-2 flex flex-col gap-8">
+        <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+              <div className="lg:col-span-2 flex flex-col gap-6 sm:gap-8">
                  <Card>
                     <CardHeader>
-                      <CardTitle className="flex items-center gap-3"><span className="flex items-center justify-center w-8 h-8 bg-primary text-primary-foreground rounded-full text-base font-bold">1</span><span>{t.step1}</span></CardTitle>
+                      <CardTitle className="flex items-center gap-3"><span className="flex items-center justify-center w-8 h-8 bg-primary text-primary-foreground rounded-full text-base font-bold">1</span><span className="text-xl">{t.step1}</span></CardTitle>
                       <CardDescription>{t.step1Desc}</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
@@ -618,7 +620,7 @@ function DashboardLayout() {
                           <span className="text-xs text-muted-foreground tracking-wider">{t.or}</span>
                           <div className="flex-grow border-t"></div>
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <Button
                           onClick={toggleRecording}
                           disabled={!canSubmit || isLoading}
@@ -643,7 +645,7 @@ function DashboardLayout() {
                         </Button>
                       </div>
                       {isRecording && (
-                          <div className="flex items-center justify-center text-sm text-red-500 animate-pulse font-medium">
+                          <div className="flex items-center justify-center text-sm text-red-500 animate-pulse font-medium pt-2">
                               <div className="w-2 h-2 rounded-full bg-red-500 mr-2 animate-ping"></div>
                               {t.recording}
                           </div>
@@ -651,15 +653,15 @@ function DashboardLayout() {
                     </CardContent>
                   </Card>
               </div>
-              <div className="xl:col-span-3">
+              <div className="lg:col-span-3">
                 <Card className="h-full flex flex-col">
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-3"><span className="flex items-center justify-center w-8 h-8 bg-primary text-primary-foreground rounded-full text-base font-bold">2</span><span>{t.step2}</span></CardTitle>
+                    <CardTitle className="flex items-center gap-3"><span className="flex items-center justify-center w-8 h-8 bg-primary text-primary-foreground rounded-full text-base font-bold">2</span><span className="text-xl">{t.step2}</span></CardTitle>
                     <CardDescription>{t.step2Desc}</CardDescription>
                   </CardHeader>
                   <CardContent className="flex-grow flex items-center justify-center">
                     {isLoading && !feedback && (
-                       <div className="text-center space-y-4">
+                       <div className="text-center space-y-4 py-8">
                          <MascotLoading />
                          <h3 className="text-xl font-semibold text-primary">{t.analyzing}</h3>
                          <p className="text-muted-foreground">{t.analyzingDesc}</p>
@@ -667,7 +669,7 @@ function DashboardLayout() {
                     )}
   
                     {!isLoading && !feedback && (
-                      <div className="text-center space-y-4 flex flex-col items-center justify-center">
+                      <div className="text-center space-y-4 flex flex-col items-center justify-center py-8">
                         <Mascot />
                         <h3 className="text-2xl font-semibold">{t.readyToStart}</h3>
                         <p className="text-muted-foreground max-w-sm mx-auto">{t.readyToStartDesc}</p>
@@ -706,7 +708,7 @@ function DashboardLayout() {
                                      <TabsTrigger value="details">{t.detailedAnalysis}</TabsTrigger>
                                      <TabsTrigger value="transcript">{t.transcript}</TabsTrigger>
                                  </TabsList>
-                                  <ScrollArea className="h-64 mt-4 pr-4">
+                                  <ScrollArea className="h-80 mt-4 pr-4">
                                      <TabsContent value="overall">
                                          <p className="text-sm leading-relaxed">{feedback.overallFeedback}</p>
                                      </TabsContent>
@@ -790,3 +792,5 @@ export default function Home() {
     </SidebarProvider>
   );
 }
+
+    

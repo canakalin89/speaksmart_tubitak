@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
-import { FirebaseClientProvider } from '@/firebase/client-provider';
 
 export const metadata: Metadata = {
   title: 'SpeakSmart: Yapay Zekâ Destekli Konuşma Asistanı',
@@ -27,15 +26,12 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
           rel="stylesheet"
         />
-        <link rel="icon" href="/favicon.ico" sizes="any" />
       </head>
       <body className="font-body antialiased">
-        <FirebaseClientProvider>
-          <main>
-            {children}
-            <Toaster />
-          </main>
-        </FirebaseClientProvider>
+        <main>
+          {children}
+          <Toaster />
+        </main>
       </body>
     </html>
   );

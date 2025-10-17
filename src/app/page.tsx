@@ -10,12 +10,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Progress } from "@/components/ui/progress";
-import { Mic, MicOff, Languages, FileUp, History, Atom, Link as LinkIcon, Building, LayoutDashboard, LogOut, PanelLeft, MailWarning, Send, Users, Trash2 } from 'lucide-react';
+import { Mic, MicOff, Languages, FileUp, History, Atom, Link as LinkIcon, Building, LayoutDashboard, PanelLeft, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Mascot, MascotLoading } from '@/components/mascot';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useAuth, useUser, useCollection, useMemoFirebase, useFirestore, useFirebase } from '@/firebase';
-import { collection, serverTimestamp, addDoc, doc, deleteDoc, writeBatch } from 'firebase/firestore';
 import { formatDistanceToNow } from 'date-fns';
 import { tr, enUS } from 'date-fns/locale';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -46,8 +44,6 @@ import {
   SidebarInset,
   useSidebar
 } from '@/components/ui/sidebar';
-import { useRouter } from 'next/navigation';
-import { sendEmailVerification } from 'firebase/auth';
 
 const content = {
   tr: {
@@ -96,20 +92,9 @@ const content = {
     social: 'Sosyal Medya',
     usefulLinks: 'Faydalı Linkler',
     kapakliMeb: 'Kapaklı İlçe Milli Eğitim Müdürlüğü',
-    continueAsGuest: 'Misafir Olarak Devam Et',
-    welcomeGuest: 'Hoş Geldin, Misafir!',
-    loginToSave: 'İlerlemenizi kaydetmek için giriş yapın veya kaydolun.',
     welcome: 'Hoş Geldin',
     pastResults: 'Geçmiş Denemelerim',
     noPastResults: 'Henüz bir deneme yapmadınız.',
-    viewResult: 'Görüntüle',
-    logout: 'Çıkış Yap',
-    dashboard: 'Kontrol Paneli',
-    verifyEmailTitle: 'E-postanızı Doğrulayın',
-    verifyEmailDesc: 'Uygulamayı kullanmaya başlamadan önce e-posta adresinizi doğrulamanız gerekmektedir. Lütfen gelen kutunuzu kontrol edin.',
-    resendVerification: 'Doğrulama E-postasını Tekrar Gönder',
-    verificationSent: 'Doğrulama e-postası gönderildi!',
-    verificationFailed: 'E-posta gönderilemedi. Lütfen daha sonra tekrar deneyin.',
     deleteAttempt: 'Denemeyi Sil',
     clearAll: 'Tümünü Temizle',
     deleteConfirmTitle: 'Emin misiniz?',
@@ -118,7 +103,8 @@ const content = {
     cancel: 'İptal',
     delete: 'Sil',
     deletedToast: 'Deneme silindi.',
-    clearedToast: 'Tüm denemeler silindi.'
+    clearedToast: 'Tüm denemeler silindi.',
+    dashboard: 'Kontrol Paneli',
   },
   en: {
     title: 'SpeakSmart',
@@ -166,20 +152,9 @@ const content = {
     social: 'Social Media',
     usefulLinks: 'Useful Links',
     kapakliMeb: 'Kapaklı District Directorate of National Education',
-    continueAsGuest: 'Continue as Guest',
-    welcomeGuest: 'Welcome, Guest!',
-    loginToSave: 'Log in or sign up to save your progress.',
     welcome: 'Welcome',
     pastResults: 'Past Attempts',
     noPastResults: 'You haven\'t made any attempts yet.',
-    viewResult: 'View',
-    logout: 'Log Out',
-    dashboard: 'Dashboard',
-    verifyEmailTitle: 'Verify Your Email',
-    verifyEmailDesc: 'You need to verify your email address before you can start using the application. Please check your inbox.',
-    resendVerification: 'Resend Verification Email',
-    verificationSent: 'Verification email sent!',
-    verificationFailed: 'Failed to send email. Please try again later.',
     deleteAttempt: 'Delete Attempt',
     clearAll: 'Clear All',
     deleteConfirmTitle: 'Are you sure?',
@@ -188,7 +163,8 @@ const content = {
     cancel: 'Cancel',
     delete: 'Delete',
     deletedToast: 'Attempt deleted.',
-    clearedToast: 'All attempts cleared.'
+    clearedToast: 'All attempts cleared.',
+    dashboard: 'Dashboard',
   }
 };
 
@@ -234,6 +210,14 @@ const predefinedTasks = {
     { id: 'task-15', text: 'Prepare a short talk titled “Me and My World” combining all themes.' }
   ]
 };
+
+type ProgressItem = {
+    id: string;
+    taskDescription: string;
+    createdAt: string; 
+    feedback: GenAiAssistedFeedbackOutput;
+};
+
 
 const ScoreDisplay = ({ score, label }: { score: number, label: string }) => {
   const [progress, setProgress] = useState(0);
@@ -324,27 +308,36 @@ function DashboardLayout() {
   const audioChunksRef = useRef<Blob[]>([]);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { toast } = useToast();
-  const { auth, user, firestore } = useFirebase();
+  const [progressData, setProgressData] = useState<ProgressItem[]>([]);
+  
+  const { setOpenMobile } = useSidebar();
+
+  useEffect(() => {
+    try {
+      const savedProgress = localStorage.getItem('speakSmartProgress');
+      if (savedProgress) {
+        setProgressData(JSON.parse(savedProgress));
+      }
+    } catch (error) {
+      console.error("Failed to load progress from localStorage:", error);
+    }
+  }, []);
+
+  const saveProgress = (newProgress: ProgressItem[]) => {
+    try {
+      localStorage.setItem('speakSmartProgress', JSON.stringify(newProgress));
+      setProgressData(newProgress);
+    } catch (error) {
+      console.error("Failed to save progress to localStorage:", error);
+    }
+  };
+
 
   const t = content[language];
   const tasks = predefinedTasks[language];
-  const { setOpenMobile } = useSidebar();
-  const [isSendingVerification, setIsSendingVerification] = useState(false);
-
-  const progressCollectionRef = useMemoFirebase(() => {
-    if (!firestore || !user?.uid) return null;
-    return collection(firestore, 'users', user.uid, 'progress');
-  }, [firestore, user?.uid]);
-
-  const { data: progressData } = useCollection<any>(progressCollectionRef);
 
   const sortedProgressData = useMemo(() => {
-    if (!progressData) return [];
-    return [...progressData].sort((a: any, b: any) => {
-        const dateA = a.createdAt?.toDate?.() || 0;
-        const dateB = b.createdAt?.toDate?.() || 0;
-        return dateB - dateA;
-    });
+    return [...progressData].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   }, [progressData]);
 
   const handleAudioAnalysis = async (base64Audio: string) => {
@@ -362,20 +355,15 @@ function DashboardLayout() {
       });
       setFeedback(feedbackResult);
 
-      if (user?.uid && progressCollectionRef) {
-        addDoc(progressCollectionRef, {
-            userId: user.uid,
-            taskId: currentTask.id,
-            taskDescription: currentTask.text,
-            completionStatus: 'completed',
-            attempts: 1, // This could be incremented in a more complex scenario
-            feedback: JSON.stringify(feedbackResult), // Storing the full feedback
-            createdAt: serverTimestamp(),
-            ...feedbackResult
-        }).catch(error => {
-          console.error("Error writing progress to Firestore:", error);
-        });
-      }
+      const newProgressItem: ProgressItem = {
+        id: `progress-${Date.now()}`,
+        taskDescription: currentTask.text,
+        createdAt: new Date().toISOString(),
+        feedback: feedbackResult,
+      };
+
+      saveProgress([...progressData, newProgressItem]);
+
 
       toast({
         title: t.toastReady,
@@ -470,87 +458,30 @@ function DashboardLayout() {
 
   const triggerFileSelect = () => fileInputRef.current?.click();
   
-  const handleSetFeedback = (item: any) => {
-    const feedbackData = typeof item.feedback === 'string' ? JSON.parse(item.feedback) : item;
-    setFeedback(feedbackData);
+  const handleSetFeedback = (item: ProgressItem) => {
+    setFeedback(item.feedback);
     setTaskDescription(''); // Clear task selection when viewing past results
     setOpenMobile(false);
   }
 
-  const handleResendVerification = async () => {
-    if (user) {
-      setIsSendingVerification(true);
-      try {
-        await sendEmailVerification(user);
-        toast({ title: t.verificationSent });
-      } catch (error) {
-        toast({ variant: 'destructive', title: t.verificationFailed });
-        console.error(error);
-      } finally {
-        setIsSendingVerification(false);
-      }
-    }
-  };
-  
   const canSubmit = taskDescription.trim().length > 0;
 
-  const handleDeleteAttempt = async (attemptId: string) => {
-    if (!progressCollectionRef) return;
-    try {
-      await deleteDoc(doc(progressCollectionRef, attemptId));
-      toast({ title: t.deletedToast });
-      if (feedback && sortedProgressData.find(d => d.id === attemptId)) {
+  const handleDeleteAttempt = (attemptId: string) => {
+    const newProgress = progressData.filter(item => item.id !== attemptId);
+    saveProgress(newProgress);
+    toast({ title: t.deletedToast });
+    // If the deleted attempt was being viewed, clear the view
+    if (feedback && sortedProgressData.find(d => d.id === attemptId && JSON.stringify(d.feedback) === JSON.stringify(feedback))) {
         setFeedback(null);
-      }
-    } catch (error) {
-      console.error("Error deleting document:", error);
-      toast({ variant: 'destructive', title: 'Error', description: 'Could not delete attempt.' });
     }
   };
 
-  const handleClearAllAttempts = async () => {
-    if (!progressCollectionRef || !progressData) return;
-    try {
-      const batch = writeBatch(firestore);
-      progressData.forEach((attempt) => {
-        batch.delete(doc(progressCollectionRef, attempt.id));
-      });
-      await batch.commit();
-      setFeedback(null);
-      toast({ title: t.clearedToast });
-    } catch (error) {
-      console.error("Error clearing all attempts:", error);
-      toast({ variant: 'destructive', title: 'Error', description: 'Could not clear all attempts.' });
-    }
+  const handleClearAllAttempts = () => {
+    saveProgress([]);
+    setFeedback(null);
+    toast({ title: t.clearedToast });
   };
 
-  if (user && !user.emailVerified && !user.isAnonymous) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-background text-center p-4">
-        <Card className="max-w-md w-full">
-          <CardHeader>
-            <CardTitle className="flex items-center justify-center gap-2 text-2xl">
-              <MailWarning className="w-8 h-8 text-primary" />
-              {t.verifyEmailTitle}
-            </CardTitle>
-            <CardDescription>{t.verifyEmailDesc}</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-             <p className="text-sm text-muted-foreground">
-              Doğrulama e-postasını <strong>{user.email}</strong> adresine gönderdik.
-            </p>
-            <Button onClick={handleResendVerification} disabled={isSendingVerification} className="w-full">
-              {isSendingVerification ? "Gönderiliyor..." : <><Send className="mr-2 h-4 w-4" />{t.resendVerification}</>}
-            </Button>
-            <Button variant="outline" onClick={() => auth.signOut()} className="w-full">
-              <LogOut className="mr-2 h-4 w-4" />
-              {t.logout}
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   return (
     <>
@@ -602,10 +533,10 @@ function DashboardLayout() {
                          <button onClick={() => handleSetFeedback(item)} className="flex-grow overflow-hidden mr-2 text-left">
                            <p className="font-semibold truncate text-sm">{item.taskDescription}</p>
                            <p className="text-xs text-sidebar-foreground/70">
-                            { item.createdAt ? formatDistanceToNow(item.createdAt.toDate(), { addSuffix: true, locale: language === 'tr' ? tr : enUS }) : ''}
+                            { formatDistanceToNow(new Date(item.createdAt), { addSuffix: true, locale: language === 'tr' ? tr : enUS }) }
                            </p>
                          </button>
-                         <div className="flex-shrink-0 font-bold text-lg text-sidebar-primary pr-8">{item.overallScore}</div>
+                         <div className="flex-shrink-0 font-bold text-lg text-sidebar-primary pr-8">{item.feedback.overallScore}</div>
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
                              <Button variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 text-sidebar-foreground/60 opacity-0 group-hover:opacity-100 hover:bg-red-500/10 hover:text-red-500 transition-opacity">
@@ -634,14 +565,7 @@ function DashboardLayout() {
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter className="border-t border-sidebar-border">
-           <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton onClick={() => auth.signOut()}>
-                  <LogOut />
-                  {t.logout}
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-           </SidebarMenu>
+           {/* Footer can be empty or have other non-user specific links */}
         </SidebarFooter>
       </Sidebar>
 
@@ -655,7 +579,7 @@ function DashboardLayout() {
                 </SidebarTrigger>
                 <div>
                    <p className="text-sm text-muted-foreground">
-                    {user && (user.isAnonymous ? t.welcomeGuest : `${t.welcome}, ${user.email || 'Kullanıcı'}`)}
+                    {t.welcome}
                   </p>
                 </div>
               </div>
@@ -743,7 +667,7 @@ function DashboardLayout() {
                     )}
   
                     {!isLoading && !feedback && (
-                      <div className="text-center space-y-4 flex flex-col items-center">
+                      <div className="text-center space-y-4 flex flex-col items-center justify-center">
                         <Mascot />
                         <h3 className="text-2xl font-semibold">{t.readyToStart}</h3>
                         <p className="text-muted-foreground max-w-sm mx-auto">{t.readyToStartDesc}</p>
@@ -860,24 +784,6 @@ function DashboardLayout() {
 }
 
 export default function Home() {
-  const { isUserLoading, user } = useFirebase();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!isUserLoading && !user) {
-      router.push('/login');
-    }
-  }, [isUserLoading, user, router]);
-
-  if (isUserLoading || !user) {
-    return (
-      <div className="flex flex-col items-center justify-center h-full min-h-screen text-center space-y-4">
-        <MascotLoading />
-        <h3 className="text-xl font-semibold text-primary">Yükleniyor...</h3>
-      </div>
-    );
-  }
-  
   return (
     <SidebarProvider>
       <DashboardLayout />

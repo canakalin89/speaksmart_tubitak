@@ -6,25 +6,10 @@ SpeakSmart, lise öğrencilerinin İngilizce konuşma becerilerini geliştirmele
 
 Bu uygulama, öğrenciler için bir **yapay zekâ konuşma asistanı** görevi görür. Öğrencilerin İngilizce konuşmalarını dinler ve onlara anında geri bildirim sunar.
 
-### Temel Özellikler
+### Nasıl Çalışır?
 
-1.  **Görev Seçimi:** Öğrenciler, Türkiye Yüzyılı Maarif Modeli'ne uygun olarak hazırlanmış çeşitli konuşma görevlerinden birini seçebilirler. Ayrıca, "Serbest Konuşma" seçeneğiyle istedikleri bir konu hakkında da pratik yapabilirler.
-2.  **Ses Kaydı ve Yükleme:** Kullanıcılar, tarayıcı üzerinden doğrudan seslerini kaydedebilir veya daha önce kaydettikleri bir ses dosyasını sisteme yükleyebilirler.
-3.  **Yapay Zekâ Analizi:** Kaydedilen ses, Google'ın gelişmiş yapay zekâ modelleri kullanılarak analiz edilir. Bu analiz sonucunda öğrenciye kapsamlı bir geri bildirim sunulur.
-4.  **Detaylı Geri Bildirim:** Analiz sonucunda öğrenciye şu konularda puanlar ve tavsiyeler verilir:
-    *   **Rapport (Dinleyici ile Bağ Kurma):** Konuşmanın ne kadar etkileşimli ve dinleyici odaklı olduğu.
-    *   **Organisation (Organizasyon):** Fikirlerin ne kadar düzenli ve akıcı bir şekilde sunulduğu.
-    *   **Delivery (Sunum):** Telaffuz, ses tonu ve konuşma hızı.
-    *   **Language Use (Dil Kullanımı):** Gramer doğruluğu ve kelime seçimi.
-    *   **Creativity (Yaratıcılık):** Fikirlerin orijinalliği ve kullanılan dilin zenginliği.
-5.  **Geçmiş Denemeler:** Yapılan tüm denemeler, tarayıcının yerel depolama alanına kaydedilir. Öğrenciler, kenar çubuğundan geçmiş denemelerini ve aldıkları geri bildirimleri istedikleri zaman tekrar inceleyebilirler.
+1.  **Konu Seç:** Listeden bir konuşma görevi seçilir.
+2.  **Konuş ve Kaydet:** "Kayda Başla" butonuna basılarak konuşma yapılır ve bitince kayıt durdurulur.
+3.  **Sonuçları Gör:** Yapay zekâ, konuşmayı analiz ederek telaffuz, gramer, akıcılık gibi konularda anında puanlar ve tavsiyeler verir.
 
-## Kimler İçin?
-
-Bu uygulama, özellikle İngilizce konuşma pratiği yapmaktan çekinen, hata yapmaktan korkan veya pratik yapacak birini bulmakta zorlanan lise öğrencileri için geliştirilmiştir. Öğrencilerin kendilerine güvenlerini artırmayı ve konuşma becerilerini geliştirmeyi hedefler.
-
-## Nasıl Kullanılır?
-
-1.  **Konu Seç:** Listeden bir konuşma görevi seçin.
-2.  **Konuş ve Kaydet:** "Kayda Başla" butonuna basarak konuşmanızı yapın. Bitince kaydı durdurun.
-3.  **Sonuçları Gör:** Yapay zekânın konuşmanızı analiz etmesini bekleyin ve geri bildirim ekranında sonuçlarınızı inceleyin.
+Uygulama, öğrencilerin çekinmeden, hata yapmaktan korkmadan pratik yapmalarına olanak tanıyarak İngilizce konuşma becerilerini ve özgüvenlerini artırmayı hedefler.
